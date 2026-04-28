@@ -9,6 +9,7 @@ from langchain_openai import ChatOpenAI
 from langchain_community.tools import StructuredTool
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
+from config import get_llm_config, get_mems_api_config
 
 class AgentState(TypedDict):
     user_input: str
@@ -20,12 +21,13 @@ class AgentState(TypedDict):
     base_url: str
 
 class MemsAPI:
-    def __init__(self, base_url: str = "http://localhost:80/api/v1"):
-        self.base_url = base_url
+    def __init__(self, base_url: str = None, username: str = None, password: str = None, secret_key: str = None):
+        mems_config = get_mems_api_config()
+        self.base_url = base_url or mems_config.get("base_url", "http://localhost:80/api/v1")
         self.token = None
-        self.username = "admin"
-        self.password = "easy2021"
-        self.secret_key = b'zju-plcc'
+        self.username = username or mems_config.get("username", "admin")
+        self.password = password or mems_config.get("password", "")
+        self.secret_key = (secret_key or mems_config.get("secret_key", "")).encode("utf-8")
     
     def login(self) -> str:
         encrypted_password = hmac.new(self.secret_key, self.password.encode('utf-8'), hashlib.sha256).digest()
@@ -175,12 +177,13 @@ class MemsAPI:
         return f"告警确认失败: {response.text}"
 
 class MemsAgent:
-    def __init__(self, api_key: str, base_url: str = "http://localhost:80/api/v1"):
-        self.mems_api = MemsAPI(base_url)
+    def __init__(self, api_key: str = None, base_url: str = None):
+        llm_config = get_llm_config()
+        self.mems_api = MemsAPI(base_url=base_url)
         self.llm = ChatOpenAI(
-            model="gpt-4o-mini",
-            api_key=api_key,
-            base_url="https://yunwu.ai/"
+            model=llm_config.get("model", "gpt-4o-mini"),
+            api_key=api_key or llm_config.get("api_key"),
+            base_url=llm_config.get("base_url", "https://yunwu.ai/")
         )
         self.tools = self._create_tools()
         self.graph = self._build_graph()
@@ -413,9 +416,7 @@ class MemsAgent:
         return result["final_answer"]
 
 if __name__ == "__main__":
-    API_KEY = "sk-Nss5uw1SgcmqBu2iKmvSfSWr4znjvhvxmb4vJRImjWCb3EBz"
-    
-    agent = MemsAgent(api_key=API_KEY)
+    agent = MemsAgent()
     
     print("=== MEMS AI Agent ===")
     print("输入问题来与Agent交互，输入 'exit' 退出")

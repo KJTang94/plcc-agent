@@ -8,6 +8,7 @@ from typing import List, Dict, Any, Optional, TypedDict
 from langgraph.graph import StateGraph, END
 from openai import OpenAI
 from mems_tools import create_tools, ToolInfo
+from config import get_llm_config, get_mems_api_config
 
 class AgentState(TypedDict):
     user_input: str
@@ -19,12 +20,13 @@ class AgentState(TypedDict):
     base_url: str
 
 class MemsAPI:
-    def __init__(self, base_url: str = "http://localhost:80/api/v1"):
-        self.base_url = base_url
+    def __init__(self, base_url: str = None, username: str = None, password: str = None, secret_key: str = None):
+        mems_config = get_mems_api_config()
+        self.base_url = base_url or mems_config.get("base_url", "http://localhost:80/api/v1")
         self.token = None
-        self.username = "admin"
-        self.password = "easy2021"
-        self.secret_key = b'zju-plcc'
+        self.username = username or mems_config.get("username", "admin")
+        self.password = password or mems_config.get("password", "")
+        self.secret_key = (secret_key or mems_config.get("secret_key", "")).encode("utf-8")
     
     def _request(self, method: str, path: str, params: dict = None, data: dict = None) -> str:
         if not self.token:
@@ -676,19 +678,21 @@ class MemsAPI:
         return self._request('POST', '/file_tree_version', params={'id': tree_id}, data=data)
 
 class MemsAgent:
-    def __init__(self, api_key: str, base_url: str = "http://localhost:80/api/v1"):
-        self.mems_api = MemsAPI(base_url)
+    def __init__(self, api_key: str = None, base_url: str = None):
+        llm_config = get_llm_config()
+        self.mems_api = MemsAPI(base_url=base_url)
         self.client = OpenAI(
-            api_key=api_key,
-            base_url="https://yunwu.ai/v1"
+            api_key=api_key or llm_config.get("api_key"),
+            base_url=llm_config.get("base_url", "https://yunwu.ai/v1")
         )
+        self.model = llm_config.get("model", "gpt-4o-mini")
         self.tools = create_tools(self.mems_api)
         self.graph = self._build_graph()
     
     def _call_llm(self, prompt: str) -> str:
         try:
             response = self.client.chat.completions.create(
-                model="gpt-4o-mini",
+                model=self.model,
                 messages=[
                     {"role": "system", "content": prompt}
                 ],
@@ -864,10 +868,8 @@ class MemsAgent:
         return result["final_answer"]
 
 def main():
-    API_KEY = "sk-Nss5uw1SgcmqBu2iKmvSfSWr4znjvhvxmb4vJRImjWCb3EBz"
-    
     try:
-        agent = MemsAgent(api_key=API_KEY)
+        agent = MemsAgent()
         print("=" * 50)
         print("     MEMS AI Agent 智能助手")
         print("=" * 50)
