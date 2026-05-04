@@ -9,6 +9,16 @@ from langgraph.graph import StateGraph, END
 from openai import OpenAI
 from mems_tools import create_tools, ToolInfo
 from config import get_llm_config, get_mems_api_config
+from langchain_text_splitters import MarkdownTextSplitter
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain_core.documents import Document
+
+class ConversationHistory(TypedDict):
+    user_input: str
+    agent_response: str
+    tool_results: List[Dict[str, Any]]
+    timestamp: float
 
 class AgentState(TypedDict):
     user_input: str
@@ -18,6 +28,7 @@ class AgentState(TypedDict):
     final_answer: str
     token: Optional[str]
     base_url: str
+    conversation_history: List[ConversationHistory]
 
 class MemsAPI:
     def __init__(self, base_url: str = None, username: str = None, password: str = None, secret_key: str = None):
@@ -688,6 +699,46 @@ class MemsAgent:
         self.model = llm_config.get("model", "gpt-4o-mini")
         self.tools = create_tools(self.mems_api)
         self.graph = self._build_graph()
+        self.conversation_history: List[ConversationHistory] = []
+        
+        # 加载API文档并初始化RAG系统
+        self.rag_system = self._init_rag_system()
+    
+    def _init_rag_system(self) -> Optional[FAISS]:
+        """初始化RAG系统，加载API文档并创建向量存储"""
+        try:
+            with open('mems_api_docs.md', 'r', encoding='utf-8') as f:
+                docs_content = f.read()
+            
+            # 分割文档
+            text_splitter = MarkdownTextSplitter(chunk_size=1000, chunk_overlap=200)
+            docs = text_splitter.split_text(docs_content)
+            
+            # 创建文档对象
+            documents = [Document(page_content=doc, metadata={"source": "mems_api_docs.md"}) for doc in docs]
+            
+            # 创建向量存储
+            llm_config = get_llm_config()
+            embeddings = OpenAIEmbeddings(
+                model="text-embedding-3-small",
+                api_key=llm_config.get("api_key"),
+                base_url=llm_config.get("base_url", "https://yunwu.ai/")
+            )
+            
+            db = FAISS.from_documents(documents, embeddings)
+            return db
+            
+        except FileNotFoundError:
+            print("警告：未找到mems_api_docs.md文件")
+            return None
+    
+    def _search_docs(self, query: str, k: int = 3) -> List[str]:
+        """在API文档中搜索相关内容"""
+        if not self.rag_system:
+            return []
+        
+        results = self.rag_system.similarity_search(query, k=k)
+        return [doc.page_content for doc in results]
     
     def _call_llm(self, prompt: str) -> str:
         try:
@@ -725,21 +776,42 @@ class MemsAgent:
         return workflow.compile()
     
     def _agent_node(self, state: AgentState) -> AgentState:
-        tools_info = "\n".join([f"- {tool.name}: {tool.description}" for tool in self.tools])
+        # 构建工具信息，包含参数描述
+        tools_info = []
+        for tool in self.tools:
+            tool_desc = f"- {tool.name}: {tool.description}"
+            if tool.parameters:
+                params_desc = "\n  参数："
+                for param in tool.parameters:
+                    params_desc += f"\n    - {param['name']} ({param['type']}) {'[必填]' if param['required'] else ''}: {param['description']}"
+                tool_desc += params_desc
+            tools_info.append(tool_desc)
+        tools_info = "\n".join(tools_info)
+        
+        # 构建对话历史字符串
+        conversation_history_str = ""
+        if state.get("conversation_history"):
+            conversation_history_str = "\n对话历史:\n"
+            for i, history in enumerate(state["conversation_history"]):
+                conversation_history_str += f"\n轮次 {i+1}:\n用户: {history['user_input']}\n助手: {history['agent_response']}\n"
+        
+        # 搜索API文档相关内容
+        relevant_docs = self._search_docs(state["user_input"], k=3)
+        docs_content = "\n\n相关文档内容：\n" + "\n\n---\n\n".join(relevant_docs)
         
         prompt = """
-你是一个MEMS系统的AI助手，能够调用多个API工具来完成用户的任务。
+你是一个MEMS系统的AI助手，能够调用多个API工具来完成用户的任务。同时你也可以回答关于MEMS API文档的细节问题。
 
 可用工具列表：
 {tools_info}
 
-请根据用户的请求和历史工具调用结果，决定下一步操作：
+请根据用户的请求、对话历史、历史工具调用结果以及相关文档内容，决定下一步操作：
 
 输出格式要求（必须是有效的JSON格式）：
 1. 如果需要调用工具获取信息，请输出：
 {{"action": "tool", "tool_name": "工具名称", "args": {{参数对象}}}}
 
-2. 如果已经收集到足够的信息可以直接回答用户，请输出：
+2. 如果已经有足够的信息回答问题（包括API文档中的细节），请输出：
 {{"action": "summarize", "reason": "总结原因"}}
 
 注意事项：
@@ -747,16 +819,21 @@ class MemsAgent:
 - 登录是调用其他接口的前提，如果还未登录或者token失效，需要先调用login工具
 - 请仔细分析用户的问题，判断需要调用哪些工具
 - 如果需要调用多个工具，可以依次调用
-- 如果已经有足够的信息回答问题，请直接总结
+- 如果用户的问题是关于API文档的细节，不需要调用工具，直接总结回答
 - 输出必须是纯JSON格式，不要包含其他任何文本
 
+{conversation_history_str}
 用户问题：{user_input}
 
 历史工具调用结果：{tool_results}
+
+{docs_content}
 """.format(
             tools_info=tools_info,
+            conversation_history_str=conversation_history_str,
             user_input=state["user_input"],
-            tool_results=str(state["tool_results"])
+            tool_results=str(state["tool_results"]),
+            docs_content=docs_content
         )
         
         response = self._call_llm(prompt)
@@ -818,13 +895,19 @@ class MemsAgent:
         return state
     
     def _summarize_node(self, state: AgentState) -> AgentState:
+        # 搜索API文档相关内容
+        relevant_docs = self._search_docs(state["user_input"], k=3)
+        docs_content = "\n\n相关文档内容：\n" + "\n\n---\n\n".join(relevant_docs)
+        
         prompt = """
-你是一个MEMS系统的AI助手，请根据工具调用结果，用自然、友好的语言总结回答用户的问题。
+你是一个MEMS系统的AI助手，请根据工具调用结果、对话历史和相关文档内容，用自然、友好的语言总结回答用户的问题。
 
 用户问题：{user_input}
 
 工具调用结果：
 {tool_results}
+
+{docs_content}
 
 请提供详细、清晰的总结回答，包括：
 1. 解决用户问题的步骤
@@ -835,9 +918,11 @@ class MemsAgent:
 - 使用中文回答
 - 保持回答简洁明了
 - 如果有错误信息，请告知用户
+- 如果用户的问题是关于API文档的细节，直接从文档中提取信息回答
 """.format(
             user_input=state["user_input"],
-            tool_results="\n".join([json.dumps(r, ensure_ascii=False) for r in state["tool_results"]])
+            tool_results="\n".join([json.dumps(r, ensure_ascii=False) for r in state["tool_results"]]),
+            docs_content=docs_content
         )
         
         response = self._call_llm(prompt)
@@ -861,11 +946,26 @@ class MemsAgent:
             "is_finished": False,
             "final_answer": "",
             "token": None,
-            "base_url": self.mems_api.base_url
+            "base_url": self.mems_api.base_url,
+            "conversation_history": self.conversation_history.copy()
         }
         
         result = self.graph.invoke(initial_state)
+        
+        # 保存当前对话到历史
+        if result.get("final_answer"):
+            self.conversation_history.append({
+                "user_input": user_input,
+                "agent_response": result["final_answer"],
+                "tool_results": result["tool_results"],
+                "timestamp": time.time()
+            })
+        
         return result["final_answer"]
+    
+    def reset_conversation(self):
+        """重置对话历史"""
+        self.conversation_history = []
 
 def main():
     try:
@@ -892,7 +992,7 @@ def main():
         print("  - Common: 通用功能")
         print("=" * 50)
         print(f"共 {len(agent.tools)} 个工具可用")
-        print("输入问题来与Agent交互，输入 'exit' 退出")
+        print("输入问题来与Agent交互，输入 'exit' 退出，输入 'reset' 重置对话历史")
         print()
         
         while True:
@@ -900,6 +1000,11 @@ def main():
             if user_input.lower() == 'exit':
                 print("Agent: 再见！")
                 break
+            
+            if user_input.lower() == 'reset':
+                agent.reset_conversation()
+                print("Agent: 对话历史已重置")
+                continue
             
             if not user_input.strip():
                 print("Agent: 请输入有效的问题")

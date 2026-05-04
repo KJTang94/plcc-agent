@@ -1,10 +1,17 @@
 from typing import List, Dict, Any, Optional, TypedDict
 
+class ParameterInfo(TypedDict):
+    name: str
+    type: str
+    required: bool
+    description: str
+
 class ToolInfo:
-    def __init__(self, name, description, func):
+    def __init__(self, name, description, func, parameters: Optional[List[ParameterInfo]] = None):
         self.name = name
         self.description = description
         self.func = func
+        self.parameters = parameters or []
 
 def create_tools(mems_api) -> List[ToolInfo]:
     tools = []
@@ -606,14 +613,31 @@ def create_tools(mems_api) -> List[ToolInfo]:
 
     tools.append(ToolInfo(
         name="add_device",
-        description="新增设备。参数：data (dict) - 请求体数据",
-        func=mems_api.add_device
+        description="新增设备。参数：data (dict) - 设备信息，包含字段：id (u64) - 设备id, define_id (u64) - 设备定义id, name (String) - 设备名称, desc (String) - 设备描述, container_id (u64) - 容器id, terminals (Terminal[]) - 端子列表, prop_groups (u64[]) - 设备属性分组",
+        func=mems_api.add_device,
+        parameters=[
+            {"name": "id", "type": "u64", "required": True, "description": "设备id"},
+            {"name": "define_id", "type": "u64", "required": True, "description": "设备定义id"},
+            {"name": "name", "type": "String", "required": True, "description": "设备名称"},
+            {"name": "desc", "type": "String", "required": True, "description": "设备描述"},
+            {"name": "container_id", "type": "u64", "required": False, "description": "容器id"},
+            {"name": "terminals", "type": "Terminal[]", "required": True, "description": "端子列表"},
+            {"name": "prop_groups", "type": "u64[]", "required": True, "description": "设备属性分组"}
+        ]
     ))
 
     tools.append(ToolInfo(
         name="add_device_define",
-        description="新增设备定义。参数：data (dict) - 请求体数据",
-        func=mems_api.add_device_define
+        description="新增设备定义。参数：data (dict) - 设备定义信息，包含字段：id (u64) - 定义id, rsr_type (PsRsrType) - 设备所属类型, name (String) - 设备类别名称, desc (String) - 设备定义的描述, terminal_num (u8) - 端口数量, prop_groups (PropGroupDefine[]) - 属性分组定义列表",
+        func=mems_api.add_device_define,
+        parameters=[
+            {"name": "id", "type": "u64", "required": True, "description": "定义id"},
+            {"name": "rsr_type", "type": "PsRsrType", "required": True, "description": "设备所属类型"},
+            {"name": "name", "type": "String", "required": True, "description": "设备类别名称"},
+            {"name": "desc", "type": "String", "required": True, "description": "设备定义的描述"},
+            {"name": "terminal_num", "type": "u8", "required": True, "description": "端口数量"},
+            {"name": "prop_groups", "type": "PropGroupDefine[]", "required": True, "description": "属性分组定义列表"}
+        ]
     ))
 
     tools.append(ToolInfo(
