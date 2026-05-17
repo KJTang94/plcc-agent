@@ -63,7 +63,22 @@ Access-Token: <your_token>
 - **路径**: `/alarm/config`
 - **函数名**: `add_alarm_config`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| common | object | 是 | 告警通知形式 |
+| common.popup_window | boolean | 是 | 桌面弹窗 |
+| common.sound_light | boolean | 是 | 声光 |
+| common.text_messages | boolean | 是 | 短信 |
+| emergency | object | 是 | 告警通知形式 |
+| emergency.popup_window | boolean | 是 | 桌面弹窗 |
+| emergency.sound_light | boolean | 是 | 声光 |
+| emergency.text_messages | boolean | 是 | 短信 |
+| important | object | 是 | 告警通知形式 |
+| important.popup_window | boolean | 是 | 桌面弹窗 |
+| important.sound_light | boolean | 是 | 声光 |
+| important.text_messages | boolean | 是 | 短信 |
 
 ### 3. 确认告警
 
@@ -77,7 +92,9 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | user_id | integer | 是 | 用户id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 4. 查询已确认的告警
 
@@ -97,7 +114,16 @@ Access-Token: <your_token>
 - **路径**: `/alarm/define`
 - **函数名**: `add_alarm_define`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| desc | string | 否 |  |
+| id | integer | 否 |  |
+| level | string | 否 |  |
+| name | string | 否 |  |
+| owners | string | 否 |  |
+| rule | string | 否 |  |
 
 ### 7. 查询指定id的告警定义
 
@@ -123,7 +149,18 @@ Access-Token: <your_token>
 - **路径**: `/alarm/defines`
 - **函数名**: `add_alarm_defines`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| defines | array[PbAlarmDefine] | 是 |  |
+| defines[] | object | 是 |  |
+| defines[].desc | string | 否 |  |
+| defines[].id | integer | 否 |  |
+| defines[].level | string | 否 |  |
+| defines[].name | string | 否 |  |
+| defines[].owners | string | 否 |  |
+| defines[].rule | string | 否 |  |
 
 ### 10. 删除指定id的告警定义
 
@@ -143,7 +180,14 @@ Access-Token: <your_token>
 - **路径**: `/alarm/defines_file`
 - **函数名**: `add_alarm_defines_file`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| fileContent | array[integer] | 否 |  |
+| fileName | string | 否 |  |
+| is_zip | boolean | 否 |  |
+| op | string | 否 |  |
 
 ### 12. 查询未确认的告警数
 
@@ -211,7 +255,37 @@ Access-Token: <your_token>
 - **路径**: `/aoes/models`
 - **函数名**: `add_aoes_models`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].actions | array[ActionEdge] | 是 | 动作列表 |
+| [].actions[] | object | 是 | 动作列表 |
+| [].actions[].action | string | 是 | 无动作 |
+| [].actions[].aoe_id | integer | 是 | AOE id |
+| [].actions[].failure_mode | string | 是 | 失败模式 |
+| [].actions[].name | string | 是 | 动作名称 |
+| [].actions[].source_node | integer | 是 | 源节点 |
+| [].actions[].target_node | integer | 是 | 目标节点 |
+| [].events | array[EventNode] | 是 | 节点列表 |
+| [].events[] | object | 是 | 节点列表 |
+| [].events[].aoe_id | integer | 是 | AOE id |
+| [].events[].expr | object | 是 | 表达式对象 |
+| [].events[].expr.rpn | array[Token] | 是 |  |
+| [].events[].expr.rpn[] | object | 是 |  |
+| [].events[].expr.rpn[].Binary | string | 是 | Mathematical operations. |
+| [].events[].id | integer | 是 | 节点id |
+| [].events[].name | string | 是 | 节点名 |
+| [].events[].node_type | string | 是 | 节点类型 |
+| [].events[].timeout | integer | 是 | 事件还未发生时等待超时时间 |
+| [].id | integer | 是 | aoe id |
+| [].name | string | 是 | aoe名称 |
+| [].trigger_type | object | 是 | 简单固定周期触发 |
+| [].trigger_type.SimpleRepeat | object | 是 | 时间对象 |
+| [].trigger_type.SimpleRepeat.nanos | integer | 是 | 剩余纳秒 |
+| [].trigger_type.SimpleRepeat.secs | integer | 是 | 秒 |
+| [].variables | array[array[any]] | 是 | 用户自定义的变量：变量名和表达式 |
 
 ### 4. 查询指定版本的AOE
 
@@ -273,7 +347,14 @@ Access-Token: <your_token>
 - **路径**: `/aoes/models_file`
 - **函数名**: `add_aoes_models_file`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| fileContent | array[integer] | 否 |  |
+| fileName | string | 否 |  |
+| is_zip | boolean | 否 |  |
+| op | string | 否 |  |
 
 ### 9. 保存AOE（多文件形式）
 
@@ -281,7 +362,11 @@ Access-Token: <your_token>
 - **路径**: `/aoes/models_file2`
 - **函数名**: `add_aoes_models_file2`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| file | array[string] | 是 |  |
 
 ### 10. 查询所有的AOE版本信息
 
@@ -295,7 +380,13 @@ Access-Token: <your_token>
 - **路径**: `/aoes/version`
 - **函数名**: `add_aoes_version`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| note | string | 是 | 提交时的注释 |
+| tree_id | string | 是 | 对应的tree_id |
+| version | integer | 是 | 版本号 |
 
 ### 12. 删除某一个AOE版本
 
@@ -337,7 +428,16 @@ Access-Token: <your_token>
 - **路径**: `/auth/auths`
 - **函数名**: `add_auth_auths`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].desc | string | 是 | 权限描述 |
+| [].id | integer | 是 | 权限ID |
+| [].method | string | 是 | 请求方法 |
+| [].name | string | 是 | 权限名称 |
+| [].url | string | 是 | 权限可操作的url资源地址 |
 
 ### 3. 查询指定角色的所有权限
 
@@ -369,7 +469,9 @@ Access-Token: <your_token>
 - **路径**: `/auth/login`
 - **函数名**: `add_auth_login`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 6. 查询所有菜单
 
@@ -383,7 +485,15 @@ Access-Token: <your_token>
 - **路径**: `/auth/menus`
 - **函数名**: `add_auth_menus`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].group | string | 是 | 分组 |
+| [].id | integer | 是 | 菜单ID |
+| [].name | string | 是 | 名称 |
+| [].url | string | 是 | 菜单对应的url地址 |
 
 ### 8. 查询指定角色的所有菜单
 
@@ -427,7 +537,9 @@ Access-Token: <your_token>
 - **路径**: `/auth/register`
 - **函数名**: `add_auth_register`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 12. 查询所有角色
 
@@ -441,7 +553,14 @@ Access-Token: <your_token>
 - **路径**: `/auth/roles`
 - **函数名**: `update_auth_roles`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| id | integer | 是 | 角色ID |
+| name | string | 是 | 角色名称 |
+| role2authority | array[integer] | 是 | 角色权限关联表，一个角色可以拥有多个权限 |
+| role2menu | array[integer] | 是 | 角色菜单关联表，一个角色可以拥有多个菜单 |
 
 ### 14. 新增角色
 
@@ -449,7 +568,15 @@ Access-Token: <your_token>
 - **路径**: `/auth/roles`
 - **函数名**: `add_auth_roles`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].id | integer | 是 | 角色ID |
+| [].name | string | 是 | 角色名称 |
+| [].role2authority | array[integer] | 是 | 角色权限关联表，一个角色可以拥有多个权限 |
+| [].role2menu | array[integer] | 是 | 角色菜单关联表，一个角色可以拥有多个菜单 |
 
 ### 15. 根据ids查询角色
 
@@ -487,7 +614,13 @@ Access-Token: <your_token>
 - **路径**: `/auth/user_groups`
 - **函数名**: `update_auth_user_groups`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| id | integer | 是 | 用户组ID |
+| name | string | 是 | 用户组名称 |
+| user_group2role | array[integer] | 是 | 用户组角色关联表，一个用户组可以拥有多个角色 |
 
 ### 19. 新增用户组
 
@@ -495,7 +628,14 @@ Access-Token: <your_token>
 - **路径**: `/auth/user_groups`
 - **函数名**: `add_auth_user_groups`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].id | integer | 是 | 用户组ID |
+| [].name | string | 是 | 用户组名称 |
+| [].user_group2role | array[integer] | 是 | 用户组角色关联表，一个用户组可以拥有多个角色 |
 
 ### 20. 删除指定id的用户组
 
@@ -533,7 +673,21 @@ Access-Token: <your_token>
 - **路径**: `/auth/users`
 - **函数名**: `update_auth_users`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| password | array[integer] | 是 | 加密后的用户密码 |
+| password_update_time | integer | 是 | 最近一次密码修改时间 |
+| pub_info | object | 是 | 用户 - 公开信息 |
+| pub_info.desc | string | 否 | 描述 |
+| pub_info.email | string | 否 | 用户的邮箱 |
+| pub_info.expiration_time | integer | 否 | 过期时间 |
+| pub_info.id | integer | 是 | 用户ID |
+| pub_info.name | string | 是 | 用户名称 |
+| pub_info.phone_number | string | 否 | 用户的手机号 |
+| pub_info.special_role | array[integer] | 是 | 特别分配的角色 |
+| pub_info.user_group | integer | 是 | 所属用户组的id（用户与用户组关联表，一个用户只能属于一个用户组） |
 
 ### 24. 新增用户
 
@@ -541,7 +695,21 @@ Access-Token: <your_token>
 - **路径**: `/auth/users`
 - **函数名**: `add_auth_users`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| password | array[integer] | 是 | 加密后的用户密码 |
+| password_update_time | integer | 是 | 最近一次密码修改时间 |
+| pub_info | object | 是 | 用户 - 公开信息 |
+| pub_info.desc | string | 否 | 描述 |
+| pub_info.email | string | 否 | 用户的邮箱 |
+| pub_info.expiration_time | integer | 否 | 过期时间 |
+| pub_info.id | integer | 是 | 用户ID |
+| pub_info.name | string | 是 | 用户名称 |
+| pub_info.phone_number | string | 否 | 用户的手机号 |
+| pub_info.special_role | array[integer] | 是 | 特别分配的角色 |
+| pub_info.user_group | integer | 是 | 所属用户组的id（用户与用户组关联表，一个用户只能属于一个用户组） |
 
 ### 25. 根据分组id查询用户信息
 
@@ -567,7 +735,9 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | id | integer | 是 | 用户id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 27. 重置用户密码
 
@@ -593,7 +763,9 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | id | integer | 是 | 用户id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 29. 删除指定id的用户
 
@@ -646,7 +818,13 @@ Access-Token: <your_token>
 - **路径**: `/controls/aoes`
 - **函数名**: `add_controls_aoes`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| AoeActions | array[AoeAction] | 是 | AOE指令列表 |
+| AoeActions[] | object | 是 | AOE指令列表 |
+| AoeActions[].StartAoe | integer | 是 | 开始AOE |
 
 ### 3. 执行测点控制
 
@@ -654,7 +832,22 @@ Access-Token: <your_token>
 - **路径**: `/controls/points`
 - **函数名**: `add_controls_points`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| analogs | array[SetFloatValue] | 是 |  |
+| analogs[] | object | 是 |  |
+| analogs[].point_id | integer | 是 |  |
+| analogs[].sender_id | integer | 是 |  |
+| analogs[].timestamp | integer | 是 |  |
+| analogs[].yt_command | number | 是 |  |
+| discretes | array[SetIntValue] | 是 |  |
+| discretes[] | object | 是 |  |
+| discretes[].point_id | integer | 是 |  |
+| discretes[].sender_id | integer | 是 |  |
+| discretes[].timestamp | integer | 是 |  |
+| discretes[].yk_command | integer | 是 |  |
 
 ### 4. 执行测点控制（通过别名）
 
@@ -662,7 +855,22 @@ Access-Token: <your_token>
 - **路径**: `/controls/points_by_alias`
 - **函数名**: `add_controls_points_by_alias`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| analogs | array[SetFloatValue2] | 是 |  |
+| analogs[] | object | 是 |  |
+| analogs[].point_alias | string | 是 |  |
+| analogs[].sender_id | integer | 是 |  |
+| analogs[].timestamp | integer | 是 |  |
+| analogs[].yt_command | number | 是 |  |
+| discretes | array[SetIntValue2] | 是 |  |
+| discretes[] | object | 是 |  |
+| discretes[].point_alias | string | 是 |  |
+| discretes[].sender_id | integer | 是 |  |
+| discretes[].timestamp | integer | 是 |  |
+| discretes[].yk_command | integer | 是 |  |
 
 ### 5. 执行测点控制（通过公式）
 
@@ -670,7 +878,19 @@ Access-Token: <your_token>
 - **路径**: `/controls/points_by_expr`
 - **函数名**: `add_controls_points_by_expr`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| commands | array[SetPointValue] | 是 |  |
+| commands[] | object | 是 |  |
+| commands[].command | object | 是 | 表达式对象 |
+| commands[].command.rpn | array[Token] | 是 |  |
+| commands[].command.rpn[] | object | 是 |  |
+| commands[].command.rpn[].Binary | string | 是 | Mathematical operations. |
+| commands[].point_id | integer | 是 |  |
+| commands[].sender_id | integer | 是 |  |
+| commands[].timestamp | integer | 是 |  |
 
 ### 6. 执行测点控制（通过其他数据源）
 
@@ -684,7 +904,19 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | source | integer | 是 | 数据源id |
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].analog_value | number | 是 | 模拟量值 |
+| [].discrete_value | integer | 是 | 离散量值 |
+| [].is_discrete | boolean | 是 | 是否离散量 |
+| [].is_transformed | boolean | 是 | 是否已经变换 |
+| [].point_id | integer | 是 | 对应的测点 |
+| [].timestamp | integer | 是 | 时间戳 |
+| [].transformed_analog | number | 是 | 变换后的模拟量值 |
+| [].transformed_discrete | integer | 是 | 变换后的离散量值 |
 
 ## Devices 模块
 
@@ -708,7 +940,14 @@ Access-Token: <your_token>
 - **路径**: `/devices/cns`
 - **函数名**: `add_devices_cns`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].id | integer | 是 | 连接节点id |
+| [].psr_id | string | 是 | 资源id |
+| [].terminals | array[integer] | 是 | 端子id数组 |
 
 ### 3. 查询所有设备定义
 
@@ -722,7 +961,20 @@ Access-Token: <your_token>
 - **路径**: `/devices/defines`
 - **函数名**: `update_devices_defines`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| desc | string | 是 | 设备定义的描述 |
+| id | integer | 是 | 定义id |
+| name | string | 是 | 设备类别名称 |
+| prop_groups | array[PropGroupDefine] | 是 | 设备属性 |
+| prop_groups[] | object | 是 | 设备属性 |
+| prop_groups[].desc | string | 是 | 属性定义描述 |
+| prop_groups[].name | string | 是 | 属性定义标识 |
+| prop_groups[].prop_defines | array[integer] | 是 | 设备属性实际描述 |
+| rsr_type | string | 是 | 电力设备类型 |
+| terminal_num | integer | 是 | 端口数量 |
 
 ### 5. 新增设备定义
 
@@ -730,7 +982,21 @@ Access-Token: <your_token>
 - **路径**: `/devices/defines`
 - **函数名**: `add_devices_defines`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].desc | string | 是 | 设备定义的描述 |
+| [].id | integer | 是 | 定义id |
+| [].name | string | 是 | 设备类别名称 |
+| [].prop_groups | array[PropGroupDefine] | 是 | 设备属性 |
+| [].prop_groups[] | object | 是 | 设备属性 |
+| [].prop_groups[].desc | string | 是 | 属性定义描述 |
+| [].prop_groups[].name | string | 是 | 属性定义标识 |
+| [].prop_groups[].prop_defines | array[integer] | 是 | 设备属性实际描述 |
+| [].rsr_type | string | 是 | 电力设备类型 |
+| [].terminal_num | integer | 是 | 端口数量 |
 
 ### 6. 删除指定id的设备定义
 
@@ -774,7 +1040,20 @@ Access-Token: <your_token>
 - **路径**: `/devices/devs`
 - **函数名**: `update_devices_devs`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| container_id | integer | 否 |  |
+| define_id | integer | 是 | 设备定义id |
+| desc | string | 是 | 设备描述 |
+| id | integer | 是 | 设备id |
+| name | string | 是 | 设备名称 |
+| prop_group_ids | array[integer] | 是 | 设备属性分组id列表 |
+| terminals | array[Terminal] | 是 | 设备的端口 |
+| terminals[] | object | 是 | 设备的端口 |
+| terminals[].device | integer | 是 | 设备id |
+| terminals[].id | integer | 是 | 端口id |
 
 ### 10. 新增设备
 
@@ -782,7 +1061,21 @@ Access-Token: <your_token>
 - **路径**: `/devices/devs`
 - **函数名**: `add_devices_devs`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].container_id | integer | 否 |  |
+| [].define_id | integer | 是 | 设备定义id |
+| [].desc | string | 是 | 设备描述 |
+| [].id | integer | 是 | 设备id |
+| [].name | string | 是 | 设备名称 |
+| [].prop_group_ids | array[integer] | 是 | 设备属性分组id列表 |
+| [].terminals | array[Terminal] | 是 | 设备的端口 |
+| [].terminals[] | object | 是 | 设备的端口 |
+| [].terminals[].device | integer | 是 | 设备id |
+| [].terminals[].id | integer | 是 | 端口id |
 
 ### 11. 删除指定id的设备
 
@@ -832,7 +1125,9 @@ Access-Token: <your_token>
 - **路径**: `/devices/islands`
 - **函数名**: `add_devices_islands`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 15. 查询设备测点
 
@@ -852,7 +1147,16 @@ Access-Token: <your_token>
 - **路径**: `/devices/measure_defs`
 - **函数名**: `update_devices_measure_defs`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].dev_id | integer | 是 |  |
+| [].id | integer | 是 |  |
+| [].phase | string | 是 | 量测相位 |
+| [].point_id | integer | 是 |  |
+| [].terminal_id | integer | 是 |  |
 
 ### 17. 新增设备测点
 
@@ -860,7 +1164,16 @@ Access-Token: <your_token>
 - **路径**: `/devices/measure_defs`
 - **函数名**: `add_devices_measure_defs`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].dev_id | integer | 是 |  |
+| [].id | integer | 是 |  |
+| [].phase | string | 是 | 量测相位 |
+| [].point_id | integer | 是 |  |
+| [].terminal_id | integer | 是 |  |
 
 ### 18. 删除指定id的设备测点
 
@@ -868,7 +1181,9 @@ Access-Token: <your_token>
 - **路径**: `/devices/measure_defs`
 - **函数名**: `delete_devices_measure_defs`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 19. 查询测点树（测点在设备树中的路径）
 
@@ -894,7 +1209,15 @@ Access-Token: <your_token>
 - **路径**: `/devices/prop_defines`
 - **函数名**: `update_devices_prop_defines`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| data_type | string | 是 | 属性类型 |
+| data_unit | string | 是 | 数据单位 |
+| desc | string | 是 | 属性定义描述 |
+| id | integer | 是 | 属性定义id |
+| name | string | 是 | 属性定义标识 |
 
 ### 22. 新增设备属性定义
 
@@ -902,7 +1225,16 @@ Access-Token: <your_token>
 - **路径**: `/devices/prop_defines`
 - **函数名**: `add_devices_prop_defines`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].data_type | string | 是 | 属性类型 |
+| [].data_unit | string | 是 | 数据单位 |
+| [].desc | string | 是 | 属性定义描述 |
+| [].id | integer | 是 | 属性定义id |
+| [].name | string | 是 | 属性定义标识 |
 
 ### 23. 删除指定id的设备属性定义
 
@@ -934,7 +1266,18 @@ Access-Token: <your_token>
 - **路径**: `/devices/prop_groups`
 - **函数名**: `update_devices_prop_groups`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].defines | array[integer] | 是 | 设备属性定义列表 |
+| [].id | integer | 是 |  |
+| [].name | string | 是 | 分组名称，用于显示，以及匹配PropGroupDefine |
+| [].props | array[PropValue] | 是 | 设备属性实际描述 |
+| [].props[] | object | 是 | 设备属性实际描述 |
+| [].props[].U8 | integer | 是 |  |
+| [].rsr_id | integer | 是 | resource id |
 
 ### 26. 新增设备属性分组
 
@@ -942,7 +1285,18 @@ Access-Token: <your_token>
 - **路径**: `/devices/prop_groups`
 - **函数名**: `add_devices_prop_groups`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].defines | array[integer] | 是 | 设备属性定义列表 |
+| [].id | integer | 是 |  |
+| [].name | string | 是 | 分组名称，用于显示，以及匹配PropGroupDefine |
+| [].props | array[PropValue] | 是 | 设备属性实际描述 |
+| [].props[] | object | 是 | 设备属性实际描述 |
+| [].props[].U8 | integer | 是 |  |
+| [].rsr_id | integer | 是 | resource id |
 
 ### 27. 根据id列表查看设备属性分组列表
 
@@ -992,7 +1346,13 @@ Access-Token: <your_token>
 - **路径**: `/devices/version`
 - **函数名**: `add_devices_version`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| note | string | 是 | 提交时的注释 |
+| tree_id | string | 是 | 对应的tree_id |
+| version | integer | 是 | 版本号 |
 
 ### 32. 删除指定id的电气岛版本
 
@@ -1024,7 +1384,9 @@ Access-Token: <your_token>
 - **路径**: `/multi_import_bytes`
 - **函数名**: `add_multi_import_bytes`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ## Ems 模块
 
@@ -1042,7 +1404,16 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | ems_id | string | 是 | ems_id |
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| content | string | 否 |  |
+| function | string | 否 |  |
+| header_keys | array[string] | 是 |  |
+| header_values | array[string] | 是 |  |
+| id | integer | 否 |  |
+| url | string | 否 |  |
 
 ### 2. 查询指定id的ems
 
@@ -1072,7 +1443,15 @@ Access-Token: <your_token>
 - **路径**: `/file_tree`
 - **函数名**: `add_file_tree`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| op | string | 是 | 文件树的操作类型 |
+| op_paths | array[string] | 是 |  |
+| path | string | 否 |  |
+| tree_id | string | 是 |  |
+| version | integer | 否 |  |
 
 ### 2. 保存filetree的一个节点
 
@@ -1086,7 +1465,9 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | id | string | 是 | tree_id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 3. 提交filetree版本
 
@@ -1094,7 +1475,13 @@ Access-Token: <your_token>
 - **路径**: `/file_tree_version`
 - **函数名**: `add_file_tree_version`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| note | string | 是 | 提交时的注释 |
+| tree_id | string | 是 | 对应的tree_id |
+| version | integer | 是 | 版本号 |
 
 ## Flows 模块
 
@@ -1125,7 +1512,9 @@ Access-Token: <your_token>
 - **路径**: `/flows/controls`
 - **函数名**: `add_flows_controls`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 3. 报表节点测试
 
@@ -1133,7 +1522,9 @@ Access-Token: <your_token>
 - **路径**: `/flows/debug`
 - **函数名**: `add_flows_debug`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 4. 查询报表
 
@@ -1154,7 +1545,41 @@ Access-Token: <your_token>
 - **路径**: `/flows/models`
 - **函数名**: `update_flows_models`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].actions | array[DfActionEdge] | 是 | 边 |
+| [].actions[] | object | 是 | 边 |
+| [].actions[].action | object | 是 | 对单个Dataframe进行运算 |
+| [].actions[].action.Eval | array[Expr] | 是 | 对单个Dataframe进行运算 |
+| [].actions[].action.Eval[] | object | 是 | 对单个Dataframe进行运算 |
+| [].actions[].action.Eval[].rpn | array[Token] | 是 |  |
+| [].actions[].action.Eval[].rpn[] | object | 是 |  |
+| [].actions[].action.Eval[].rpn[].Binary | string | 是 | Mathematical operations. |
+| [].actions[].desc | string | 是 |  |
+| [].actions[].flow_id | integer | 是 |  |
+| [].actions[].name | string | 是 |  |
+| [].actions[].source_node | integer | 是 |  |
+| [].actions[].target_node | integer | 是 |  |
+| [].aoe_var | array[any] | 否 | destination of aoe variable |
+| [].id | integer | 是 | dff id |
+| [].is_on | boolean | 是 | should schedule |
+| [].name | string | 是 | dff name |
+| [].nodes | array[DfNode] | 是 | 节点 |
+| [].nodes[] | object | 是 | 节点 |
+| [].nodes[].flow_id | integer | 是 |  |
+| [].nodes[].id | integer | 是 |  |
+| [].nodes[].name | string | 是 |  |
+| [].nodes[].node_type | object | 是 | query data source |
+| [].nodes[].node_type.Source | object | 是 | 直接导入数据 |
+| [].nodes[].node_type.Source.Data | any | 是 | 直接导入数据 |
+| [].save_mode | string | 是 | Data frame save mode |
+| [].trigger_type | object | 是 | Dataframe flow 启动的方式 |
+| [].trigger_type.SimpleRepeat | object | 是 | 时间对象 |
+| [].trigger_type.SimpleRepeat.nanos | integer | 是 | 剩余纳秒 |
+| [].trigger_type.SimpleRepeat.secs | integer | 是 | 秒 |
 
 ### 6. 新增报表
 
@@ -1162,7 +1587,41 @@ Access-Token: <your_token>
 - **路径**: `/flows/models`
 - **函数名**: `add_flows_models`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].actions | array[DfActionEdge] | 是 | 边 |
+| [].actions[] | object | 是 | 边 |
+| [].actions[].action | object | 是 | 对单个Dataframe进行运算 |
+| [].actions[].action.Eval | array[Expr] | 是 | 对单个Dataframe进行运算 |
+| [].actions[].action.Eval[] | object | 是 | 对单个Dataframe进行运算 |
+| [].actions[].action.Eval[].rpn | array[Token] | 是 |  |
+| [].actions[].action.Eval[].rpn[] | object | 是 |  |
+| [].actions[].action.Eval[].rpn[].Binary | string | 是 | Mathematical operations. |
+| [].actions[].desc | string | 是 |  |
+| [].actions[].flow_id | integer | 是 |  |
+| [].actions[].name | string | 是 |  |
+| [].actions[].source_node | integer | 是 |  |
+| [].actions[].target_node | integer | 是 |  |
+| [].aoe_var | array[any] | 否 | destination of aoe variable |
+| [].id | integer | 是 | dff id |
+| [].is_on | boolean | 是 | should schedule |
+| [].name | string | 是 | dff name |
+| [].nodes | array[DfNode] | 是 | 节点 |
+| [].nodes[] | object | 是 | 节点 |
+| [].nodes[].flow_id | integer | 是 |  |
+| [].nodes[].id | integer | 是 |  |
+| [].nodes[].name | string | 是 |  |
+| [].nodes[].node_type | object | 是 | query data source |
+| [].nodes[].node_type.Source | object | 是 | 直接导入数据 |
+| [].nodes[].node_type.Source.Data | any | 是 | 直接导入数据 |
+| [].save_mode | string | 是 | Data frame save mode |
+| [].trigger_type | object | 是 | Dataframe flow 启动的方式 |
+| [].trigger_type.SimpleRepeat | object | 是 | 时间对象 |
+| [].trigger_type.SimpleRepeat.nanos | integer | 是 | 剩余纳秒 |
+| [].trigger_type.SimpleRepeat.secs | integer | 是 | 秒 |
 
 ### 7. 删除指定id的报表
 
@@ -1182,7 +1641,11 @@ Access-Token: <your_token>
 - **路径**: `/flows/models_file2`
 - **函数名**: `add_flows_models_file2`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| file | array[string] | 是 |  |
 
 ### 9. 查询报表（自定义JSON格式）
 
@@ -1203,7 +1666,11 @@ Access-Token: <your_token>
 - **路径**: `/flows/prog_file2`
 - **函数名**: `add_flows_prog_file2`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| file | array[string] | 是 |  |
 
 ### 11. 重新加载报表
 
@@ -1255,7 +1722,9 @@ Access-Token: <your_token>
 - **路径**: `/flows/results`
 - **函数名**: `delete_flows_results`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 15. 重命名报表结果（简洁模式）
 
@@ -1263,7 +1732,9 @@ Access-Token: <your_token>
 - **路径**: `/flows/results/rename`
 - **函数名**: `add_flows_results_rename`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 16. query_flows_result_and_eval
 
@@ -1278,7 +1749,14 @@ Access-Token: <your_token>
 | id | string | 是 | 报表id |
 | key | string | 是 | key |
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].rpn | array[Token] | 是 |  |
+| [].rpn[] | object | 是 |  |
+| [].rpn[].Binary | string | 是 | Mathematical operations. |
 
 ### 17. query_flows_result_in_view
 
@@ -1294,7 +1772,14 @@ Access-Token: <your_token>
 | key | string | 是 | key |
 | view | string | 是 | view |
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].rpn | array[Token] | 是 |  |
+| [].rpn[] | object | 是 |  |
+| [].rpn[].Binary | string | 是 | Mathematical operations. |
 
 ### 18. 根据id查询报表执行结果（Parquet格式）
 
@@ -1378,7 +1863,22 @@ Access-Token: <your_token>
 - **路径**: `/flows/view`
 - **函数名**: `update_flows_view`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| config | any | 是 |  |
+| echart_js | string | 否 |  |
+| exprs | string | 是 |  |
+| flow_id | integer | 是 |  |
+| id | integer | 是 |  |
+| is_show | boolean | 是 |  |
+| layout | any | 是 |  |
+| name | string | 是 |  |
+| plot_template | string | 是 |  |
+| plot_type | string | 是 |  |
+| refresh_interval | integer | 否 |  |
+| series_style | any | 是 |  |
 
 ### 25. 新增报表展示模型
 
@@ -1386,7 +1886,22 @@ Access-Token: <your_token>
 - **路径**: `/flows/view`
 - **函数名**: `add_flows_view`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| config | any | 是 |  |
+| echart_js | string | 否 |  |
+| exprs | string | 是 |  |
+| flow_id | integer | 是 |  |
+| id | integer | 是 |  |
+| is_show | boolean | 是 |  |
+| layout | any | 是 |  |
+| name | string | 是 |  |
+| plot_template | string | 是 |  |
+| plot_type | string | 是 |  |
+| refresh_interval | integer | 否 |  |
+| series_style | any | 是 |  |
 
 ### 26. 删除指定id的报表展示模型
 
@@ -1413,7 +1928,9 @@ Access-Token: <your_token>
 | flow | integer | 是 | 报表id |
 | node | integer | 是 | 节点id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 28. 重启北向服务
 
@@ -1431,7 +1948,9 @@ Access-Token: <your_token>
 - **路径**: `/graphs/apply/additional`
 - **函数名**: `add_graphs_apply_additional`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 2. 获取应用版本某个名称的svg
 
@@ -1457,7 +1976,9 @@ Access-Token: <your_token>
 - **路径**: `/graphs/apply/version`
 - **函数名**: `add_graphs_apply_version`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 5. 新增svg
 
@@ -1465,7 +1986,15 @@ Access-Token: <your_token>
 - **路径**: `/graphs/models`
 - **函数名**: `add_graphs_models`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].fileContent | array[integer] | 否 |  |
+| [].fileName | string | 否 |  |
+| [].is_zip | boolean | 否 |  |
+| [].op | string | 否 |  |
 
 ### 6. 根据path查询指定的svg内容
 
@@ -1521,7 +2050,13 @@ Access-Token: <your_token>
 - **路径**: `/graphs/version`
 - **函数名**: `add_graphs_version`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| note | string | 是 | 提交时的注释 |
+| tree_id | string | 是 | 对应的tree_id |
+| version | integer | 是 | 版本号 |
 
 ### 11. 删除指定svg版本
 
@@ -1563,7 +2098,22 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | lcc_id | string | 是 | lcc_id |
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| common | object | 是 | 告警通知形式 |
+| common.popup_window | boolean | 是 | 桌面弹窗 |
+| common.sound_light | boolean | 是 | 声光 |
+| common.text_messages | boolean | 是 | 短信 |
+| emergency | object | 是 | 告警通知形式 |
+| emergency.popup_window | boolean | 是 | 桌面弹窗 |
+| emergency.sound_light | boolean | 是 | 声光 |
+| emergency.text_messages | boolean | 是 | 短信 |
+| important | object | 是 | 告警通知形式 |
+| important.popup_window | boolean | 是 | 桌面弹窗 |
+| important.sound_light | boolean | 是 | 声光 |
+| important.text_messages | boolean | 是 | 短信 |
 
 ### 3. 指定lcc确认告警
 
@@ -1578,7 +2128,9 @@ Access-Token: <your_token>
 | lcc_id | string | 是 | lcc_id |
 | user_id | integer | 是 | 用户id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 4. 查询指定lcc的已确认告警
 
@@ -1616,7 +2168,16 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | lcc_id | string | 是 | lcc_id |
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| desc | string | 否 |  |
+| id | integer | 否 |  |
+| level | string | 否 |  |
+| name | string | 否 |  |
+| owners | string | 否 |  |
+| rule | string | 否 |  |
 
 ### 7. 查询指定lcc中指定id的告警定义
 
@@ -1655,7 +2216,18 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | lcc_id | string | 是 | lcc_id |
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| defines | array[PbAlarmDefine] | 是 |  |
+| defines[] | object | 是 |  |
+| defines[].desc | string | 否 |  |
+| defines[].id | integer | 否 |  |
+| defines[].level | string | 否 |  |
+| defines[].name | string | 否 |  |
+| defines[].owners | string | 否 |  |
+| defines[].rule | string | 否 |  |
 
 ### 10. 删除指定lcc的指定id们的告警定义
 
@@ -1750,7 +2322,9 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | lcc_id | string | 是 | lcc_id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 16. 查询指定lcc的AOE执行结果
 
@@ -1807,7 +2381,37 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | lcc_id | string | 是 | lcc_id |
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].actions | array[ActionEdge] | 是 | 动作列表 |
+| [].actions[] | object | 是 | 动作列表 |
+| [].actions[].action | string | 是 | 无动作 |
+| [].actions[].aoe_id | integer | 是 | AOE id |
+| [].actions[].failure_mode | string | 是 | 失败模式 |
+| [].actions[].name | string | 是 | 动作名称 |
+| [].actions[].source_node | integer | 是 | 源节点 |
+| [].actions[].target_node | integer | 是 | 目标节点 |
+| [].events | array[EventNode] | 是 | 节点列表 |
+| [].events[] | object | 是 | 节点列表 |
+| [].events[].aoe_id | integer | 是 | AOE id |
+| [].events[].expr | object | 是 | 表达式对象 |
+| [].events[].expr.rpn | array[Token] | 是 |  |
+| [].events[].expr.rpn[] | object | 是 |  |
+| [].events[].expr.rpn[].Binary | string | 是 | Mathematical operations. |
+| [].events[].id | integer | 是 | 节点id |
+| [].events[].name | string | 是 | 节点名 |
+| [].events[].node_type | string | 是 | 节点类型 |
+| [].events[].timeout | integer | 是 | 事件还未发生时等待超时时间 |
+| [].id | integer | 是 | aoe id |
+| [].name | string | 是 | aoe名称 |
+| [].trigger_type | object | 是 | 简单固定周期触发 |
+| [].trigger_type.SimpleRepeat | object | 是 | 时间对象 |
+| [].trigger_type.SimpleRepeat.nanos | integer | 是 | 剩余纳秒 |
+| [].trigger_type.SimpleRepeat.secs | integer | 是 | 秒 |
+| [].variables | array[array[any]] | 是 | 用户自定义的变量：变量名和表达式 |
 
 ### 19. 删除指定lcc指定id的AOE
 
@@ -1869,7 +2473,11 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | lcc_id | string | 是 | lcc_id |
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| Query | array[integer] | 是 | 查询 |
 
 ### 23. 查询指定lcc的配置
 
@@ -1895,7 +2503,12 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | lcc_id | string | 是 | lcc_id |
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| properties | object | 是 | 主要配置属性 |
+| properties2 | object | 是 | 次要配置属性 |
 
 ### 25. 执行Lcc操作
 
@@ -1909,7 +2522,9 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | lcc_id | string | 是 | lcc_id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 26. 查询指定lcc的日志
 
@@ -1966,7 +2581,9 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | lcc_id | string | 是 | lcc_id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 29. 查询指定lcc的测点信息
 
@@ -2000,7 +2617,30 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | lcc_id | string | 是 | lcc_id |
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].alarm_level1_expr | string | 是 | 告警级别1的表达式 |
+| [].alarm_level2_expr | string | 是 | 告警级别2的表达式 |
+| [].alias_id | string | 是 | 字符串id |
+| [].change_expr | string | 是 | 判断是否"变化"的公式，用于变化上传或储存 |
+| [].data_unit | string | 是 | 单位 |
+| [].desc | string | 是 | Description |
+| [].expression | string | 是 | 如果是计算点，这是表达式 |
+| [].init_value | integer | 是 | 默认值存储在8个字节，需要根据is_discrete来转换成具体的值 |
+| [].inv_trans_expr | string | 是 | 逆变换公式 |
+| [].is_computing_point | boolean | 是 | 是否是计算点 |
+| [].is_discrete | boolean | 是 | 是否是离散量 |
+| [].is_realtime | boolean | 是 | 如是，则不判断是否"变化"，均上传 |
+| [].is_soe | boolean | 是 | 是否是soe点 |
+| [].lower_limit | number | 是 | 下限，用于坏数据辨识 |
+| [].point_id | integer | 是 | 唯一的id |
+| [].point_name | string | 是 | 测点名 |
+| [].trans_expr | string | 是 | 变换公式 |
+| [].upper_limit | number | 是 | 上限，用于坏数据辨识 |
+| [].zero_expr | string | 是 | 判断是否为0值的公式 |
 
 ### 31. 删除指定lcc的测点
 
@@ -2014,7 +2654,9 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | lcc_id | string | 是 | lcc_id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 32. 查询指定lcc运行中的AOE
 
@@ -2079,7 +2721,9 @@ Access-Token: <your_token>
 | lcc_id | string | 是 | lcc_id |
 | group | integer | 是 | 分组id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 36. 查询指定lcc指定分组下标签id对应的测点数组
 
@@ -2094,7 +2738,9 @@ Access-Token: <your_token>
 | lcc_id | string | 是 | lcc_id |
 | group | integer | 是 | 分组id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 37. 删除指定lcc指定分组下标签id和测点的关系
 
@@ -2109,7 +2755,9 @@ Access-Token: <your_token>
 | lcc_id | string | 是 | lcc_id |
 | group | integer | 是 | 分组id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 38. 查询指定lcc的通道信息
 
@@ -2142,7 +2790,38 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | lcc_id | string | 是 | lcc_id |
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].MbcTcp | object | 是 | ModbusTcp客户端通道信息 |
+| [].MbcTcp.connections | array[MbConnection] | 是 | Modbus通道连接信息 |
+| [].MbcTcp.connections[] | object | 是 | Modbus通道连接信息 |
+| [].MbcTcp.connections[].coil_write_code | integer | 否 |  |
+| [].MbcTcp.connections[].default_polling_period_in_milli | integer | 是 |  |
+| [].MbcTcp.connections[].delay_between_requests | integer | 是 | 两条请求直接的间隔 |
+| [].MbcTcp.connections[].holding_write_code | integer | 否 |  |
+| [].MbcTcp.connections[].max_read_bit_count | integer | 是 |  |
+| [].MbcTcp.connections[].max_read_register_count | integer | 是 |  |
+| [].MbcTcp.connections[].max_write_bit_count | integer | 是 |  |
+| [].MbcTcp.connections[].max_write_register_count | integer | 是 |  |
+| [].MbcTcp.connections[].mb_data_configure | array[RegisterData] | 是 | register settings |
+| [].MbcTcp.connections[].mb_data_configure[] | object | 是 | register settings |
+| [].MbcTcp.connections[].mb_data_configure[].data_id | integer | 是 | 数据标识 |
+| [].MbcTcp.connections[].mb_data_configure[].point_ids | array[integer] | 是 | 对应的测点Id |
+| [].MbcTcp.connections[].mb_data_configure[].polling_period_in_milli | integer | 是 | 轮询周期，毫秒 |
+| [].MbcTcp.connections[].name | string | 是 |  |
+| [].MbcTcp.connections[].point_id | integer | 是 | 通道状态对应的测点号 |
+| [].MbcTcp.connections[].point_id_to_rd | object | 是 | key is point id, value is position of register data |
+| [].MbcTcp.connections[].polling_period_to_data | object | 是 | 轮询周期不同的数据, key is period in milli, value is position. |
+| [].MbcTcp.connections[].protocol_type | string | 是 | Modbus协议类型 |
+| [].MbcTcp.connections[].register_addr_to_rd | object | 是 | key:寄存器地址,value:setting中vec<RegisterData>的位置 |
+| [].MbcTcp.connections[].slave_id | integer | 是 |  |
+| [].MbcTcp.connections[].timeout_in_milli | integer | 是 | 超时设置 |
+| [].MbcTcp.id | integer | 是 | 通道id |
+| [].MbcTcp.name | string | 是 | 通道名称 |
+| [].MbcTcp.tcp_server | array[any] | 是 | 服务端的ip和port |
 
 ### 40. 删除指定lcc指定id的通道
 
@@ -2257,7 +2936,14 @@ Access-Token: <your_token>
 - **路径**: `/plans/models`
 - **函数名**: `update_plans_models`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| desc | string | 是 | 计划描述 |
+| id | integer | 是 | 计划id |
+| name | string | 是 | 计划名称 |
+| plan | array[array[any]] | 是 | 计划内容数组，tuple格式为(开始时间:u64, 结束时间:u64, 功率值:f64) |
 
 ### 3. 新增计划
 
@@ -2265,7 +2951,14 @@ Access-Token: <your_token>
 - **路径**: `/plans/models`
 - **函数名**: `add_plans_models`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| desc | string | 是 | 计划描述 |
+| id | integer | 是 | 计划id |
+| name | string | 是 | 计划名称 |
+| plan | array[array[any]] | 是 | 计划内容数组，tuple格式为(开始时间:u64, 结束时间:u64, 功率值:f64) |
 
 ### 4. 查询指定id的计划列表
 
@@ -2315,7 +3008,9 @@ Access-Token: <your_token>
 - **路径**: `/plans/paths`
 - **函数名**: `update_plans_paths`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 9. 新增计划路径
 
@@ -2323,7 +3018,9 @@ Access-Token: <your_token>
 - **路径**: `/plans/paths`
 - **函数名**: `add_plans_paths`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 10. 删除指定的计划路径
 
@@ -2331,7 +3028,9 @@ Access-Token: <your_token>
 - **路径**: `/plans/paths`
 - **函数名**: `delete_plans_paths`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ## Points 模块
 
@@ -2349,7 +3048,30 @@ Access-Token: <your_token>
 - **路径**: `/points/models`
 - **函数名**: `add_points_models`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].alarm_level1_expr | string | 是 | 告警级别1的表达式 |
+| [].alarm_level2_expr | string | 是 | 告警级别2的表达式 |
+| [].alias_id | string | 是 | 字符串id |
+| [].change_expr | string | 是 | 判断是否"变化"的公式，用于变化上传或储存 |
+| [].data_unit | string | 是 | 单位 |
+| [].desc | string | 是 | Description |
+| [].expression | string | 是 | 如果是计算点，这是表达式 |
+| [].init_value | integer | 是 | 默认值存储在8个字节，需要根据is_discrete来转换成具体的值 |
+| [].inv_trans_expr | string | 是 | 逆变换公式 |
+| [].is_computing_point | boolean | 是 | 是否是计算点 |
+| [].is_discrete | boolean | 是 | 是否是离散量 |
+| [].is_realtime | boolean | 是 | 如是，则不判断是否"变化"，均上传 |
+| [].is_soe | boolean | 是 | 是否是soe点 |
+| [].lower_limit | number | 是 | 下限，用于坏数据辨识 |
+| [].point_id | integer | 是 | 唯一的id |
+| [].point_name | string | 是 | 测点名 |
+| [].trans_expr | string | 是 | 变换公式 |
+| [].upper_limit | number | 是 | 上限，用于坏数据辨识 |
+| [].zero_expr | string | 是 | 判断是否为0值的公式 |
 
 ### 3. 删除指定id的测点（body形式）
 
@@ -2357,7 +3079,9 @@ Access-Token: <your_token>
 - **路径**: `/points/models`
 - **函数名**: `delete_points_models`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 4. 获取根据版本号组装的测点应用对象
 
@@ -2389,7 +3113,14 @@ Access-Token: <your_token>
 - **路径**: `/points/models_file`
 - **函数名**: `add_points_models_file`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| fileContent | array[integer] | 否 |  |
+| fileName | string | 否 |  |
+| is_zip | boolean | 否 |  |
+| op | string | 否 |  |
 
 ### 7. 保存测点（多文件形式）
 
@@ -2397,7 +3128,11 @@ Access-Token: <your_token>
 - **路径**: `/points/models_file2`
 - **函数名**: `add_points_models_file2`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| file | array[string] | 是 |  |
 
 ### 8. 查询控制器与测点的对应关系
 
@@ -2411,7 +3146,9 @@ Access-Token: <your_token>
 - **路径**: `/points/remote`
 - **函数名**: `add_points_remote`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 10. 查询所有测点数据源
 
@@ -2425,7 +3162,9 @@ Access-Token: <your_token>
 - **路径**: `/points/source`
 - **函数名**: `add_points_source`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 12. 查询所有的测点版本信息
 
@@ -2439,7 +3178,13 @@ Access-Token: <your_token>
 - **路径**: `/points/version`
 - **函数名**: `add_points_version`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| note | string | 是 | 提交时的注释 |
+| tree_id | string | 是 | 对应的tree_id |
+| version | integer | 是 | 版本号 |
 
 ### 14. 删除某一个测点版本
 
@@ -2463,7 +3208,40 @@ Access-Token: <your_token>
 - **路径**: `/pscpu/aoes`
 - **函数名**: `add_pscpu_aoes`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| aoes | array[AoeModel] | 是 | AOE列表 |
+| aoes[] | object | 是 | AOE列表 |
+| aoes[].actions | array[ActionEdge] | 是 | 动作列表 |
+| aoes[].actions[] | object | 是 | 动作列表 |
+| aoes[].actions[].action | string | 是 | 无动作 |
+| aoes[].actions[].aoe_id | integer | 是 | AOE id |
+| aoes[].actions[].failure_mode | string | 是 | 失败模式 |
+| aoes[].actions[].name | string | 是 | 动作名称 |
+| aoes[].actions[].source_node | integer | 是 | 源节点 |
+| aoes[].actions[].target_node | integer | 是 | 目标节点 |
+| aoes[].events | array[EventNode] | 是 | 节点列表 |
+| aoes[].events[] | object | 是 | 节点列表 |
+| aoes[].events[].aoe_id | integer | 是 | AOE id |
+| aoes[].events[].expr | object | 是 | 表达式对象 |
+| aoes[].events[].expr.rpn | array[Token] | 是 |  |
+| aoes[].events[].expr.rpn[] | object | 是 |  |
+| aoes[].events[].expr.rpn[].Binary | string | 是 | Mathematical operations. |
+| aoes[].events[].id | integer | 是 | 节点id |
+| aoes[].events[].name | string | 是 | 节点名 |
+| aoes[].events[].node_type | string | 是 | 节点类型 |
+| aoes[].events[].timeout | integer | 是 | 事件还未发生时等待超时时间 |
+| aoes[].id | integer | 是 | aoe id |
+| aoes[].name | string | 是 | aoe名称 |
+| aoes[].trigger_type | object | 是 | 简单固定周期触发 |
+| aoes[].trigger_type.SimpleRepeat | object | 是 | 时间对象 |
+| aoes[].trigger_type.SimpleRepeat.nanos | integer | 是 | 剩余纳秒 |
+| aoes[].trigger_type.SimpleRepeat.secs | integer | 是 | 秒 |
+| aoes[].variables | array[array[any]] | 是 | 用户自定义的变量：变量名和表达式 |
+| commit_msg | string | 是 | 版本描述 |
+| version | integer | 是 | 版本号 |
 
 ### 2. 查询当前应用的AOE
 
@@ -2489,7 +3267,40 @@ Access-Token: <your_token>
 - **路径**: `/pscpu/island`
 - **函数名**: `add_pscpu_island`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| commit_msg | string | 是 | 版本描述 |
+| island | object | 是 | 电气岛，即集合 |
+| island.cns | array[CN] | 是 | 连接节点列表 |
+| island.cns[] | object | 是 | 连接节点列表 |
+| island.cns[].id | integer | 是 | 连接节点id |
+| island.cns[].psr_id | string | 是 | 资源id |
+| island.cns[].terminals | array[integer] | 是 | 端子id数组 |
+| island.measures | object | 是 | 测点，设备id->测点列表 |
+| island.prop_groups | object | 是 | 属性分组，属性分组id->属性分组 |
+| island.resources | object | 是 | 资源，设备id->资源对象 |
+| prop_defs | array[PropDefine] | 是 | 属性定义数组 |
+| prop_defs[] | object | 是 | 属性定义数组 |
+| prop_defs[].data_type | string | 是 | 属性类型 |
+| prop_defs[].data_unit | string | 是 | 数据单位 |
+| prop_defs[].desc | string | 是 | 属性定义描述 |
+| prop_defs[].id | integer | 是 | 属性定义id |
+| prop_defs[].name | string | 是 | 属性定义标识 |
+| rsr_defs | array[RsrDefine] | 是 | 设备定义数组 |
+| rsr_defs[] | object | 是 | 设备定义数组 |
+| rsr_defs[].desc | string | 是 | 设备定义的描述 |
+| rsr_defs[].id | integer | 是 | 定义id |
+| rsr_defs[].name | string | 是 | 设备类别名称 |
+| rsr_defs[].prop_groups | array[PropGroupDefine] | 是 | 设备属性 |
+| rsr_defs[].prop_groups[] | object | 是 | 设备属性 |
+| rsr_defs[].prop_groups[].desc | string | 是 | 属性定义描述 |
+| rsr_defs[].prop_groups[].name | string | 是 | 属性定义标识 |
+| rsr_defs[].prop_groups[].prop_defines | array[integer] | 是 | 设备属性实际描述 |
+| rsr_defs[].rsr_type | string | 是 | 电力设备类型 |
+| rsr_defs[].terminal_num | integer | 是 | 端口数量 |
+| version | integer | 是 | 版本号 |
 
 ### 6. 查询当前应用的电气岛
 
@@ -2521,7 +3332,35 @@ Access-Token: <your_token>
 - **路径**: `/pscpu/points`
 - **函数名**: `add_pscpu_points`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| beeid_to_points | array[array[any]] | 是 | beeId和测点列表对应的数组，tuple格式为(beeId:String, 测点列表:u64[]) |
+| commit_msg | string | 是 | 版本描述 |
+| points | array[Measurement] | 是 | 测点列表 |
+| points[] | object | 是 | 测点列表 |
+| points[].alarm_level1_expr | string | 是 | 告警级别1的表达式 |
+| points[].alarm_level2_expr | string | 是 | 告警级别2的表达式 |
+| points[].alias_id | string | 是 | 字符串id |
+| points[].change_expr | string | 是 | 判断是否"变化"的公式，用于变化上传或储存 |
+| points[].data_unit | string | 是 | 单位 |
+| points[].desc | string | 是 | Description |
+| points[].expression | string | 是 | 如果是计算点，这是表达式 |
+| points[].init_value | integer | 是 | 默认值存储在8个字节，需要根据is_discrete来转换成具体的值 |
+| points[].inv_trans_expr | string | 是 | 逆变换公式 |
+| points[].is_computing_point | boolean | 是 | 是否是计算点 |
+| points[].is_discrete | boolean | 是 | 是否是离散量 |
+| points[].is_realtime | boolean | 是 | 如是，则不判断是否"变化"，均上传 |
+| points[].is_soe | boolean | 是 | 是否是soe点 |
+| points[].lower_limit | number | 是 | 下限，用于坏数据辨识 |
+| points[].point_id | integer | 是 | 唯一的id |
+| points[].point_name | string | 是 | 测点名 |
+| points[].trans_expr | string | 是 | 变换公式 |
+| points[].upper_limit | number | 是 | 上限，用于坏数据辨识 |
+| points[].zero_expr | string | 是 | 判断是否为0值的公式 |
+| source_name | array[array[any]] | 是 |  |
+| version | integer | 是 | 版本号 |
 
 ### 11. 查询设备关联的测点
 
@@ -2586,7 +3425,9 @@ Access-Token: <your_token>
 - **路径**: `/pscpu/start`
 - **函数名**: `add_pscpu_start`
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 17. 停止pscpu
 
@@ -2635,7 +3476,14 @@ Access-Token: <your_token>
 - **路径**: `/script_results`
 - **函数名**: `add_script_results`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| make_time | integer | 是 |  |
+| model_id | integer | 是 |  |
+| script_id | integer | 是 |  |
+| target | string | 是 |  |
 
 ### 5. 查询指定id脚本结果
 
@@ -2655,7 +3503,14 @@ Access-Token: <your_token>
 - **路径**: `/script_wasm`
 - **函数名**: `add_script_wasm`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| js_file | array[integer] | 是 | js文件内容 |
+| module_name | string | 是 | 模块名称 |
+| script_id | integer | 是 | 脚本id |
+| wasm_file | array[integer] | 是 | wasm文件内容 |
 
 ### 7. 查询指定id脚本
 
@@ -2676,7 +3531,18 @@ Access-Token: <your_token>
 - **路径**: `/scripts`
 - **函数名**: `add_scripts`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| desc | string | 是 | 脚本描述 |
+| id | integer | 是 | 脚本id |
+| is_file_uploaded | boolean | 是 | 文件是否已上传 |
+| is_js | boolean | 是 | 是否是javascript文件 |
+| path | string | 是 | 脚本路径 |
+| target | string | 是 | 脚本目标 |
+| wasm_module_name | string | 是 | wasm模块名称 |
+| wasm_update_time | integer | 是 | wasm上传时间 |
 
 ### 9. 删除指定id的脚本
 
@@ -2700,7 +3566,11 @@ Access-Token: <your_token>
 - **路径**: `/common_map`
 - **函数名**: `add_common_map`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| Query | array[integer] | 是 | 查询 |
 
 ### 2. 查询Eig配置
 
@@ -2714,7 +3584,12 @@ Access-Token: <your_token>
 - **路径**: `/config`
 - **函数名**: `add_config`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| properties | object | 是 | 主要配置属性 |
+| properties2 | object | 是 | 次要配置属性 |
 
 ### 4. 查看ping结果
 
@@ -2755,7 +3630,9 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | group | integer | 是 | 分组id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ### 2. 删除指定分组下标签id和测点的关系
 
@@ -2769,7 +3646,9 @@ Access-Token: <your_token>
 | --- | --- | --- | --- |
 | group | integer | 是 | 分组id |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ## Tags_cbor 模块
 
@@ -2788,7 +3667,9 @@ Access-Token: <your_token>
 | id | integer | 是 | 分组id |
 | group | integer | 是 |  |
 
-**请求体**: JSON对象
+**请求体**:
+
+JSON对象
 
 ## Webplugins 模块
 
@@ -2800,7 +3681,12 @@ Access-Token: <your_token>
 - **路径**: `/webplugin_file`
 - **函数名**: `add_webplugin_file`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| plugin_id | integer | 是 | 插件id |
+| sevenz_file | array[integer] | 是 | 内容 |
 
 ### 2. 查询插件对应的压缩文件
 
@@ -2839,7 +3725,16 @@ Access-Token: <your_token>
 - **路径**: `/webplugins`
 - **函数名**: `add_webplugins`
 
-**请求体**: JSON对象
+**请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| id | integer | 是 | 插件id |
+| is_file_uploaded | boolean | 是 | 文件是否已经上传 |
+| is_monopoly | boolean | 是 | if is only one view |
+| model_name | string | 是 | wasm或js或html文件的名称 |
+| name | string | 是 | 在浏览模式下显示的名称 |
+| path | string | 是 | 文件树中的路径 |
 
 ### 6. 删除指定id的插件
 
@@ -4523,7 +5418,7 @@ Access-Token: <your_token>
 
 | 字段名 | 类型 | 说明 |
 | --- | --- | --- |
-| files | array |  |
+| file | array |  |
 
 ### 110. User
 
