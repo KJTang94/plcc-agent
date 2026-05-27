@@ -8,7 +8,7 @@ from typing import List, Dict, Any, Optional
 from langgraph.graph import StateGraph, END
 from openai import OpenAI
 from mems_tools import create_tools, ToolInfo
-from config import get_llm_config, get_mems_api_config
+from config import get_llm_config, get_mems_api_config, get_prop_defines_file_path, get_cns_file_path, get_device_define_file_path, get_device_file_path, get_measure_def_file_path, get_points_models_file_path, get_flows_models_file_path, get_aoes_models_file_path
 from memory import ConversationHistory, AgentState, MemoryManager
 from prompts import build_agent_system_prompt, build_agent_user_message, build_summarize_system_prompt, build_summarize_user_message
 
@@ -21,15 +21,9 @@ class MemsAPI:
         self.password = password or mems_config.get("password", "")
         self.secret_key = (secret_key or mems_config.get("secret_key", "")).encode("utf-8")
     
-    def _request(self, method: str, path: str, params: dict = None, data: dict = None) -> str:
+    def _request(self, method: str, path: str, params: dict = None, data: dict = None, files: dict = None) -> str:
         if not self.token:
-            login_result = self.login()
-            try:
-                login_data = json.loads(login_result)
-            except Exception:
-                login_data = {"success": False, "message": login_result}
-            if not login_data.get("success"):
-                return json.dumps(login_data, ensure_ascii=False)
+            self.login()
         headers = {'Access-Token': self.token}
         url = f'{self.base_url}{path}'
         
@@ -37,7 +31,12 @@ class MemsAPI:
             if method == 'GET':
                 response = requests.get(url, headers=headers, params=params, timeout=10)
             elif method == 'POST':
-                response = requests.post(url, headers=headers, json=data, timeout=10)
+                if files:
+                    # 文件上传方式（multipart/form-data）
+                    response = requests.post(url, headers=headers, files=files, timeout=30)
+                else:
+                    # JSON方式
+                    response = requests.post(url, headers=headers, json=data, timeout=10)
             elif method == 'PUT':
                 response = requests.put(url, headers=headers, json=data, timeout=10)
             elif method == 'DELETE':
@@ -45,11 +44,27 @@ class MemsAPI:
             else:
                 return json.dumps({"success": False, "message": "不支持的HTTP方法"}, ensure_ascii=False)
             
+            # 处理成功响应（200状态码）
             if response.status_code == 200:
-                return json.dumps({"success": True, "data": response.json()}, ensure_ascii=False)
+                # 检查响应体是否为空
+                if not response.text.strip():
+                    return json.dumps({"success": True, "data": None}, ensure_ascii=False)
+                
+                # 尝试解析JSON，如果失败则返回原始文本
+                try:
+                    return json.dumps({"success": True, "data": response.json()}, ensure_ascii=False)
+                except json.JSONDecodeError:
+                    # API返回非JSON数据，不是错误，正常返回
+                    return json.dumps({"success": True, "data": response.text}, ensure_ascii=False)
+            
+            # 处理失败响应
             return json.dumps({"success": False, "message": f"请求失败: {response.text}"}, ensure_ascii=False)
-        except Exception as e:
+        except requests.exceptions.RequestException as e:
+            # 只捕获网络相关异常
             return json.dumps({"success": False, "message": f"请求异常: {str(e)}"}, ensure_ascii=False)
+        except Exception as e:
+            # 其他异常
+            return json.dumps({"success": False, "message": f"未知异常: {str(e)}"}, ensure_ascii=False)
     
     def login(self) -> str:
         if not self.username or not self.password or not self.secret_key:
@@ -145,7 +160,39 @@ class MemsAPI:
         return self._request('GET', f'/aoes/models/{id}', params={"version": version})
 
     def add_aoes_models_file(self, data: dict = None) -> str:
-        return self._request('POST', f'/aoes/models_file', data=data)
+        """
+        新增AOE模型。
+        如果未提供data参数，则从配置文件指定的Excel文件中读取数据，以PbFile格式上传。
+        参数：data (dict, 可选) - AOE模型配置数据
+        """
+        if data is None:
+            # 从Excel文件读取数据，构建PbFile格式
+            excel_path = get_aoes_models_file_path()
+            try:
+                import os
+                
+                # 检查文件是否存在
+                if not os.path.exists(excel_path):
+                    raise FileNotFoundError(f"AOE模型Excel文件不存在：{excel_path}")
+                
+                # 读取文件内容为字节数组
+                with open(excel_path, 'rb') as f:
+                    file_content = list(f.read())  # 转换为整数数组
+                
+                # 构建PbFile格式数据
+                data = {
+                    "fileContent": file_content,
+                    "fileName": os.path.basename(excel_path),
+                    "is_zip": False,
+                    "op": None
+                }
+                
+                print(f"[DEBUG] 准备上传AOE模型文件: {data['fileName']}, 大小: {len(file_content)} bytes")
+            except Exception as e:
+                return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
+        
+        print(f"[DEBUG] 准备新增AOE模型数据: {data}")
+        return self._request('POST', '/aoes/models_file', data=data)
 
     def add_aoes_models_file2(self, data: dict = None) -> str:
         return self._request('POST', f'/aoes/models_file2', data=data)
@@ -412,7 +459,45 @@ class MemsAPI:
         return self._request('DELETE', f'/flows/models/{ids}')
 
     def add_flows_models_file2(self, data: dict = None) -> str:
-        return self._request('POST', f'/flows/models_file2', data=data)
+        """
+        新增报表模型（多文件形式）。
+        如果未提供data参数，则从配置文件指定的Excel文件中读取数据，以UploadForm格式上传。
+        参数：data (dict, 可选) - 报表模型配置数据
+        """
+        if data is None:
+            # 从Excel文件读取数据，构建UploadForm格式（multipart/form-data）
+            excel_path = get_flows_models_file_path()
+            try:
+                import os
+                
+                # 检查文件是否存在
+                if not os.path.exists(excel_path):
+                    raise FileNotFoundError(f"报表配置Excel文件不存在：{excel_path}")
+                
+                print(f"[DEBUG] 报表文件路径: {excel_path}")
+                print(f"[DEBUG] 绝对路径: {os.path.abspath(excel_path)}")
+                
+                # 读取文件内容
+                with open(excel_path, 'rb') as f:
+                    file_content = f.read()
+                
+                # 构建UploadForm格式数据（multipart/form-data）
+                # 根据API文档，UploadForm要求files是数组类型
+                # 使用requests库的列表格式确保数组结构
+                files_data = [
+                    ('file', (os.path.basename(excel_path), file_content, 'application/octet-stream'))
+                ]
+                
+                print(f"[DEBUG] 准备上传报表文件: {os.path.basename(excel_path)}, 大小: {len(file_content)} bytes")
+                
+                # 使用统一的_request方法上传文件
+                return self._request('POST', '/flows/models_file2', files=files_data)
+            except Exception as e:
+                return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
+        
+        # 如果传入了data参数，使用普通请求方式（保持向后兼容）
+        print(f"[DEBUG] 准备新增报表数据: {data}")
+        return self._request('POST', '/flows/models_file2', data=data)
 
     def get_flows_models_json(self, id: int = None, ids: str = None) -> str:
         return self._request('GET', f'/flows/models_json', params={"id": id, "ids": ids})
@@ -697,7 +782,39 @@ class MemsAPI:
         return self._request('DELETE', f'/points/models/{ids}')
 
     def add_points_models_file(self, data: dict = None) -> str:
-        return self._request('POST', f'/points/models_file', data=data)
+        """
+        新增测点模型。
+        如果未提供data参数，则从配置文件指定的Excel文件中读取数据，以PbFile格式上传。
+        参数：data (dict, 可选) - 测点模型配置数据
+        """
+        if data is None:
+            # 从Excel文件读取数据，构建PbFile格式
+            excel_path = get_points_models_file_path()
+            try:
+                import os
+                
+                # 检查文件是否存在
+                if not os.path.exists(excel_path):
+                    raise FileNotFoundError(f"测点模型Excel文件不存在：{excel_path}")
+                
+                # 读取文件内容为字节数组
+                with open(excel_path, 'rb') as f:
+                    file_content = list(f.read())  # 转换为整数数组
+                
+                # 构建PbFile格式数据
+                data = {
+                    "fileContent": file_content,
+                    "fileName": os.path.basename(excel_path),
+                    "is_zip": False,
+                    "op": None
+                }
+                
+                print(f"[DEBUG] 准备上传测点模型文件: {data['fileName']}, 大小: {len(file_content)} bytes")
+            except Exception as e:
+                return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
+        
+        print(f"[DEBUG] 准备新增测点模型数据: {data}")
+        return self._request('POST', '/points/models_file', data=data)
 
     def add_points_models_file2(self, data: dict = None) -> str:
         return self._request('POST', f'/points/models_file2', data=data)
@@ -1170,6 +1287,30 @@ def main():
             
     except Exception as e:
         print("初始化Agent失败: " + str(e))
+
+# def main():
+#     print("=" * 50)
+    
+#     try:
+#         # 创建 MemsAPI 实例
+#         api = MemsAPI()
+        
+#         result = api.add_points_models_file()
+        
+#         # 解析并打印结果
+#         result_data = json.loads(result)
+        
+#         if result_data.get("success"):
+#             print(f"  响应数据: {result}")
+#         else:
+#             print(f"  错误信息: {result_data.get('message', '未知错误')}")
+            
+#     except Exception as e:
+#         print(f"✗ 测试失败: {str(e)}")
+#         import traceback
+#         traceback.print_exc()
+    
+#     print("\n" + "=" * 50)
 
 if __name__ == "__main__":
     main()
