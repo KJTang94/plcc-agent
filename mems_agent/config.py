@@ -64,3 +64,51 @@ def get_llm_config() -> dict:
 
 def get_mems_api_config() -> dict:
     return load_config().get("mems_api", {})
+
+def get_prop_defines_file_path() -> str:
+    """
+    获取设备属性定义文件的路径，从配置文件中读取
+    """
+    return load_config().get("excel_path", {}).get("prop_defines", "")
+
+def get_cns_file_path() -> str:
+    """
+    获取拓扑配置Excel文件的路径，从配置文件中读取
+    """
+    return load_config().get("excel_path", {}).get("device_cns", "")
+
+def get_device_define_file_path() -> str:
+    """
+    获取设备定义Excel文件的路径，从配置文件中读取
+    """
+    return load_config().get("excel_path", {}).get("device_define", "")
+
+def get_device_file_path() -> str:
+    return load_config().get("excel_path", {}).get("device", "")
+
+
+def get_measure_def_file_path() -> str:
+    """
+    获取设备测点配置Excel文件的路径，从配置文件中读取
+    """
+    return load_config().get("excel_path", {}).get("measure_def", "measure_def.xlsx")
+
+def get_points_models_file_path() -> str:
+    """
+    获取测点模型配置Excel文件的路径，从配置文件中读取
+    """
+    return load_config().get("excel_path", {}).get("points", "")
+
+
+def get_flows_models_file_path() -> str:
+    """
+    获取报表配置Excel文件的路径，从配置文件中读取
+    """
+    return load_config().get("excel_path", {}).get("flows_models", "")
+
+
+def get_aoes_models_file_path() -> str:
+    """
+    获取AOE配置Excel文件的路径，从配置文件中读取
+    """
+    return load_config().get("excel_path", {}).get("aoe_model", "")
