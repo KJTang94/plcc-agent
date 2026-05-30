@@ -195,11 +195,11 @@ class MemsAPI:
     def get_auth_roles(self) -> str:
         return self._request('GET', f'/auth/roles')
 
-    def update_auth_roles(self, data: dict = None) -> str:
-        return self._request('PUT', f'/auth/roles', data=data)
-
     def add_auth_roles(self, data: dict = None) -> str:
         return self._request('POST', f'/auth/roles', data=data)
+
+    def update_auth_roles(self, data: dict = None) -> str:
+        return self._request('PUT', f'/auth/roles', data=data)
 
     def get_auth_roles_by_s(self, ids: str) -> str:
         return self._request('GET', f'/auth/roles/{ids}')
@@ -210,11 +210,11 @@ class MemsAPI:
     def get_auth_user_groups(self) -> str:
         return self._request('GET', f'/auth/user_groups')
 
-    def update_auth_user_groups(self, data: dict = None) -> str:
-        return self._request('PUT', f'/auth/user_groups', data=data)
-
     def add_auth_user_groups(self, data: dict = None) -> str:
         return self._request('POST', f'/auth/user_groups', data=data)
+
+    def update_auth_user_groups(self, data: dict = None) -> str:
+        return self._request('PUT', f'/auth/user_groups', data=data)
 
     def delete_auth_user_groups_by_s(self, ids: str) -> str:
         return self._request('DELETE', f'/auth/user_groups/{ids}')
@@ -225,11 +225,11 @@ class MemsAPI:
     def get_auth_users(self) -> str:
         return self._request('GET', f'/auth/users')
 
-    def update_auth_users(self, data: dict = None) -> str:
-        return self._request('PUT', f'/auth/users', data=data)
-
     def add_auth_users(self, data: dict = None) -> str:
         return self._request('POST', f'/auth/users', data=data)
+
+    def update_auth_users(self, data: dict = None) -> str:
+        return self._request('PUT', f'/auth/users', data=data)
 
     def get_auth_users_by_user_group(self, id: int) -> str:
         return self._request('GET', f'/auth/users/by_user_group/{id}')
@@ -285,11 +285,11 @@ class MemsAPI:
     def get_devices_defines(self) -> str:
         return self._request('GET', f'/devices/defines')
 
-    def update_devices_defines(self, data: dict = None) -> str:
-        return self._request('PUT', f'/devices/defines', data=data)
-
     def add_devices_defines(self, data: dict = None) -> str:
         return self._request('POST', f'/devices/defines', data=data)
+
+    def update_devices_defines(self, data: dict = None) -> str:
+        return self._request('PUT', f'/devices/defines', data=data)
 
     def delete_devices_defines_by_s(self, ids: str) -> str:
         return self._request('DELETE', f'/devices/defines/{ids}')
@@ -300,11 +300,11 @@ class MemsAPI:
     def get_devices_devs(self, version: int = None) -> str:
         return self._request('GET', f'/devices/devs', params={"version": version})
 
-    def update_devices_devs(self, data: dict = None) -> str:
-        return self._request('PUT', f'/devices/devs', data=data)
-
     def add_devices_devs(self, data: dict = None) -> str:
         return self._request('POST', f'/devices/devs', data=data)
+
+    def update_devices_devs(self, data: dict = None) -> str:
+        return self._request('PUT', f'/devices/devs', data=data)
 
     def delete_devices_devs_by_s(self, ids: str) -> str:
         return self._request('DELETE', f'/devices/devs/{ids}')
@@ -321,11 +321,11 @@ class MemsAPI:
     def get_devices_measure_defs(self, version: int = None) -> str:
         return self._request('GET', f'/devices/measure_defs', params={"version": version})
 
-    def update_devices_measure_defs(self, data: dict = None) -> str:
-        return self._request('PUT', f'/devices/measure_defs', data=data)
-
     def add_devices_measure_defs(self, data: dict = None) -> str:
         return self._request('POST', f'/devices/measure_defs', data=data)
+
+    def update_devices_measure_defs(self, data: dict = None) -> str:
+        return self._request('PUT', f'/devices/measure_defs', data=data)
 
     def delete_devices_measure_defs(self, data: dict = None) -> str:
         return self._request('DELETE', f'/devices/measure_defs', data=data)
@@ -336,11 +336,11 @@ class MemsAPI:
     def get_devices_prop_defines(self) -> str:
         return self._request('GET', f'/devices/prop_defines')
 
-    def update_devices_prop_defines(self, data: dict = None) -> str:
-        return self._request('PUT', f'/devices/prop_defines', data=data)
-
     def add_devices_prop_defines(self, data: dict = None) -> str:
         return self._request('POST', f'/devices/prop_defines', data=data)
+
+    def update_devices_prop_defines(self, data: dict = None) -> str:
+        return self._request('PUT', f'/devices/prop_defines', data=data)
 
     def delete_devices_prop_defines_by_s(self, ids: str) -> str:
         return self._request('DELETE', f'/devices/prop_defines/{ids}')
@@ -348,11 +348,11 @@ class MemsAPI:
     def get_devices_prop_groups(self, version: int = None) -> str:
         return self._request('GET', f'/devices/prop_groups', params={"version": version})
 
-    def update_devices_prop_groups(self, data: dict = None) -> str:
-        return self._request('PUT', f'/devices/prop_groups', data=data)
-
     def add_devices_prop_groups(self, data: dict = None) -> str:
         return self._request('POST', f'/devices/prop_groups', data=data)
+
+    def update_devices_prop_groups(self, data: dict = None) -> str:
+        return self._request('PUT', f'/devices/prop_groups', data=data)
 
     def get_devices_prop_groups_by_s(self, ids: str, version: int = None) -> str:
         return self._request('GET', f'/devices/prop_groups/{ids}', params={"version": version})
@@ -402,11 +402,11 @@ class MemsAPI:
     def get_flows_models(self, id: int = None, ids: str = None) -> str:
         return self._request('GET', f'/flows/models', params={"id": id, "ids": ids})
 
-    def update_flows_models(self, data: dict = None) -> str:
-        return self._request('PUT', f'/flows/models', data=data)
-
     def add_flows_models(self, data: dict = None) -> str:
         return self._request('POST', f'/flows/models', data=data)
+
+    def update_flows_models(self, data: dict = None) -> str:
+        return self._request('PUT', f'/flows/models', data=data)
 
     def delete_flows_models_by_s(self, ids: str) -> str:
         return self._request('DELETE', f'/flows/models/{ids}')
@@ -459,11 +459,11 @@ class MemsAPI:
     def get_flows_view(self, id: str = None, flow_id: int = None) -> str:
         return self._request('GET', f'/flows/view', params={"id": id, "flow_id": flow_id})
 
-    def update_flows_view(self, data: dict = None) -> str:
-        return self._request('PUT', f'/flows/view', data=data)
-
     def add_flows_view(self, data: dict = None) -> str:
         return self._request('POST', f'/flows/view', data=data)
+
+    def update_flows_view(self, data: dict = None) -> str:
+        return self._request('PUT', f'/flows/view', data=data)
 
     def delete_flows_view_by_s(self, ids: str) -> str:
         return self._request('DELETE', f'/flows/view/{ids}')
@@ -603,11 +603,11 @@ class MemsAPI:
     def get_lcc_tag_defines_by_lcc_by_group(self, lcc_id: str, group: int) -> str:
         return self._request('GET', f'/lcc/tag_defines/{lcc_id}/{group}')
 
-    def update_lcc_tags_by_lcc_by_group(self, lcc_id: str, group: int, data: dict = None) -> str:
-        return self._request('PUT', f'/lcc/tags/{lcc_id}/{group}', data=data)
-
     def add_lcc_tags_by_lcc_by_group(self, lcc_id: str, group: int, data: dict = None) -> str:
         return self._request('POST', f'/lcc/tags/{lcc_id}/{group}', data=data)
+
+    def update_lcc_tags_by_lcc_by_group(self, lcc_id: str, group: int, data: dict = None) -> str:
+        return self._request('PUT', f'/lcc/tags/{lcc_id}/{group}', data=data)
 
     def delete_lcc_tags_by_lcc_by_group(self, lcc_id: str, group: int, data: dict = None) -> str:
         return self._request('DELETE', f'/lcc/tags/{lcc_id}/{group}', data=data)
@@ -654,11 +654,11 @@ class MemsAPI:
     def get_plans_models(self) -> str:
         return self._request('GET', f'/plans/models')
 
-    def update_plans_models(self, data: dict = None) -> str:
-        return self._request('PUT', f'/plans/models', data=data)
-
     def add_plans_models(self, data: dict = None) -> str:
         return self._request('POST', f'/plans/models', data=data)
+
+    def update_plans_models(self, data: dict = None) -> str:
+        return self._request('PUT', f'/plans/models', data=data)
 
     def get_plans_models_by_ids(self, ids: str) -> str:
         return self._request('GET', f'/plans/models/by_ids/{ids}')
@@ -672,11 +672,11 @@ class MemsAPI:
     def get_plans_paths(self) -> str:
         return self._request('GET', f'/plans/paths')
 
-    def update_plans_paths(self, data: dict = None) -> str:
-        return self._request('PUT', f'/plans/paths', data=data)
-
     def add_plans_paths(self, data: dict = None) -> str:
         return self._request('POST', f'/plans/paths', data=data)
+
+    def update_plans_paths(self, data: dict = None) -> str:
+        return self._request('PUT', f'/plans/paths', data=data)
 
     def delete_plans_paths(self, data: dict = None) -> str:
         return self._request('DELETE', f'/plans/paths', data=data)

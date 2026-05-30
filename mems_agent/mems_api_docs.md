@@ -47,2581 +47,5435 @@ Access-Token: <your_token>
 
 ***
 
-## Alarm 模块
+## ALARM 模块
 
-共 14 个接口
-
-### 1. 查询告警通知配置信息
+### 查询告警通知配置信息
 
 - **方法**: `GET`
 - **路径**: `/alarm/config`
-- **函数名**: `get_alarm_config`
+- **工具名**: `get_alarm_config`
 
-### 2. 配置告警通知
+### 配置告警通知
 
 - **方法**: `POST`
 - **路径**: `/alarm/config`
-- **函数名**: `add_alarm_config`
-
-**请求体**:
+- **工具名**: `add_alarm_config`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| common | object | 是 | 告警通知形式 |
+| common | object | 是 | 普通 |
 | common.popup_window | boolean | 是 | 桌面弹窗 |
 | common.sound_light | boolean | 是 | 声光 |
 | common.text_messages | boolean | 是 | 短信 |
-| emergency | object | 是 | 告警通知形式 |
+| emergency | object | 是 | 紧急 |
 | emergency.popup_window | boolean | 是 | 桌面弹窗 |
 | emergency.sound_light | boolean | 是 | 声光 |
 | emergency.text_messages | boolean | 是 | 短信 |
-| important | object | 是 | 告警通知形式 |
+| important | object | 是 | 严重 |
 | important.popup_window | boolean | 是 | 桌面弹窗 |
 | important.sound_light | boolean | 是 | 声光 |
 | important.text_messages | boolean | 是 | 短信 |
 
-### 3. 确认告警
+
+### 确认告警
 
 - **方法**: `POST`
 - **路径**: `/alarm/confirm/{user_id}`
-- **函数名**: `add_alarm_confirm_by_user`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| user_id | integer | 是 | 用户id |
-
-**请求体**:
-
-JSON对象
-
-### 4. 查询已确认的告警
-
-- **方法**: `GET`
-- **路径**: `/alarm/confirm_status`
-- **函数名**: `get_alarm_confirm_status`
-
-### 5. 查询告警总数
-
-- **方法**: `GET`
-- **路径**: `/alarm/count`
-- **函数名**: `get_alarm_count`
-
-### 6. 上传单个告警定义
-
-- **方法**: `POST`
-- **路径**: `/alarm/define`
-- **函数名**: `add_alarm_define`
-
-**请求体**:
+- **工具名**: `add_alarm_confirm_by_user`
+- **参数**:
+  - `user_id` (path, integer, 必填): 用户id；元信息：format=int32
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| desc | string | 否 |  |
-| id | integer | 否 |  |
-| level | string | 否 |  |
-| name | string | 否 |  |
-| owners | string | 否 |  |
-| rule | string | 否 |  |
+| [] | integer | 是 | 格式：int64 |
 
-### 7. 查询指定id的告警定义
+
+### 查询已确认的告警
+
+- **方法**: `GET`
+- **路径**: `/alarm/confirm_status`
+- **工具名**: `get_alarm_confirm_status`
+
+### 查询告警总数
+
+- **方法**: `GET`
+- **路径**: `/alarm/count`
+- **工具名**: `get_alarm_count`
+
+### 上传单个告警定义
+
+- **方法**: `POST`
+- **路径**: `/alarm/define`
+- **工具名**: `add_alarm_define`
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| desc | string | 否 | 允许空值 |
+| id | integer | 否 | 格式：int32；允许空值 |
+| level | oneOf[string] | 否 | 可选值：Common、Important、Emergency；可选结构：string |
+| level.oneOf[1] | string | 是 | 可选值：Common、Important、Emergency |
+| name | string | 否 | 允许空值 |
+| owners | string | 否 | 允许空值 |
+| rule | string | 否 | 允许空值 |
+
+
+### 查询指定id的告警定义
 
 - **方法**: `GET`
 - **路径**: `/alarm/define/{id}`
-- **函数名**: `get_alarm_define_by`
+- **工具名**: `get_alarm_define_by`
+- **参数**:
+  - `id` (path, integer, 必填): 告警定义id；元信息：format=int64
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 告警定义id |
-
-### 8. 查询所有的告警定义
+### 查询所有的告警定义
 
 - **方法**: `GET`
 - **路径**: `/alarm/defines`
-- **函数名**: `get_alarm_defines`
+- **工具名**: `get_alarm_defines`
 
-### 9. 上传告警定义
+### 上传告警定义
 
 - **方法**: `POST`
 - **路径**: `/alarm/defines`
-- **函数名**: `add_alarm_defines`
-
-**请求体**:
+- **工具名**: `add_alarm_defines`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | defines | array[PbAlarmDefine] | 是 |  |
 | defines[] | object | 是 |  |
-| defines[].desc | string | 否 |  |
-| defines[].id | integer | 否 |  |
-| defines[].level | string | 否 |  |
-| defines[].name | string | 否 |  |
-| defines[].owners | string | 否 |  |
-| defines[].rule | string | 否 |  |
+| defines[].desc | string | 否 | 允许空值 |
+| defines[].id | integer | 否 | 格式：int32；允许空值 |
+| defines[].level | oneOf[string] | 否 | 可选值：Common、Important、Emergency；可选结构：string |
+| defines[].level.oneOf[1] | string | 是 | 可选值：Common、Important、Emergency |
+| defines[].name | string | 否 | 允许空值 |
+| defines[].owners | string | 否 | 允许空值 |
+| defines[].rule | string | 否 | 允许空值 |
 
-### 10. 删除指定id的告警定义
+
+### 删除指定id的告警定义
 
 - **方法**: `DELETE`
 - **路径**: `/alarm/defines/{ids}`
-- **函数名**: `delete_alarm_defines_by_s`
+- **工具名**: `delete_alarm_defines_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 告警定义id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 告警定义id列表，以,间隔 |
-
-### 11. 上传告警定义（文件形式）
+### 上传告警定义（文件形式）
 
 - **方法**: `POST`
 - **路径**: `/alarm/defines_file`
-- **函数名**: `add_alarm_defines_file`
-
-**请求体**:
+- **工具名**: `add_alarm_defines_file`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| fileContent | array[integer] | 否 |  |
-| fileName | string | 否 |  |
-| is_zip | boolean | 否 |  |
-| op | string | 否 |  |
+| fileContent | array[integer] | 否 | 允许空值 |
+| fileContent[] | integer | 是 | 格式：int32 |
+| fileName | string | 否 | 允许空值 |
+| is_zip | boolean | 否 | 允许空值 |
+| op | oneOf[string] | 否 | 可选值：UPDATE、DELETE、RENAME；可选结构：string |
+| op.oneOf[1] | string | 是 | 可选值：UPDATE、DELETE、RENAME |
 
-### 12. 查询未确认的告警数
+
+### 查询未确认的告警数
 
 - **方法**: `GET`
 - **路径**: `/alarm/unconfirmed_number`
-- **函数名**: `get_alarm_unconfirmed_number`
+- **工具名**: `get_alarm_unconfirmed_number`
 
-### 13. 查询告警，结果按照时间排序
+### 查询告警，结果按照时间排序
 
 - **方法**: `GET`
 - **路径**: `/alarms`
-- **函数名**: `get_alarms`
+- **工具名**: `get_alarms`
+- **参数**:
+  - `id` (query, string, 可选): 测点id，多个id之间以,间隔；元信息：nullable=true
+  - `start` (query, integer, 可选): 开始时间, 13位时间戳；元信息：format=int64, nullable=true
+  - `end` (query, integer, 可选): 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end；元信息：format=int64, nullable=true
+  - `date` (query, string, 可选): 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准；元信息：nullable=true
+  - `source` (query, integer, 可选): 数据源；元信息：format=int32, nullable=true
+  - `last_only` (query, boolean, 可选): 是否查询只最新的数据；元信息：nullable=true
+  - `with_init` (query, boolean, 可选): 是否查询该天初始的数据；元信息：nullable=true
+  - `reverse_order` (query, boolean, 可选): 是否时间倒序查询；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 | 测点id，多个id之间以,间隔 |
-| start | integer | 否 | 开始时间, 13位时间戳 |
-| end | integer | 否 | 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end |
-| date | string | 否 | 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准 |
-| source | integer | 否 | 数据源 |
-| last_only | boolean | 否 | 是否查询只最新的数据 |
-| with_init | boolean | 否 | 是否查询该天初始的数据 |
-| reverse_order | boolean | 否 | 是否时间倒序查询 |
-
-### 14. 查询未确认的告警列表
+### 查询未确认的告警列表
 
 - **方法**: `GET`
 - **路径**: `/alarms/unconfirmed`
-- **函数名**: `get_alarms_unconfirmed`
+- **工具名**: `get_alarms_unconfirmed`
 
-## Aoes 模块
+***
 
-共 14 个接口
+## AOES 模块
 
-### 1. 查询AOE执行结果
+### 查询AOE执行结果
 
 - **方法**: `GET`
 - **路径**: `/aoe_results`
-- **函数名**: `get_aoe_results`
+- **工具名**: `get_aoe_results`
+- **参数**:
+  - `id` (query, string, 可选): 测点id，多个id之间以,间隔；元信息：nullable=true
+  - `start` (query, integer, 可选): 开始时间, 13位时间戳；元信息：format=int64, nullable=true
+  - `end` (query, integer, 可选): 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end；元信息：format=int64, nullable=true
+  - `date` (query, string, 可选): 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准；元信息：nullable=true
+  - `source` (query, integer, 可选): 数据源；元信息：format=int32, nullable=true
+  - `last_only` (query, boolean, 可选): 是否查询只最新的数据；元信息：nullable=true
+  - `with_init` (query, boolean, 可选): 是否查询该天初始的数据；元信息：nullable=true
+  - `reverse_order` (query, boolean, 可选): 是否时间倒序查询；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 | 测点id，多个id之间以,间隔 |
-| start | integer | 否 | 开始时间, 13位时间戳 |
-| end | integer | 否 | 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end |
-| date | string | 否 | 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准 |
-| source | integer | 否 | 数据源 |
-| last_only | boolean | 否 | 是否查询只最新的数据 |
-| with_init | boolean | 否 | 是否查询该天初始的数据 |
-| reverse_order | boolean | 否 | 是否时间倒序查询 |
-
-### 2. 查询所有AOE
+### 查询所有AOE
 
 - **方法**: `GET`
 - **路径**: `/aoes/models`
-- **函数名**: `get_aoes_models`
+- **工具名**: `get_aoes_models`
 
-### 3. 保存AOE
+### 保存AOE
 
 - **方法**: `POST`
 - **路径**: `/aoes/models`
-- **函数名**: `add_aoes_models`
-
-**请求体**:
+- **工具名**: `add_aoes_models`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
+| [] | object | 是 | aoe模型 |
 | [].actions | array[ActionEdge] | 是 | 动作列表 |
-| [].actions[] | object | 是 | 动作列表 |
-| [].actions[].action | string | 是 | 无动作 |
-| [].actions[].aoe_id | integer | 是 | AOE id |
-| [].actions[].failure_mode | string | 是 | 失败模式 |
+| [].actions[] | object | 是 | 边对象 |
+| [].actions[].action | oneOf[string | object{SetPoints} | object{SetPointsWithCheck} | object{SetPoints2} | object{SetPointsWithCheck2} | object{Solve} | object{Nlsolve} | object{Milp} | object{SimpleMilp} | object{Nlp}] | 是 | 动作定义；可选值：None；可选结构：string | object{SetPoints} | object{SetPointsWithCheck} | object{SetPoints2} | object{SetPointsWithCheck2} | object{Solve} | object{Nlsolve} | object{Milp} | object{SimpleMilp} | object{Nlp} |
+| [].actions[].action.oneOf[1] | string | 是 | 无动作；可选值：None |
+| [].actions[].action.oneOf[2] | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[2].SetPoints | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[2].SetPoints.analog_id | array[string] | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.analog_v | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_id | array[string] | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[3] | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[3].SetPointsWithCheck | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_id | array[string] | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_id | array[string] | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[4] | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[4].SetPoints2 | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[4].SetPoints2.analogs | array[PointsToExp] | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[] | object | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr | object | 是 | 表达式 |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].ids | array[string] | 是 | id列表 |
+| [].actions[].action.oneOf[4].SetPoints2.discretes | array[PointsToExp] | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[] | object | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr | object | 是 | 表达式 |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].ids | array[string] | 是 | id列表 |
+| [].actions[].action.oneOf[5] | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2 | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs | array[PointsToExp] | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[] | object | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr | object | 是 | 表达式 |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].ids | array[string] | 是 | id列表 |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes | array[PointsToExp] | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[] | object | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr | object | 是 | 表达式 |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].ids | array[string] | 是 | id列表 |
+| [].actions[].action.oneOf[6] | object | 是 | 求方程 |
+| [].actions[].action.oneOf[6].Solve | object | 是 | 求方程 |
+| [].actions[].action.oneOf[6].Solve.a | object | 是 | A矩阵 |
+| [].actions[].action.oneOf[6].Solve.a.m | integer | 是 | 行数 |
+| [].actions[].action.oneOf[6].Solve.a.n | integer | 是 | 列数 |
+| [].actions[].action.oneOf[6].Solve.a.v | array[array[any]] | 是 |  |
+| [].actions[].action.oneOf[6].Solve.b | array[Expr] | 是 | b向量 |
+| [].actions[].action.oneOf[6].Solve.b[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[6].Solve.b[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[6].Solve.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| [].actions[].action.oneOf[6].Solve.x_init | array[Expr] | 是 | 变量初始值 |
+| [].actions[].action.oneOf[6].Solve.x_init[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[6].Solve.x_name | array[string] | 是 | 变量名称 |
+| [].actions[].action.oneOf[7] | object | 是 | 求非线性方程组 |
+| [].actions[].action.oneOf[7].Nlsolve | object | 是 | 求非线性方程组 |
+| [].actions[].action.oneOf[7].Nlsolve.f | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.f[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[7].Nlsolve.parameters | object[string, string] | 是 | 额外属性：string |
+| [].actions[].action.oneOf[7].Nlsolve.x_init | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[7].Nlsolve.x_name | array[string] | 是 |  |
+| [].actions[].action.oneOf[8] | object | 是 | 混合整数线性规划稀疏表示 |
+| [].actions[].action.oneOf[8].Milp | object | 是 | 混合整数线性规划稀疏表示 |
+| [].actions[].action.oneOf[8].Milp.a | object | 是 | Ax >=/<= b |
+| [].actions[].action.oneOf[8].Milp.a.m | integer | 是 | 行数 |
+| [].actions[].action.oneOf[8].Milp.a.n | integer | 是 | 列数 |
+| [].actions[].action.oneOf[8].Milp.a.v | array[array[any]] | 是 |  |
+| [].actions[].action.oneOf[8].Milp.b | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[8].Milp.b[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[8].Milp.b[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[8].Milp.binary_int_float | array[integer] | 是 | 整数变量在x中的位置 |
+| [].actions[].action.oneOf[8].Milp.binary_int_float[] | integer | 是 | 整数变量在x中的位置；格式：int32 |
+| [].actions[].action.oneOf[8].Milp.c | array[array[any]] | 是 | min/max c^T*x |
+| [].actions[].action.oneOf[8].Milp.constraint_type | array[Operation] | 是 |  |
+| [].actions[].action.oneOf[8].Milp.constraint_type[] | string | 是 | Mathematical operations.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[8].Milp.min_or_max | boolean | 是 | min: true, max: false |
+| [].actions[].action.oneOf[8].Milp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| [].actions[].action.oneOf[8].Milp.x_lower | array[array[any]] | 是 | 变量的下界约束：变量位置、约束表达式 |
+| [].actions[].action.oneOf[8].Milp.x_name | array[string] | 是 | 变量名称 |
+| [].actions[].action.oneOf[8].Milp.x_upper | array[array[any]] | 是 | 变量的上界约束：变量位置、约束表达式 |
+| [].actions[].action.oneOf[9] | object | 是 | 混合整数线性规划稠密表示 |
+| [].actions[].action.oneOf[9].SimpleMilp | object | 是 | 混合整数线性规划稠密表示 |
+| [].actions[].action.oneOf[9].SimpleMilp.a | object | 是 | Ax >=/<= b |
+| [].actions[].action.oneOf[9].SimpleMilp.a.m | integer | 是 | 行数 |
+| [].actions[].action.oneOf[9].SimpleMilp.a.n | integer | 是 | 列数 |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v | array[Expr] | 是 | 值 |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[9].SimpleMilp.b | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.b[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[9].SimpleMilp.binary_int_float | array[integer] | 是 | 整数变量在x中的位置 |
+| [].actions[].action.oneOf[9].SimpleMilp.binary_int_float[] | integer | 是 | 整数变量在x中的位置；格式：int32 |
+| [].actions[].action.oneOf[9].SimpleMilp.c | array[Expr] | 是 | min/max c^T*x |
+| [].actions[].action.oneOf[9].SimpleMilp.c[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[9].SimpleMilp.constraint_type | array[Operation] | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.constraint_type[] | string | 是 | Mathematical operations.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[9].SimpleMilp.min_or_max | boolean | 是 | min: true, max: false |
+| [].actions[].action.oneOf[9].SimpleMilp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| [].actions[].action.oneOf[9].SimpleMilp.x_lower | array[array[any]] | 是 | 变量的下界约束：变量位置、约束表达式 |
+| [].actions[].action.oneOf[9].SimpleMilp.x_name | array[string] | 是 | 变量名称 |
+| [].actions[].action.oneOf[9].SimpleMilp.x_upper | array[array[any]] | 是 |  |
+| [].actions[].action.oneOf[10] | object | 是 | 非整数线性规划 |
+| [].actions[].action.oneOf[10].Nlp | object | 是 | 非整数线性规划 |
+| [].actions[].action.oneOf[10].Nlp.g | array[Expr] | 是 | 等式约束式 g(x) == b |
+| [].actions[].action.oneOf[10].Nlp.g[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.g_lower | array[Expr] | 是 | 不等式约束式 g(x) <= b |
+| [].actions[].action.oneOf[10].Nlp.g_lower[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.g_upper | array[Expr] | 是 | 不等式约束式 g(x) >= b |
+| [].actions[].action.oneOf[10].Nlp.g_upper[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.min_or_max | boolean | 是 | min: true, max: false |
+| [].actions[].action.oneOf[10].Nlp.obj_expr | object | 是 | 目标函数表达式 min obj |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| [].actions[].action.oneOf[10].Nlp.x_init | array[Expr] | 是 | 变量初始值x0 |
+| [].actions[].action.oneOf[10].Nlp.x_init[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.x_lower | array[Expr] | 是 | 整数变量在x中的位置 |
+| [].actions[].action.oneOf[10].Nlp.x_lower[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.x_name | array[string] | 是 | 变量名称 |
+| [].actions[].action.oneOf[10].Nlp.x_upper | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_upper[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].aoe_id | integer | 是 | AOE id；格式：int64 |
+| [].actions[].failure_mode | string | 是 | action失败时的处理方式；可选值：Default、Ignore、StopAll、StopFailed |
 | [].actions[].name | string | 是 | 动作名称 |
-| [].actions[].source_node | integer | 是 | 源节点 |
-| [].actions[].target_node | integer | 是 | 目标节点 |
+| [].actions[].source_node | integer | 是 | 源节点；格式：int64 |
+| [].actions[].target_node | integer | 是 | 目标节点；格式：int64 |
 | [].events | array[EventNode] | 是 | 节点列表 |
-| [].events[] | object | 是 | 节点列表 |
-| [].events[].aoe_id | integer | 是 | AOE id |
-| [].events[].expr | object | 是 | 表达式对象 |
+| [].events[] | object | 是 | 节点对象 |
+| [].events[].aoe_id | integer | 是 | AOE id；格式：int64 |
+| [].events[].expr | object | 是 | 事件是否发生判断的bool表达式 |
 | [].events[].expr.rpn | array[Token] | 是 |  |
-| [].events[].expr.rpn[] | object | 是 |  |
-| [].events[].expr.rpn[].Binary | string | 是 | Mathematical operations. |
-| [].events[].id | integer | 是 | 节点id |
+| [].events[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].events[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].events[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].events[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].events[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].events[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].events[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].events[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].events[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].events[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].events[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].events[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| [].events[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].events[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].events[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].events[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].events[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].events[].expr.rpn[].oneOf[12] | object | 是 |  |
+| [].events[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| [].events[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].events[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].events[].id | integer | 是 | 节点id；格式：int64 |
 | [].events[].name | string | 是 | 节点名 |
-| [].events[].node_type | string | 是 | 节点类型 |
-| [].events[].timeout | integer | 是 | 事件还未发生时等待超时时间 |
-| [].id | integer | 是 | aoe id |
+| [].events[].node_type | string | 是 | 节点类型；可选值：ConditionNode、SwitchNode、SwitchOfActionResult |
+| [].events[].timeout | integer | 是 | 事件还未发生时等待超时时间；格式：int64 |
+| [].id | integer | 是 | aoe id；格式：int64 |
 | [].name | string | 是 | aoe名称 |
-| [].trigger_type | object | 是 | 简单固定周期触发 |
-| [].trigger_type.SimpleRepeat | object | 是 | 时间对象 |
-| [].trigger_type.SimpleRepeat.nanos | integer | 是 | 剩余纳秒 |
-| [].trigger_type.SimpleRepeat.secs | integer | 是 | 秒 |
+| [].trigger_type | oneOf[object{SimpleRepeat} | object{TimeDrive} | string | object{EventRepeatMix} | object{EventTimeMix}] | 是 | 触发类型；可选值：EventDrive；可选结构：object{SimpleRepeat} | object{TimeDrive} | string | object{EventRepeatMix} | object{EventTimeMix} |
+| [].trigger_type.oneOf[1] | object | 是 | 简单固定周期触发 |
+| [].trigger_type.oneOf[1].SimpleRepeat | object | 是 | 简单固定周期触发 |
+| [].trigger_type.oneOf[1].SimpleRepeat.nanos | integer | 是 | 剩余纳秒；格式：int32 |
+| [].trigger_type.oneOf[1].SimpleRepeat.secs | integer | 是 | 秒；格式：int64 |
+| [].trigger_type.oneOf[2] | object | 是 | cron表达式 |
+| [].trigger_type.oneOf[2].TimeDrive | string | 是 | cron表达式 |
+| [].trigger_type.oneOf[3] | string | 是 | 事件驱动，AOE开始节点条件满足即触发；可选值：EventDrive |
+| [].trigger_type.oneOf[4] | object | 是 | 事件驱动 && 简单固定周期 联合 |
+| [].trigger_type.oneOf[4].EventRepeatMix | object | 是 | 事件驱动 && 简单固定周期 联合 |
+| [].trigger_type.oneOf[4].EventRepeatMix.nanos | integer | 是 | 剩余纳秒；格式：int32 |
+| [].trigger_type.oneOf[4].EventRepeatMix.secs | integer | 是 | 秒；格式：int64 |
+| [].trigger_type.oneOf[5] | object | 是 | 事件驱动 && cron表达式 联合 |
+| [].trigger_type.oneOf[5].EventTimeMix | string | 是 | 事件驱动 && cron表达式 联合 |
 | [].variables | array[array[any]] | 是 | 用户自定义的变量：变量名和表达式 |
 
-### 4. 查询指定版本的AOE
+
+### 查询指定版本的AOE
 
 - **方法**: `GET`
 - **路径**: `/aoes/models/by_version/{v}`
-- **函数名**: `get_aoes_models_by_version_by_v`
+- **工具名**: `get_aoes_models_by_version_by_v`
+- **参数**:
+  - `v` (path, integer, 必填): 版本id；元信息：format=int32
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| v | integer | 是 | 版本id |
-
-### 5. 查询根据版本号组装的AOE应用对象
+### 查询根据版本号组装的AOE应用对象
 
 - **方法**: `GET`
 - **路径**: `/aoes/models/for_apply`
-- **函数名**: `get_aoes_models_for_apply`
+- **工具名**: `get_aoes_models_for_apply`
+- **参数**:
+  - `version` (query, integer, 可选): 版本号，可选，若为空则默认0号版本；元信息：format=int32, nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| version | integer | 否 | 版本号，可选，若为空则默认0号版本 |
-
-### 6. 删除指定id的AOE
+### 删除指定id的AOE
 
 - **方法**: `DELETE`
 - **路径**: `/aoes/models/{ids}`
-- **函数名**: `delete_aoes_models_by_s`
+- **工具名**: `delete_aoes_models_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): AOE_id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | AOE_id列表，以,间隔 |
-
-### 7. 根据id查询指定的AOE
+### 根据id查询指定的AOE
 
 - **方法**: `GET`
 - **路径**: `/aoes/models/{id}`
-- **函数名**: `get_aoes_models_by`
+- **工具名**: `get_aoes_models_by`
+- **参数**:
+  - `id` (path, integer, 必填): AOE_id；元信息：format=int64
+  - `version` (query, integer, 可选): 版本号，可选，若为空则默认0号版本；元信息：format=int32, nullable=true
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | AOE_id |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| version | integer | 否 | 版本号，可选，若为空则默认0号版本 |
-
-### 8. 保存AOE（文件形式）
+### 保存AOE（文件形式）
 
 - **方法**: `POST`
 - **路径**: `/aoes/models_file`
-- **函数名**: `add_aoes_models_file`
-
-**请求体**:
+- **工具名**: `add_aoes_models_file`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| fileContent | array[integer] | 否 |  |
-| fileName | string | 否 |  |
-| is_zip | boolean | 否 |  |
-| op | string | 否 |  |
+| fileContent | array[integer] | 否 | 允许空值 |
+| fileContent[] | integer | 是 | 格式：int32 |
+| fileName | string | 否 | 允许空值 |
+| is_zip | boolean | 否 | 允许空值 |
+| op | oneOf[string] | 否 | 可选值：UPDATE、DELETE、RENAME；可选结构：string |
+| op.oneOf[1] | string | 是 | 可选值：UPDATE、DELETE、RENAME |
 
-### 9. 保存AOE（多文件形式）
+
+### 保存AOE（多文件形式）
 
 - **方法**: `POST`
 - **路径**: `/aoes/models_file2`
-- **函数名**: `add_aoes_models_file2`
-
-**请求体**:
+- **工具名**: `add_aoes_models_file2`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | file | array[string] | 是 |  |
+| file[] | string | 是 | 格式：binary |
 
-### 10. 查询所有的AOE版本信息
+
+### 查询所有的AOE版本信息
 
 - **方法**: `GET`
 - **路径**: `/aoes/version`
-- **函数名**: `get_aoes_version`
+- **工具名**: `get_aoes_version`
 
-### 11. 新增AOE版本
+### 新增AOE版本
 
 - **方法**: `POST`
 - **路径**: `/aoes/version`
-- **函数名**: `add_aoes_version`
-
-**请求体**:
+- **工具名**: `add_aoes_version`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | note | string | 是 | 提交时的注释 |
 | tree_id | string | 是 | 对应的tree_id |
-| version | integer | 是 | 版本号 |
+| version | integer | 是 | 版本号；格式：int32 |
 
-### 12. 删除某一个AOE版本
+
+### 删除某一个AOE版本
 
 - **方法**: `DELETE`
 - **路径**: `/aoes/version/{v}`
-- **函数名**: `delete_aoes_version_by_v`
+- **工具名**: `delete_aoes_version_by_v`
+- **参数**:
+  - `v` (path, integer, 必填): 版本id；元信息：format=int32
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| v | integer | 是 | 版本id |
-
-### 13. 查询当前运行中的AOE
+### 查询当前运行中的AOE
 
 - **方法**: `GET`
 - **路径**: `/running_aoes`
-- **函数名**: `get_running_aoes`
+- **工具名**: `get_running_aoes`
 
-### 14. 查询未运行的AOE
+### 查询未运行的AOE
 
 - **方法**: `GET`
 - **路径**: `/unrun_aoes`
-- **函数名**: `get_unrun_aoes`
+- **工具名**: `get_unrun_aoes`
 
-## Auth 模块
+***
 
-共 30 个接口
+## AUTH 模块
 
-### 1. 查询所有权限
+### 查询所有权限
 
 - **方法**: `GET`
 - **路径**: `/auth/auths`
-- **函数名**: `get_auth_auths`
+- **工具名**: `get_auth_auths`
 
-### 2. 新增权限
+### 新增权限
 
 - **方法**: `POST`
 - **路径**: `/auth/auths`
-- **函数名**: `add_auth_auths`
-
-**请求体**:
+- **工具名**: `add_auth_auths`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
+| [] | object | 是 | 权限 |
 | [].desc | string | 是 | 权限描述 |
-| [].id | integer | 是 | 权限ID |
+| [].id | integer | 是 | 权限ID；格式：int32 |
 | [].method | string | 是 | 请求方法 |
 | [].name | string | 是 | 权限名称 |
 | [].url | string | 是 | 权限可操作的url资源地址 |
 
-### 3. 查询指定角色的所有权限
+
+### 查询指定角色的所有权限
 
 - **方法**: `GET`
 - **路径**: `/auth/auths/by_role/{id}`
-- **函数名**: `get_auth_auths_by_role`
+- **工具名**: `get_auth_auths_by_role`
+- **参数**:
+  - `id` (path, integer, 必填): 角色id；元信息：format=int32
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 角色id |
-
-### 4. 删除指定id的删除权限
+### 删除指定id的删除权限
 
 - **方法**: `DELETE`
 - **路径**: `/auth/auths/{ids}`
-- **函数名**: `delete_auth_auths_by_s`
+- **工具名**: `delete_auth_auths_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 权限id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 权限id列表，以,间隔 |
-
-### 5. 执行登录
+### 执行登录
 
 - **方法**: `POST`
 - **路径**: `/auth/login`
-- **函数名**: `add_auth_login`
+- **工具名**: `add_auth_login`
+- **请求体**:
 
-**请求体**:
+  - 无法解析请求体结构
 
-JSON对象
 
-### 6. 查询所有菜单
+### 查询所有菜单
 
 - **方法**: `GET`
 - **路径**: `/auth/menus`
-- **函数名**: `get_auth_menus`
+- **工具名**: `get_auth_menus`
 
-### 7. 新增菜单
+### 新增菜单
 
 - **方法**: `POST`
 - **路径**: `/auth/menus`
-- **函数名**: `add_auth_menus`
-
-**请求体**:
+- **工具名**: `add_auth_menus`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
+| [] | object | 是 | 菜单 |
 | [].group | string | 是 | 分组 |
-| [].id | integer | 是 | 菜单ID |
+| [].id | integer | 是 | 菜单ID；格式：int32 |
 | [].name | string | 是 | 名称 |
 | [].url | string | 是 | 菜单对应的url地址 |
 
-### 8. 查询指定角色的所有菜单
+
+### 查询指定角色的所有菜单
 
 - **方法**: `GET`
 - **路径**: `/auth/menus/by_role/{id}`
-- **函数名**: `get_auth_menus_by_role`
+- **工具名**: `get_auth_menus_by_role`
+- **参数**:
+  - `id` (path, integer, 必填): 角色id；元信息：format=int32
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 角色id |
-
-### 9. 查询指定用户的所有菜单
+### 查询指定用户的所有菜单
 
 - **方法**: `GET`
 - **路径**: `/auth/menus/by_user/{id}`
-- **函数名**: `get_auth_menus_by_user`
+- **工具名**: `get_auth_menus_by_user`
+- **参数**:
+  - `id` (path, integer, 必填): 用户id；元信息：format=int32
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 用户id |
-
-### 10. 删除指定id的菜单
+### 删除指定id的菜单
 
 - **方法**: `DELETE`
 - **路径**: `/auth/menus/{ids}`
-- **函数名**: `delete_auth_menus_by_s`
+- **工具名**: `delete_auth_menus_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 菜单id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 菜单id列表，以,间隔 |
-
-### 11. 用户注册
+### 用户注册
 
 - **方法**: `POST`
 - **路径**: `/auth/register`
-- **函数名**: `add_auth_register`
+- **工具名**: `add_auth_register`
+- **请求体**:
 
-**请求体**:
+  - 无法解析请求体结构
 
-JSON对象
 
-### 12. 查询所有角色
+### 查询所有角色
 
 - **方法**: `GET`
 - **路径**: `/auth/roles`
-- **函数名**: `get_auth_roles`
+- **工具名**: `get_auth_roles`
 
-### 13. 修改角色
-
-- **方法**: `PUT`
-- **路径**: `/auth/roles`
-- **函数名**: `update_auth_roles`
-
-**请求体**:
-
-| 字段名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 角色ID |
-| name | string | 是 | 角色名称 |
-| role2authority | array[integer] | 是 | 角色权限关联表，一个角色可以拥有多个权限 |
-| role2menu | array[integer] | 是 | 角色菜单关联表，一个角色可以拥有多个菜单 |
-
-### 14. 新增角色
+### 新增角色
 
 - **方法**: `POST`
 - **路径**: `/auth/roles`
-- **函数名**: `add_auth_roles`
-
-**请求体**:
+- **工具名**: `add_auth_roles`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
-| [].id | integer | 是 | 角色ID |
+| [] | object | 是 | 角色 |
+| [].id | integer | 是 | 角色ID；格式：int32 |
 | [].name | string | 是 | 角色名称 |
 | [].role2authority | array[integer] | 是 | 角色权限关联表，一个角色可以拥有多个权限 |
+| [].role2authority[] | integer | 是 | 角色权限关联表，一个角色可以拥有多个权限；格式：int32 |
 | [].role2menu | array[integer] | 是 | 角色菜单关联表，一个角色可以拥有多个菜单 |
+| [].role2menu[] | integer | 是 | 角色菜单关联表，一个角色可以拥有多个菜单；格式：int32 |
 
-### 15. 根据ids查询角色
+
+### 修改角色
+
+- **方法**: `PUT`
+- **路径**: `/auth/roles`
+- **工具名**: `update_auth_roles`
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| id | integer | 是 | 角色ID；格式：int32 |
+| name | string | 是 | 角色名称 |
+| role2authority | array[integer] | 是 | 角色权限关联表，一个角色可以拥有多个权限 |
+| role2authority[] | integer | 是 | 角色权限关联表，一个角色可以拥有多个权限；格式：int32 |
+| role2menu | array[integer] | 是 | 角色菜单关联表，一个角色可以拥有多个菜单 |
+| role2menu[] | integer | 是 | 角色菜单关联表，一个角色可以拥有多个菜单；格式：int32 |
+
+
+### 根据ids查询角色
 
 - **方法**: `GET`
 - **路径**: `/auth/roles/{ids}`
-- **函数名**: `get_auth_roles_by_s`
+- **工具名**: `get_auth_roles_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 角色id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 角色id列表，以,间隔 |
-
-### 16. 删除指定id的删除角色
+### 删除指定id的删除角色
 
 - **方法**: `DELETE`
 - **路径**: `/auth/roles/{ids}`
-- **函数名**: `delete_auth_roles_by_s`
+- **工具名**: `delete_auth_roles_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 角色id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 角色id列表，以,间隔 |
-
-### 17. 查询所有用户组
+### 查询所有用户组
 
 - **方法**: `GET`
 - **路径**: `/auth/user_groups`
-- **函数名**: `get_auth_user_groups`
+- **工具名**: `get_auth_user_groups`
 
-### 18. 修改用户组
-
-- **方法**: `PUT`
-- **路径**: `/auth/user_groups`
-- **函数名**: `update_auth_user_groups`
-
-**请求体**:
-
-| 字段名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 用户组ID |
-| name | string | 是 | 用户组名称 |
-| user_group2role | array[integer] | 是 | 用户组角色关联表，一个用户组可以拥有多个角色 |
-
-### 19. 新增用户组
+### 新增用户组
 
 - **方法**: `POST`
 - **路径**: `/auth/user_groups`
-- **函数名**: `add_auth_user_groups`
-
-**请求体**:
+- **工具名**: `add_auth_user_groups`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
-| [].id | integer | 是 | 用户组ID |
+| [] | object | 是 | 用户组 |
+| [].id | integer | 是 | 用户组ID；格式：int32 |
 | [].name | string | 是 | 用户组名称 |
 | [].user_group2role | array[integer] | 是 | 用户组角色关联表，一个用户组可以拥有多个角色 |
+| [].user_group2role[] | integer | 是 | 用户组角色关联表，一个用户组可以拥有多个角色；格式：int32 |
 
-### 20. 删除指定id的用户组
+
+### 修改用户组
+
+- **方法**: `PUT`
+- **路径**: `/auth/user_groups`
+- **工具名**: `update_auth_user_groups`
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| id | integer | 是 | 用户组ID；格式：int32 |
+| name | string | 是 | 用户组名称 |
+| user_group2role | array[integer] | 是 | 用户组角色关联表，一个用户组可以拥有多个角色 |
+| user_group2role[] | integer | 是 | 用户组角色关联表，一个用户组可以拥有多个角色；格式：int32 |
+
+
+### 删除指定id的用户组
 
 - **方法**: `DELETE`
 - **路径**: `/auth/user_groups/{ids}`
-- **函数名**: `delete_auth_user_groups_by_s`
+- **工具名**: `delete_auth_user_groups_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 用户组id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 用户组id列表，以,间隔 |
-
-### 21. 查询指定id用户组
+### 查询指定id用户组
 
 - **方法**: `GET`
 - **路径**: `/auth/user_groups/{id}`
-- **函数名**: `get_auth_user_groups_by`
+- **工具名**: `get_auth_user_groups_by`
+- **参数**:
+  - `id` (path, integer, 必填): 用户组id；元信息：format=int32
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 用户组id |
-
-### 22. 查询所有用户
+### 查询所有用户
 
 - **方法**: `GET`
 - **路径**: `/auth/users`
-- **函数名**: `get_auth_users`
+- **工具名**: `get_auth_users`
 
-### 23. 修改用户
-
-- **方法**: `PUT`
-- **路径**: `/auth/users`
-- **函数名**: `update_auth_users`
-
-**请求体**:
-
-| 字段名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| password | array[integer] | 是 | 加密后的用户密码 |
-| password_update_time | integer | 是 | 最近一次密码修改时间 |
-| pub_info | object | 是 | 用户 - 公开信息 |
-| pub_info.desc | string | 否 | 描述 |
-| pub_info.email | string | 否 | 用户的邮箱 |
-| pub_info.expiration_time | integer | 否 | 过期时间 |
-| pub_info.id | integer | 是 | 用户ID |
-| pub_info.name | string | 是 | 用户名称 |
-| pub_info.phone_number | string | 否 | 用户的手机号 |
-| pub_info.special_role | array[integer] | 是 | 特别分配的角色 |
-| pub_info.user_group | integer | 是 | 所属用户组的id（用户与用户组关联表，一个用户只能属于一个用户组） |
-
-### 24. 新增用户
+### 新增用户
 
 - **方法**: `POST`
 - **路径**: `/auth/users`
-- **函数名**: `add_auth_users`
-
-**请求体**:
+- **工具名**: `add_auth_users`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | password | array[integer] | 是 | 加密后的用户密码 |
-| password_update_time | integer | 是 | 最近一次密码修改时间 |
-| pub_info | object | 是 | 用户 - 公开信息 |
-| pub_info.desc | string | 否 | 描述 |
-| pub_info.email | string | 否 | 用户的邮箱 |
-| pub_info.expiration_time | integer | 否 | 过期时间 |
-| pub_info.id | integer | 是 | 用户ID |
+| password[] | integer | 是 | 加密后的用户密码；格式：int32 |
+| password_update_time | integer | 是 | 最近一次密码修改时间；格式：int64 |
+| pub_info | object | 是 | 可查询的用户公开信息 |
+| pub_info.desc | string | 否 | 描述；允许空值 |
+| pub_info.email | string | 否 | 用户的邮箱；允许空值 |
+| pub_info.expiration_time | integer | 否 | 过期时间；格式：int64；允许空值 |
+| pub_info.id | integer | 是 | 用户ID；格式：int32 |
 | pub_info.name | string | 是 | 用户名称 |
-| pub_info.phone_number | string | 否 | 用户的手机号 |
+| pub_info.phone_number | string | 否 | 用户的手机号；允许空值 |
 | pub_info.special_role | array[integer] | 是 | 特别分配的角色 |
-| pub_info.user_group | integer | 是 | 所属用户组的id（用户与用户组关联表，一个用户只能属于一个用户组） |
+| pub_info.special_role[] | integer | 是 | 特别分配的角色；格式：int32 |
+| pub_info.user_group | integer | 是 | 所属用户组的id（用户与用户组关联表，一个用户只能属于一个用户组）；格式：int32 |
 
-### 25. 根据分组id查询用户信息
+
+### 修改用户
+
+- **方法**: `PUT`
+- **路径**: `/auth/users`
+- **工具名**: `update_auth_users`
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| password | array[integer] | 是 | 加密后的用户密码 |
+| password[] | integer | 是 | 加密后的用户密码；格式：int32 |
+| password_update_time | integer | 是 | 最近一次密码修改时间；格式：int64 |
+| pub_info | object | 是 | 可查询的用户公开信息 |
+| pub_info.desc | string | 否 | 描述；允许空值 |
+| pub_info.email | string | 否 | 用户的邮箱；允许空值 |
+| pub_info.expiration_time | integer | 否 | 过期时间；格式：int64；允许空值 |
+| pub_info.id | integer | 是 | 用户ID；格式：int32 |
+| pub_info.name | string | 是 | 用户名称 |
+| pub_info.phone_number | string | 否 | 用户的手机号；允许空值 |
+| pub_info.special_role | array[integer] | 是 | 特别分配的角色 |
+| pub_info.special_role[] | integer | 是 | 特别分配的角色；格式：int32 |
+| pub_info.user_group | integer | 是 | 所属用户组的id（用户与用户组关联表，一个用户只能属于一个用户组）；格式：int32 |
+
+
+### 根据分组id查询用户信息
 
 - **方法**: `GET`
 - **路径**: `/auth/users/by_user_group/{id}`
-- **函数名**: `get_auth_users_by_user_group`
+- **工具名**: `get_auth_users_by_user_group`
+- **参数**:
+  - `id` (path, integer, 必填): 分组id；元信息：format=int32
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 分组id |
-
-### 26. 更改用户密码
+### 更改用户密码
 
 - **方法**: `PUT`
 - **路径**: `/auth/users/password/{id}`
-- **函数名**: `update_auth_users_password_by`
+- **工具名**: `update_auth_users_password_by`
+- **参数**:
+  - `id` (path, integer, 必填): 用户id；元信息：format=int32
+- **请求体**:
 
-**路径参数**:
+  - 无法解析请求体结构
 
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 用户id |
 
-**请求体**:
-
-JSON对象
-
-### 27. 重置用户密码
+### 重置用户密码
 
 - **方法**: `PUT`
 - **路径**: `/auth/users/reset_password/{id}`
-- **函数名**: `update_auth_users_reset_password_by`
+- **工具名**: `update_auth_users_reset_password_by`
+- **参数**:
+  - `id` (path, integer, 必填): 用户id；元信息：format=int32
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 用户id |
-
-### 28. 绑定已有用户的角色信息
+### 绑定已有用户的角色信息
 
 - **方法**: `PUT`
 - **路径**: `/auth/users/roles/{id}`
-- **函数名**: `update_auth_users_roles_by`
+- **工具名**: `update_auth_users_roles_by`
+- **参数**:
+  - `id` (path, integer, 必填): 用户id；元信息：format=int32
+- **请求体**:
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
+| 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| id | integer | 是 | 用户id |
+| [] | integer | 是 | 格式：int32 |
 
-**请求体**:
 
-JSON对象
-
-### 29. 删除指定id的用户
+### 删除指定id的用户
 
 - **方法**: `DELETE`
 - **路径**: `/auth/users/{ids}`
-- **函数名**: `delete_auth_users_by_s`
+- **工具名**: `delete_auth_users_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 用户id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 用户id列表，以,间隔 |
-
-### 30. 查询指定id用户
+### 查询指定id用户
 
 - **方法**: `GET`
 - **路径**: `/auth/users/{id}`
-- **函数名**: `get_auth_users_by`
+- **工具名**: `get_auth_users_by`
+- **参数**:
+  - `id` (path, integer, 必填): 用户id；元信息：format=int32
 
-**路径参数**:
+***
 
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 用户id |
+## CONTROLS 模块
 
-## Controls 模块
-
-共 6 个接口
-
-### 1. 查询历史设点执行结果
+### 查询历史设点执行结果
 
 - **方法**: `GET`
 - **路径**: `/commands`
-- **函数名**: `get_commands`
+- **工具名**: `get_commands`
+- **参数**:
+  - `sender_id` (query, integer, 可选): 元信息：format=int64, nullable=true
+  - `point_id` (query, integer, 可选): 测点id；元信息：format=int64, nullable=true
+  - `start` (query, integer, 可选): 开始时间；元信息：format=int64, nullable=true
+  - `end` (query, integer, 可选): 结束时间；元信息：format=int64, nullable=true
+  - `date` (query, string, 可选): 时间字符串，yyyy-MM-dd；元信息：nullable=true
+  - `reverse_order` (query, boolean, 可选): 是否时间倒序查询；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| sender_id | integer | 否 |  |
-| point_id | integer | 否 | 测点id |
-| start | integer | 否 | 开始时间 |
-| end | integer | 否 | 结束时间 |
-| date | string | 否 | 时间字符串，yyyy-MM-dd |
-| reverse_order | boolean | 否 | 是否时间倒序查询 |
-
-### 2. 对指定id的AOE采取指定动作，启动/停止/更新
+### 对指定id的AOE采取指定动作，启动/停止/更新
 
 - **方法**: `POST`
 - **路径**: `/controls/aoes`
-- **函数名**: `add_controls_aoes`
-
-**请求体**:
+- **工具名**: `add_controls_aoes`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | AoeActions | array[AoeAction] | 是 | AOE指令列表 |
-| AoeActions[] | object | 是 | AOE指令列表 |
-| AoeActions[].StartAoe | integer | 是 | 开始AOE |
+| AoeActions[] | oneOf[object{StartAoe} | object{StopAoe} | object{UpdateAoe} | object{UpdateAoeCsv}] | 是 | AOE指令对象；可选结构：object{StartAoe} | object{StopAoe} | object{UpdateAoe} | object{UpdateAoeCsv} |
+| AoeActions[].oneOf[1] | object | 是 | 开始AOE |
+| AoeActions[].oneOf[1].StartAoe | integer | 是 | 开始AOE；格式：int64 |
+| AoeActions[].oneOf[2] | object | 是 | 停止AOE |
+| AoeActions[].oneOf[2].StopAoe | integer | 是 | 停止AOE；格式：int64 |
+| AoeActions[].oneOf[3] | object | 是 | 更新AOE |
+| AoeActions[].oneOf[3].UpdateAoe | object | 是 | 更新AOE |
+| AoeActions[].oneOf[3].UpdateAoe.actions | array[ActionEdge] | 是 | 动作列表 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[] | object | 是 | 边对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action | oneOf[string | object{SetPoints} | object{SetPointsWithCheck} | object{SetPoints2} | object{SetPointsWithCheck2} | object{Solve} | object{Nlsolve} | object{Milp} | object{SimpleMilp} | object{Nlp}] | 是 | 动作定义；可选值：None；可选结构：string | object{SetPoints} | object{SetPointsWithCheck} | object{SetPoints2} | object{SetPointsWithCheck2} | object{Solve} | object{Nlsolve} | object{Milp} | object{SimpleMilp} | object{Nlp} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[1] | string | 是 | 无动作；可选值：None |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2] | object | 是 | 设点动作 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints | object | 是 | 设点动作 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_id | array[string] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v | array[Expr] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_id | array[string] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v | array[Expr] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3] | object | 是 | 设点动作 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck | object | 是 | 设点动作 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_id | array[string] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v | array[Expr] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_id | array[string] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v | array[Expr] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4] | object | 是 | 设点动作 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2 | object | 是 | 设点动作 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs | array[PointsToExp] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr | object | 是 | 表达式 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].ids | array[string] | 是 | id列表 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes | array[PointsToExp] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr | object | 是 | 表达式 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].ids | array[string] | 是 | id列表 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5] | object | 是 | 设点动作 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2 | object | 是 | 设点动作 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs | array[PointsToExp] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr | object | 是 | 表达式 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].ids | array[string] | 是 | id列表 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes | array[PointsToExp] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr | object | 是 | 表达式 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].ids | array[string] | 是 | id列表 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6] | object | 是 | 求方程 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve | object | 是 | 求方程 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.a | object | 是 | A矩阵 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.a.m | integer | 是 | 行数 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.a.n | integer | 是 | 列数 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.a.v | array[array[any]] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b | array[Expr] | 是 | b向量 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init | array[Expr] | 是 | 变量初始值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_name | array[string] | 是 | 变量名称 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7] | object | 是 | 求非线性方程组 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve | object | 是 | 求非线性方程组 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f | array[Expr] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.parameters | object[string, string] | 是 | 额外属性：string |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init | array[Expr] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx | array[Expr] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_name | array[string] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8] | object | 是 | 混合整数线性规划稀疏表示 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp | object | 是 | 混合整数线性规划稀疏表示 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.a | object | 是 | Ax >=/<= b |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.a.m | integer | 是 | 行数 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.a.n | integer | 是 | 列数 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.a.v | array[array[any]] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b | array[Expr] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.binary_int_float | array[integer] | 是 | 整数变量在x中的位置 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.binary_int_float[] | integer | 是 | 整数变量在x中的位置；格式：int32 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.c | array[array[any]] | 是 | min/max c^T*x |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.constraint_type | array[Operation] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.constraint_type[] | string | 是 | Mathematical operations.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.min_or_max | boolean | 是 | min: true, max: false |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.x_lower | array[array[any]] | 是 | 变量的下界约束：变量位置、约束表达式 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.x_name | array[string] | 是 | 变量名称 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.x_upper | array[array[any]] | 是 | 变量的上界约束：变量位置、约束表达式 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9] | object | 是 | 混合整数线性规划稠密表示 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp | object | 是 | 混合整数线性规划稠密表示 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a | object | 是 | Ax >=/<= b |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.m | integer | 是 | 行数 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.n | integer | 是 | 列数 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v | array[Expr] | 是 | 值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b | array[Expr] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.binary_int_float | array[integer] | 是 | 整数变量在x中的位置 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.binary_int_float[] | integer | 是 | 整数变量在x中的位置；格式：int32 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c | array[Expr] | 是 | min/max c^T*x |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.constraint_type | array[Operation] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.constraint_type[] | string | 是 | Mathematical operations.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.min_or_max | boolean | 是 | min: true, max: false |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.x_lower | array[array[any]] | 是 | 变量的下界约束：变量位置、约束表达式 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.x_name | array[string] | 是 | 变量名称 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.x_upper | array[array[any]] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10] | object | 是 | 非整数线性规划 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp | object | 是 | 非整数线性规划 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g | array[Expr] | 是 | 等式约束式 g(x) == b |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower | array[Expr] | 是 | 不等式约束式 g(x) <= b |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper | array[Expr] | 是 | 不等式约束式 g(x) >= b |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.min_or_max | boolean | 是 | min: true, max: false |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr | object | 是 | 目标函数表达式 min obj |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init | array[Expr] | 是 | 变量初始值x0 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower | array[Expr] | 是 | 整数变量在x中的位置 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_name | array[string] | 是 | 变量名称 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper | array[Expr] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[] | object | 是 | 表达式对象 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].aoe_id | integer | 是 | AOE id；格式：int64 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].failure_mode | string | 是 | action失败时的处理方式；可选值：Default、Ignore、StopAll、StopFailed |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].name | string | 是 | 动作名称 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].source_node | integer | 是 | 源节点；格式：int64 |
+| AoeActions[].oneOf[3].UpdateAoe.actions[].target_node | integer | 是 | 目标节点；格式：int64 |
+| AoeActions[].oneOf[3].UpdateAoe.events | array[EventNode] | 是 | 节点列表 |
+| AoeActions[].oneOf[3].UpdateAoe.events[] | object | 是 | 节点对象 |
+| AoeActions[].oneOf[3].UpdateAoe.events[].aoe_id | integer | 是 | AOE id；格式：int64 |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr | object | 是 | 事件是否发生判断的bool表达式 |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn | array[Token] | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[12] | object | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| AoeActions[].oneOf[3].UpdateAoe.events[].id | integer | 是 | 节点id；格式：int64 |
+| AoeActions[].oneOf[3].UpdateAoe.events[].name | string | 是 | 节点名 |
+| AoeActions[].oneOf[3].UpdateAoe.events[].node_type | string | 是 | 节点类型；可选值：ConditionNode、SwitchNode、SwitchOfActionResult |
+| AoeActions[].oneOf[3].UpdateAoe.events[].timeout | integer | 是 | 事件还未发生时等待超时时间；格式：int64 |
+| AoeActions[].oneOf[3].UpdateAoe.id | integer | 是 | aoe id；格式：int64 |
+| AoeActions[].oneOf[3].UpdateAoe.name | string | 是 | aoe名称 |
+| AoeActions[].oneOf[3].UpdateAoe.trigger_type | oneOf[object{SimpleRepeat} | object{TimeDrive} | string | object{EventRepeatMix} | object{EventTimeMix}] | 是 | 触发类型；可选值：EventDrive；可选结构：object{SimpleRepeat} | object{TimeDrive} | string | object{EventRepeatMix} | object{EventTimeMix} |
+| AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[1] | object | 是 | 简单固定周期触发 |
+| AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[1].SimpleRepeat | object | 是 | 简单固定周期触发 |
+| AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[1].SimpleRepeat.nanos | integer | 是 | 剩余纳秒；格式：int32 |
+| AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[1].SimpleRepeat.secs | integer | 是 | 秒；格式：int64 |
+| AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[2] | object | 是 | cron表达式 |
+| AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[2].TimeDrive | string | 是 | cron表达式 |
+| AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[3] | string | 是 | 事件驱动，AOE开始节点条件满足即触发；可选值：EventDrive |
+| AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[4] | object | 是 | 事件驱动 && 简单固定周期 联合 |
+| AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[4].EventRepeatMix | object | 是 | 事件驱动 && 简单固定周期 联合 |
+| AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[4].EventRepeatMix.nanos | integer | 是 | 剩余纳秒；格式：int32 |
+| AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[4].EventRepeatMix.secs | integer | 是 | 秒；格式：int64 |
+| AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[5] | object | 是 | 事件驱动 && cron表达式 联合 |
+| AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[5].EventTimeMix | string | 是 | 事件驱动 && cron表达式 联合 |
+| AoeActions[].oneOf[3].UpdateAoe.variables | array[array[any]] | 是 | 用户自定义的变量：变量名和表达式 |
+| AoeActions[].oneOf[4] | object | 是 | 更新AOE（字节数组） |
+| AoeActions[].oneOf[4].UpdateAoeCsv | array[integer] | 是 | 更新AOE（字节数组） |
+| AoeActions[].oneOf[4].UpdateAoeCsv[] | integer | 是 | 更新AOE（字节数组）；格式：int32 |
 
-### 3. 执行测点控制
+
+### 执行测点控制
 
 - **方法**: `POST`
 - **路径**: `/controls/points`
-- **函数名**: `add_controls_points`
-
-**请求体**:
+- **工具名**: `add_controls_points`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | analogs | array[SetFloatValue] | 是 |  |
-| analogs[] | object | 是 |  |
-| analogs[].point_id | integer | 是 |  |
-| analogs[].sender_id | integer | 是 |  |
-| analogs[].timestamp | integer | 是 |  |
-| analogs[].yt_command | number | 是 |  |
+| analogs[] | object | 是 | 浮点型指令数据 |
+| analogs[].point_id | integer | 是 | 格式：int64 |
+| analogs[].sender_id | integer | 是 | 格式：int64 |
+| analogs[].timestamp | integer | 是 | 格式：int64 |
+| analogs[].yt_command | number | 是 | 格式：double |
 | discretes | array[SetIntValue] | 是 |  |
-| discretes[] | object | 是 |  |
-| discretes[].point_id | integer | 是 |  |
-| discretes[].sender_id | integer | 是 |  |
-| discretes[].timestamp | integer | 是 |  |
-| discretes[].yk_command | integer | 是 |  |
+| discretes[] | object | 是 | 整型指令数据 |
+| discretes[].point_id | integer | 是 | 格式：int64 |
+| discretes[].sender_id | integer | 是 | 格式：int64 |
+| discretes[].timestamp | integer | 是 | 格式：int64 |
+| discretes[].yk_command | integer | 是 | 格式：int64 |
 
-### 4. 执行测点控制（通过别名）
+
+### 执行测点控制（通过别名）
 
 - **方法**: `POST`
 - **路径**: `/controls/points_by_alias`
-- **函数名**: `add_controls_points_by_alias`
-
-**请求体**:
+- **工具名**: `add_controls_points_by_alias`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | analogs | array[SetFloatValue2] | 是 |  |
-| analogs[] | object | 是 |  |
+| analogs[] | object | 是 | 浮点型指令数据 |
 | analogs[].point_alias | string | 是 |  |
-| analogs[].sender_id | integer | 是 |  |
-| analogs[].timestamp | integer | 是 |  |
-| analogs[].yt_command | number | 是 |  |
+| analogs[].sender_id | integer | 是 | 格式：int64 |
+| analogs[].timestamp | integer | 是 | 格式：int64 |
+| analogs[].yt_command | number | 是 | 格式：double |
 | discretes | array[SetIntValue2] | 是 |  |
-| discretes[] | object | 是 |  |
+| discretes[] | object | 是 | 整型指令数据 |
 | discretes[].point_alias | string | 是 |  |
-| discretes[].sender_id | integer | 是 |  |
-| discretes[].timestamp | integer | 是 |  |
-| discretes[].yk_command | integer | 是 |  |
+| discretes[].sender_id | integer | 是 | 格式：int64 |
+| discretes[].timestamp | integer | 是 | 格式：int64 |
+| discretes[].yk_command | integer | 是 | 格式：int64 |
 
-### 5. 执行测点控制（通过公式）
+
+### 执行测点控制（通过公式）
 
 - **方法**: `POST`
 - **路径**: `/controls/points_by_expr`
-- **函数名**: `add_controls_points_by_expr`
-
-**请求体**:
+- **工具名**: `add_controls_points_by_expr`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | commands | array[SetPointValue] | 是 |  |
-| commands[] | object | 是 |  |
+| commands[] | object | 是 | 公式型指令数据 |
 | commands[].command | object | 是 | 表达式对象 |
 | commands[].command.rpn | array[Token] | 是 |  |
-| commands[].command.rpn[] | object | 是 |  |
-| commands[].command.rpn[].Binary | string | 是 | Mathematical operations. |
-| commands[].point_id | integer | 是 |  |
-| commands[].sender_id | integer | 是 |  |
-| commands[].timestamp | integer | 是 |  |
+| commands[].command.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| commands[].command.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| commands[].command.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| commands[].command.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| commands[].command.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| commands[].command.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| commands[].command.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| commands[].command.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| commands[].command.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| commands[].command.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| commands[].command.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| commands[].command.rpn[].oneOf[9] | object | 是 | A number. |
+| commands[].command.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| commands[].command.rpn[].oneOf[10] | object | 是 | A tensor. |
+| commands[].command.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| commands[].command.rpn[].oneOf[11] | object | 是 | A variable. |
+| commands[].command.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| commands[].command.rpn[].oneOf[12] | object | 是 |  |
+| commands[].command.rpn[].oneOf[12].Str | string | 是 |  |
+| commands[].command.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| commands[].command.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| commands[].point_id | integer | 是 | 格式：int64 |
+| commands[].sender_id | integer | 是 | 格式：int64 |
+| commands[].timestamp | integer | 是 | 格式：int64 |
 
-### 6. 执行测点控制（通过其他数据源）
+
+### 执行测点控制（通过其他数据源）
 
 - **方法**: `POST`
 - **路径**: `/controls/points_with_source/{source}`
-- **函数名**: `add_controls_points_with_source_by_source`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| source | integer | 是 | 数据源id |
-
-**请求体**:
+- **工具名**: `add_controls_points_with_source_by_source`
+- **参数**:
+  - `source` (path, integer, 必填): 数据源id；元信息：format=int32
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | [] | object | 是 |  |
-| [].analog_value | number | 是 | 模拟量值 |
-| [].discrete_value | integer | 是 | 离散量值 |
+| [].analog_value | number | 是 | 模拟量值；格式：double |
+| [].discrete_value | integer | 是 | 离散量值；格式：int64 |
 | [].is_discrete | boolean | 是 | 是否离散量 |
 | [].is_transformed | boolean | 是 | 是否已经变换 |
-| [].point_id | integer | 是 | 对应的测点 |
-| [].timestamp | integer | 是 | 时间戳 |
-| [].transformed_analog | number | 是 | 变换后的模拟量值 |
-| [].transformed_discrete | integer | 是 | 变换后的离散量值 |
+| [].point_id | integer | 是 | 对应的测点；格式：int64 |
+| [].timestamp | integer | 是 | 时间戳；格式：int64 |
+| [].transformed_analog | number | 是 | 变换后的模拟量值；格式：double |
+| [].transformed_discrete | integer | 是 | 变换后的离散量值；格式：int64 |
 
-## Devices 模块
 
-共 34 个接口
+***
 
-### 1. 查询拓扑
+## DEVICES 模块
+
+### 查询拓扑
 
 - **方法**: `GET`
 - **路径**: `/devices/cns`
-- **函数名**: `get_devices_cns`
+- **工具名**: `get_devices_cns`
+- **参数**:
+  - `version` (query, integer, 可选): 版本号，可选，若为空则默认0号版本；元信息：format=int32, nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| version | integer | 否 | 版本号，可选，若为空则默认0号版本 |
-
-### 2. 新增拓扑
+### 新增拓扑
 
 - **方法**: `POST`
 - **路径**: `/devices/cns`
-- **函数名**: `add_devices_cns`
-
-**请求体**:
+- **工具名**: `add_devices_cns`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
-| [].id | integer | 是 | 连接节点id |
+| [] | object | 是 | 连接节点 |
+| [].id | integer | 是 | 连接节点id；格式：int64 |
 | [].psr_id | string | 是 | 资源id |
 | [].terminals | array[integer] | 是 | 端子id数组 |
+| [].terminals[] | integer | 是 | 端子id数组；格式：int64 |
 
-### 3. 查询所有设备定义
+
+### 查询所有设备定义
 
 - **方法**: `GET`
 - **路径**: `/devices/defines`
-- **函数名**: `get_devices_defines`
+- **工具名**: `get_devices_defines`
 
-### 4. 修改设备定义
+### 新增设备定义
+
+- **方法**: `POST`
+- **路径**: `/devices/defines`
+- **工具名**: `add_devices_defines`
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 | 设备定义 |
+| [].desc | string | 是 | 设备定义的描述 |
+| [].id | integer | 是 | 定义id；格式：int64 |
+| [].name | string | 是 | 设备类别名称 |
+| [].prop_groups | array[PropGroupDefine] | 是 | 设备属性 |
+| [].prop_groups[] | object | 是 | 属性分组定义 |
+| [].prop_groups[].desc | string | 是 | 属性定义描述 |
+| [].prop_groups[].name | string | 是 | 属性定义标识 |
+| [].prop_groups[].prop_defines | array[integer] | 是 | 设备属性实际描述 |
+| [].prop_groups[].prop_defines[] | integer | 是 | 设备属性实际描述；格式：int64 |
+| [].rsr_type | string | 是 | 设备所属类型；可选值：Switch、Busbar、ACline、DCline、Winding、SyncGenerator、ESS、PCS、Transformer、Load、ShuntCompensator、SerialCompensator、ShuntReactor、ShuntCapacitor、SeriesReactor、SeriesCapacitor、Breaker、Disconnector、GroundDisconnector、SVC、SVG、Feeder、PWBusbar、Cable、Regulator、Connector、Measurement、Company、SubIsland、LoadArea、Substation、PowerPlant、VoltageLevel、BaseVoltage、HvdcSys、HvdcPoleSys、DCPole、DCLineDot、TLineDot、Converter、TLine、ACLineDot、TNode、Convergenceline、SeriesPowerTransformer、SeriesTransformerWinding、Acfilter、Synccondenser、DCBreaker、DCDisconnector、Signal、Combined、Composite、Section、SectionType、Bus、Branch、UserDefine1、UserDefine2、UserDefine3、UserDefine4、UserDefine5、UserDefine6、UserDefine7、UserDefine8、UserDefine9、UserDefine10、Unknown |
+| [].terminal_num | integer | 是 | 端口数量；格式：int32 |
+
+
+### 修改设备定义
 
 - **方法**: `PUT`
 - **路径**: `/devices/defines`
-- **函数名**: `update_devices_defines`
-
-**请求体**:
+- **工具名**: `update_devices_defines`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | desc | string | 是 | 设备定义的描述 |
-| id | integer | 是 | 定义id |
+| id | integer | 是 | 定义id；格式：int64 |
 | name | string | 是 | 设备类别名称 |
 | prop_groups | array[PropGroupDefine] | 是 | 设备属性 |
-| prop_groups[] | object | 是 | 设备属性 |
+| prop_groups[] | object | 是 | 属性分组定义 |
 | prop_groups[].desc | string | 是 | 属性定义描述 |
 | prop_groups[].name | string | 是 | 属性定义标识 |
 | prop_groups[].prop_defines | array[integer] | 是 | 设备属性实际描述 |
-| rsr_type | string | 是 | 电力设备类型 |
-| terminal_num | integer | 是 | 端口数量 |
+| prop_groups[].prop_defines[] | integer | 是 | 设备属性实际描述；格式：int64 |
+| rsr_type | string | 是 | 设备所属类型；可选值：Switch、Busbar、ACline、DCline、Winding、SyncGenerator、ESS、PCS、Transformer、Load、ShuntCompensator、SerialCompensator、ShuntReactor、ShuntCapacitor、SeriesReactor、SeriesCapacitor、Breaker、Disconnector、GroundDisconnector、SVC、SVG、Feeder、PWBusbar、Cable、Regulator、Connector、Measurement、Company、SubIsland、LoadArea、Substation、PowerPlant、VoltageLevel、BaseVoltage、HvdcSys、HvdcPoleSys、DCPole、DCLineDot、TLineDot、Converter、TLine、ACLineDot、TNode、Convergenceline、SeriesPowerTransformer、SeriesTransformerWinding、Acfilter、Synccondenser、DCBreaker、DCDisconnector、Signal、Combined、Composite、Section、SectionType、Bus、Branch、UserDefine1、UserDefine2、UserDefine3、UserDefine4、UserDefine5、UserDefine6、UserDefine7、UserDefine8、UserDefine9、UserDefine10、Unknown |
+| terminal_num | integer | 是 | 端口数量；格式：int32 |
 
-### 5. 新增设备定义
 
-- **方法**: `POST`
-- **路径**: `/devices/defines`
-- **函数名**: `add_devices_defines`
-
-**请求体**:
-
-| 字段名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| [] | object | 是 |  |
-| [].desc | string | 是 | 设备定义的描述 |
-| [].id | integer | 是 | 定义id |
-| [].name | string | 是 | 设备类别名称 |
-| [].prop_groups | array[PropGroupDefine] | 是 | 设备属性 |
-| [].prop_groups[] | object | 是 | 设备属性 |
-| [].prop_groups[].desc | string | 是 | 属性定义描述 |
-| [].prop_groups[].name | string | 是 | 属性定义标识 |
-| [].prop_groups[].prop_defines | array[integer] | 是 | 设备属性实际描述 |
-| [].rsr_type | string | 是 | 电力设备类型 |
-| [].terminal_num | integer | 是 | 端口数量 |
-
-### 6. 删除指定id的设备定义
+### 删除指定id的设备定义
 
 - **方法**: `DELETE`
 - **路径**: `/devices/defines/{ids}`
-- **函数名**: `delete_devices_defines_by_s`
+- **工具名**: `delete_devices_defines_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 设备定义id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 设备定义id列表，以,间隔 |
-
-### 7. 根据id查询对应的设备定义
+### 根据id查询对应的设备定义
 
 - **方法**: `GET`
 - **路径**: `/devices/defines/{id}`
-- **函数名**: `get_devices_defines_by`
+- **工具名**: `get_devices_defines_by`
+- **参数**:
+  - `id` (path, integer, 必填): 设备定义id；元信息：format=int64
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 设备定义id |
-
-### 8. 查询所有设备列表
+### 查询所有设备列表
 
 - **方法**: `GET`
 - **路径**: `/devices/devs`
-- **函数名**: `get_devices_devs`
+- **工具名**: `get_devices_devs`
+- **参数**:
+  - `version` (query, integer, 可选): 版本号，可选，若为空则默认0号版本；元信息：format=int32, nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| version | integer | 否 | 版本号，可选，若为空则默认0号版本 |
-
-### 9. 修改设备
-
-- **方法**: `PUT`
-- **路径**: `/devices/devs`
-- **函数名**: `update_devices_devs`
-
-**请求体**:
-
-| 字段名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| container_id | integer | 否 |  |
-| define_id | integer | 是 | 设备定义id |
-| desc | string | 是 | 设备描述 |
-| id | integer | 是 | 设备id |
-| name | string | 是 | 设备名称 |
-| prop_group_ids | array[integer] | 是 | 设备属性分组id列表 |
-| terminals | array[Terminal] | 是 | 设备的端口 |
-| terminals[] | object | 是 | 设备的端口 |
-| terminals[].device | integer | 是 | 设备id |
-| terminals[].id | integer | 是 | 端口id |
-
-### 10. 新增设备
+### 新增设备
 
 - **方法**: `POST`
 - **路径**: `/devices/devs`
-- **函数名**: `add_devices_devs`
-
-**请求体**:
+- **工具名**: `add_devices_devs`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
-| [].container_id | integer | 否 |  |
-| [].define_id | integer | 是 | 设备定义id |
+| [] | object | 是 | 设备对象 |
+| [].container_id | integer | 否 | 格式：int64；允许空值 |
+| [].define_id | integer | 是 | 设备定义id；格式：int64 |
 | [].desc | string | 是 | 设备描述 |
-| [].id | integer | 是 | 设备id |
+| [].id | integer | 是 | 设备id；格式：int64 |
 | [].name | string | 是 | 设备名称 |
 | [].prop_group_ids | array[integer] | 是 | 设备属性分组id列表 |
+| [].prop_group_ids[] | integer | 是 | 设备属性分组id列表；格式：int64 |
 | [].terminals | array[Terminal] | 是 | 设备的端口 |
-| [].terminals[] | object | 是 | 设备的端口 |
-| [].terminals[].device | integer | 是 | 设备id |
-| [].terminals[].id | integer | 是 | 端口id |
+| [].terminals[] | object | 是 | 端口 |
+| [].terminals[].device | integer | 是 | 设备id；格式：int64 |
+| [].terminals[].id | integer | 是 | 端口id；格式：int64 |
 
-### 11. 删除指定id的设备
+
+### 修改设备
+
+- **方法**: `PUT`
+- **路径**: `/devices/devs`
+- **工具名**: `update_devices_devs`
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| container_id | integer | 否 | 格式：int64；允许空值 |
+| define_id | integer | 是 | 设备定义id；格式：int64 |
+| desc | string | 是 | 设备描述 |
+| id | integer | 是 | 设备id；格式：int64 |
+| name | string | 是 | 设备名称 |
+| prop_group_ids | array[integer] | 是 | 设备属性分组id列表 |
+| prop_group_ids[] | integer | 是 | 设备属性分组id列表；格式：int64 |
+| terminals | array[Terminal] | 是 | 设备的端口 |
+| terminals[] | object | 是 | 端口 |
+| terminals[].device | integer | 是 | 设备id；格式：int64 |
+| terminals[].id | integer | 是 | 端口id；格式：int64 |
+
+
+### 删除指定id的设备
 
 - **方法**: `DELETE`
 - **路径**: `/devices/devs/{ids}`
-- **函数名**: `delete_devices_devs_by_s`
+- **工具名**: `delete_devices_devs_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 设备id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 设备id列表，以,间隔 |
-
-### 12. 根据ID查询设备对象
+### 根据ID查询设备对象
 
 - **方法**: `GET`
 - **路径**: `/devices/devs/{id}`
-- **函数名**: `get_devices_devs_by`
+- **工具名**: `get_devices_devs_by`
+- **参数**:
+  - `id` (path, integer, 必填): 设备id；元信息：format=int64
+  - `version` (query, integer, 可选): 版本号，可选，若为空则默认0号版本；元信息：format=int32, nullable=true
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 设备id |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| version | integer | 否 | 版本号，可选，若为空则默认0号版本 |
-
-### 13. 查询电气岛
+### 查询电气岛
 
 - **方法**: `GET`
 - **路径**: `/devices/islands`
-- **函数名**: `get_devices_islands`
+- **工具名**: `get_devices_islands`
+- **参数**:
+  - `version` (query, integer, 可选): 版本号，可选，若为空则默认0号版本；元信息：format=int32, nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| version | integer | 否 | 版本号，可选，若为空则默认0号版本 |
-
-### 14. 根据版本号apply电气岛
+### 根据版本号apply电气岛
 
 - **方法**: `POST`
 - **路径**: `/devices/islands`
-- **函数名**: `add_devices_islands`
+- **工具名**: `add_devices_islands`
+- **请求体**:
 
-**请求体**:
+  - 无法解析请求体结构
 
-JSON对象
 
-### 15. 查询设备测点
+### 查询设备测点
 
 - **方法**: `GET`
 - **路径**: `/devices/measure_defs`
-- **函数名**: `get_devices_measure_defs`
+- **工具名**: `get_devices_measure_defs`
+- **参数**:
+  - `version` (query, integer, 可选): 版本号，可选，若为空则默认0号版本；元信息：format=int32, nullable=true
 
-**查询参数**:
+### 新增设备测点
 
-| 参数名 | 类型 | 必填 | 说明 |
+- **方法**: `POST`
+- **路径**: `/devices/measure_defs`
+- **工具名**: `add_devices_measure_defs`
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| version | integer | 否 | 版本号，可选，若为空则默认0号版本 |
+| [] | object | 是 | 测点定义 |
+| [].dev_id | integer | 是 | 格式：int64 |
+| [].id | integer | 是 | 格式：int64 |
+| [].phase | string | 是 | 量测相位；可选值：Unknown、Total、A、B、C、A0、B0、C0、AB、BC、CA |
+| [].point_id | integer | 是 | 格式：int64 |
+| [].terminal_id | integer | 是 | 格式：int64 |
 
-### 16. 修改设备测点
+
+### 修改设备测点
 
 - **方法**: `PUT`
 - **路径**: `/devices/measure_defs`
-- **函数名**: `update_devices_measure_defs`
-
-**请求体**:
-
-| 字段名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| [] | object | 是 |  |
-| [].dev_id | integer | 是 |  |
-| [].id | integer | 是 |  |
-| [].phase | string | 是 | 量测相位 |
-| [].point_id | integer | 是 |  |
-| [].terminal_id | integer | 是 |  |
-
-### 17. 新增设备测点
-
-- **方法**: `POST`
-- **路径**: `/devices/measure_defs`
-- **函数名**: `add_devices_measure_defs`
-
-**请求体**:
+- **工具名**: `update_devices_measure_defs`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
-| [].dev_id | integer | 是 |  |
-| [].id | integer | 是 |  |
-| [].phase | string | 是 | 量测相位 |
-| [].point_id | integer | 是 |  |
-| [].terminal_id | integer | 是 |  |
+| [] | object | 是 | 测点定义 |
+| [].dev_id | integer | 是 | 格式：int64 |
+| [].id | integer | 是 | 格式：int64 |
+| [].phase | string | 是 | 量测相位；可选值：Unknown、Total、A、B、C、A0、B0、C0、AB、BC、CA |
+| [].point_id | integer | 是 | 格式：int64 |
+| [].terminal_id | integer | 是 | 格式：int64 |
 
-### 18. 删除指定id的设备测点
+
+### 删除指定id的设备测点
 
 - **方法**: `DELETE`
 - **路径**: `/devices/measure_defs`
-- **函数名**: `delete_devices_measure_defs`
+- **工具名**: `delete_devices_measure_defs`
+- **请求体**:
 
-**请求体**:
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | integer | 是 | 格式：int64 |
 
-JSON对象
 
-### 19. 查询测点树（测点在设备树中的路径）
+### 查询测点树（测点在设备树中的路径）
 
 - **方法**: `GET`
 - **路径**: `/devices/point_tree`
-- **函数名**: `get_devices_point_tree`
+- **工具名**: `get_devices_point_tree`
+- **参数**:
+  - `version` (query, integer, 可选): 版本号，可选，若为空则默认0号版本；元信息：format=int32, nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| version | integer | 否 | 版本号，可选，若为空则默认0号版本 |
-
-### 20. 查询所有设备属性定义
+### 查询所有设备属性定义
 
 - **方法**: `GET`
 - **路径**: `/devices/prop_defines`
-- **函数名**: `get_devices_prop_defines`
+- **工具名**: `get_devices_prop_defines`
 
-### 21. 修改设备属性定义
-
-- **方法**: `PUT`
-- **路径**: `/devices/prop_defines`
-- **函数名**: `update_devices_prop_defines`
-
-**请求体**:
-
-| 字段名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| data_type | string | 是 | 属性类型 |
-| data_unit | string | 是 | 数据单位 |
-| desc | string | 是 | 属性定义描述 |
-| id | integer | 是 | 属性定义id |
-| name | string | 是 | 属性定义标识 |
-
-### 22. 新增设备属性定义
+### 新增设备属性定义
 
 - **方法**: `POST`
 - **路径**: `/devices/prop_defines`
-- **函数名**: `add_devices_prop_defines`
-
-**请求体**:
+- **工具名**: `add_devices_prop_defines`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
-| [].data_type | string | 是 | 属性类型 |
-| [].data_unit | string | 是 | 数据单位 |
+| [] | object | 是 | 设备属性 |
+| [].data_type | string | 是 | 属性类型；可选值：U8、U16、U32、U64、I8、I16、I32、I64、F32、F64、Str、Complex32、Complex64、TensorF32、TensorF64、TensorC32、TensorC64、Unknown |
+| [].data_unit | string | 是 | 属性单位；可选值：OnOrOff、A、V、kV、W、kW、MW、Var、kVar、MVar、VA、kVA、MVA、H、mH、Ah、mAh、kWh、Celsius、feet、km、meter、mm2、degree、rad、UnitOne、Percent、bit、B、kB、MB、GB、TB、PB、Unknown |
 | [].desc | string | 是 | 属性定义描述 |
-| [].id | integer | 是 | 属性定义id |
+| [].id | integer | 是 | 属性定义id；格式：int64 |
 | [].name | string | 是 | 属性定义标识 |
 
-### 23. 删除指定id的设备属性定义
+
+### 修改设备属性定义
+
+- **方法**: `PUT`
+- **路径**: `/devices/prop_defines`
+- **工具名**: `update_devices_prop_defines`
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| data_type | string | 是 | 属性类型；可选值：U8、U16、U32、U64、I8、I16、I32、I64、F32、F64、Str、Complex32、Complex64、TensorF32、TensorF64、TensorC32、TensorC64、Unknown |
+| data_unit | string | 是 | 属性单位；可选值：OnOrOff、A、V、kV、W、kW、MW、Var、kVar、MVar、VA、kVA、MVA、H、mH、Ah、mAh、kWh、Celsius、feet、km、meter、mm2、degree、rad、UnitOne、Percent、bit、B、kB、MB、GB、TB、PB、Unknown |
+| desc | string | 是 | 属性定义描述 |
+| id | integer | 是 | 属性定义id；格式：int64 |
+| name | string | 是 | 属性定义标识 |
+
+
+### 删除指定id的设备属性定义
 
 - **方法**: `DELETE`
 - **路径**: `/devices/prop_defines/{ids}`
-- **函数名**: `delete_devices_prop_defines_by_s`
+- **工具名**: `delete_devices_prop_defines_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 设备属性定义id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 设备属性定义id列表，以,间隔 |
-
-### 24. 查询所有设备属性分组
+### 查询所有设备属性分组
 
 - **方法**: `GET`
 - **路径**: `/devices/prop_groups`
-- **函数名**: `get_devices_prop_groups`
+- **工具名**: `get_devices_prop_groups`
+- **参数**:
+  - `version` (query, integer, 可选): 版本号，可选，若为空则默认0号版本；元信息：format=int32, nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| version | integer | 否 | 版本号，可选，若为空则默认0号版本 |
-
-### 25. 修改设备属性分组
-
-- **方法**: `PUT`
-- **路径**: `/devices/prop_groups`
-- **函数名**: `update_devices_prop_groups`
-
-**请求体**:
-
-| 字段名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| [] | object | 是 |  |
-| [].defines | array[integer] | 是 | 设备属性定义列表 |
-| [].id | integer | 是 |  |
-| [].name | string | 是 | 分组名称，用于显示，以及匹配PropGroupDefine |
-| [].props | array[PropValue] | 是 | 设备属性实际描述 |
-| [].props[] | object | 是 | 设备属性实际描述 |
-| [].props[].U8 | integer | 是 |  |
-| [].rsr_id | integer | 是 | resource id |
-
-### 26. 新增设备属性分组
+### 新增设备属性分组
 
 - **方法**: `POST`
 - **路径**: `/devices/prop_groups`
-- **函数名**: `add_devices_prop_groups`
-
-**请求体**:
+- **工具名**: `add_devices_prop_groups`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
+| [] | object | 是 | 设备属性分组 |
 | [].defines | array[integer] | 是 | 设备属性定义列表 |
-| [].id | integer | 是 |  |
+| [].defines[] | integer | 是 | 设备属性定义列表；格式：int64 |
+| [].id | integer | 是 | 格式：int64 |
 | [].name | string | 是 | 分组名称，用于显示，以及匹配PropGroupDefine |
 | [].props | array[PropValue] | 是 | 设备属性实际描述 |
-| [].props[] | object | 是 | 设备属性实际描述 |
-| [].props[].U8 | integer | 是 |  |
-| [].rsr_id | integer | 是 | resource id |
+| [].props[] | oneOf[object{U8} | object{U16} | object{U32} | object{U64} | object{I8} | object{I16} | object{I32} | object{I64} | object{F32} | object{F64} | object{Str} | object{Complex32} | object{Complex64} | object{TensorF32} | object{TensorF64} | object{TensorC32} | object{TensorC64} | string] | 是 | 设备属性值；可选值：Unknown；可选结构：object{U8} | object{U16} | object{U32} | object{U64} | object{I8} | object{I16} | object{I32} | object{I64} | object{F32} | object{F64} | object{Str} | object{Complex32} | object{Complex64} | object{TensorF32} | object{TensorF64} | object{TensorC32} | object{TensorC64} | string |
+| [].props[].oneOf[1] | object | 是 |  |
+| [].props[].oneOf[1].U8 | integer | 是 | 格式：int32 |
+| [].props[].oneOf[2] | object | 是 |  |
+| [].props[].oneOf[2].U16 | integer | 是 | 格式：int32 |
+| [].props[].oneOf[3] | object | 是 |  |
+| [].props[].oneOf[3].U32 | integer | 是 | 格式：int32 |
+| [].props[].oneOf[4] | object | 是 |  |
+| [].props[].oneOf[4].U64 | integer | 是 | 格式：int64 |
+| [].props[].oneOf[5] | object | 是 |  |
+| [].props[].oneOf[5].I8 | integer | 是 | 格式：int32 |
+| [].props[].oneOf[6] | object | 是 |  |
+| [].props[].oneOf[6].I16 | integer | 是 | 格式：int32 |
+| [].props[].oneOf[7] | object | 是 |  |
+| [].props[].oneOf[7].I32 | integer | 是 | 格式：int32 |
+| [].props[].oneOf[8] | object | 是 |  |
+| [].props[].oneOf[8].I64 | integer | 是 | 格式：int64 |
+| [].props[].oneOf[9] | object | 是 |  |
+| [].props[].oneOf[9].F32 | number | 是 | 格式：float |
+| [].props[].oneOf[10] | object | 是 |  |
+| [].props[].oneOf[10].F64 | number | 是 | 格式：double |
+| [].props[].oneOf[11] | object | 是 |  |
+| [].props[].oneOf[11].Str | string | 是 |  |
+| [].props[].oneOf[12] | object | 是 | f32类型复数 |
+| [].props[].oneOf[12].Complex32 | object | 是 | f32类型复数 |
+| [].props[].oneOf[12].Complex32.im | number | 是 | 格式：float |
+| [].props[].oneOf[12].Complex32.re | number | 是 | 格式：float |
+| [].props[].oneOf[13] | object | 是 | f64类型复数 |
+| [].props[].oneOf[13].Complex64 | object | 是 | f64类型复数 |
+| [].props[].oneOf[13].Complex64.im | number | 是 | 格式：double |
+| [].props[].oneOf[13].Complex64.re | number | 是 | 格式：double |
+| [].props[].oneOf[14] | object | 是 | f32类型向量 |
+| [].props[].oneOf[14].TensorF32 | array[object] | 是 | f32类型向量 |
+| [].props[].oneOf[15] | object | 是 | f64类型向量 |
+| [].props[].oneOf[15].TensorF64 | array[object] | 是 | f64类型向量 |
+| [].props[].oneOf[16] | object | 是 | f32类型复数向量 |
+| [].props[].oneOf[16].TensorC32 | array[object] | 是 | f32类型复数向量 |
+| [].props[].oneOf[17] | object | 是 | f64类型复数向量 |
+| [].props[].oneOf[17].TensorC64 | array[object] | 是 | f64类型复数向量 |
+| [].props[].oneOf[18] | string | 是 | 可选值：Unknown |
+| [].rsr_id | integer | 是 | resource id；格式：int64 |
 
-### 27. 根据id列表查看设备属性分组列表
+
+### 修改设备属性分组
+
+- **方法**: `PUT`
+- **路径**: `/devices/prop_groups`
+- **工具名**: `update_devices_prop_groups`
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 | 设备属性分组 |
+| [].defines | array[integer] | 是 | 设备属性定义列表 |
+| [].defines[] | integer | 是 | 设备属性定义列表；格式：int64 |
+| [].id | integer | 是 | 格式：int64 |
+| [].name | string | 是 | 分组名称，用于显示，以及匹配PropGroupDefine |
+| [].props | array[PropValue] | 是 | 设备属性实际描述 |
+| [].props[] | oneOf[object{U8} | object{U16} | object{U32} | object{U64} | object{I8} | object{I16} | object{I32} | object{I64} | object{F32} | object{F64} | object{Str} | object{Complex32} | object{Complex64} | object{TensorF32} | object{TensorF64} | object{TensorC32} | object{TensorC64} | string] | 是 | 设备属性值；可选值：Unknown；可选结构：object{U8} | object{U16} | object{U32} | object{U64} | object{I8} | object{I16} | object{I32} | object{I64} | object{F32} | object{F64} | object{Str} | object{Complex32} | object{Complex64} | object{TensorF32} | object{TensorF64} | object{TensorC32} | object{TensorC64} | string |
+| [].props[].oneOf[1] | object | 是 |  |
+| [].props[].oneOf[1].U8 | integer | 是 | 格式：int32 |
+| [].props[].oneOf[2] | object | 是 |  |
+| [].props[].oneOf[2].U16 | integer | 是 | 格式：int32 |
+| [].props[].oneOf[3] | object | 是 |  |
+| [].props[].oneOf[3].U32 | integer | 是 | 格式：int32 |
+| [].props[].oneOf[4] | object | 是 |  |
+| [].props[].oneOf[4].U64 | integer | 是 | 格式：int64 |
+| [].props[].oneOf[5] | object | 是 |  |
+| [].props[].oneOf[5].I8 | integer | 是 | 格式：int32 |
+| [].props[].oneOf[6] | object | 是 |  |
+| [].props[].oneOf[6].I16 | integer | 是 | 格式：int32 |
+| [].props[].oneOf[7] | object | 是 |  |
+| [].props[].oneOf[7].I32 | integer | 是 | 格式：int32 |
+| [].props[].oneOf[8] | object | 是 |  |
+| [].props[].oneOf[8].I64 | integer | 是 | 格式：int64 |
+| [].props[].oneOf[9] | object | 是 |  |
+| [].props[].oneOf[9].F32 | number | 是 | 格式：float |
+| [].props[].oneOf[10] | object | 是 |  |
+| [].props[].oneOf[10].F64 | number | 是 | 格式：double |
+| [].props[].oneOf[11] | object | 是 |  |
+| [].props[].oneOf[11].Str | string | 是 |  |
+| [].props[].oneOf[12] | object | 是 | f32类型复数 |
+| [].props[].oneOf[12].Complex32 | object | 是 | f32类型复数 |
+| [].props[].oneOf[12].Complex32.im | number | 是 | 格式：float |
+| [].props[].oneOf[12].Complex32.re | number | 是 | 格式：float |
+| [].props[].oneOf[13] | object | 是 | f64类型复数 |
+| [].props[].oneOf[13].Complex64 | object | 是 | f64类型复数 |
+| [].props[].oneOf[13].Complex64.im | number | 是 | 格式：double |
+| [].props[].oneOf[13].Complex64.re | number | 是 | 格式：double |
+| [].props[].oneOf[14] | object | 是 | f32类型向量 |
+| [].props[].oneOf[14].TensorF32 | array[object] | 是 | f32类型向量 |
+| [].props[].oneOf[15] | object | 是 | f64类型向量 |
+| [].props[].oneOf[15].TensorF64 | array[object] | 是 | f64类型向量 |
+| [].props[].oneOf[16] | object | 是 | f32类型复数向量 |
+| [].props[].oneOf[16].TensorC32 | array[object] | 是 | f32类型复数向量 |
+| [].props[].oneOf[17] | object | 是 | f64类型复数向量 |
+| [].props[].oneOf[17].TensorC64 | array[object] | 是 | f64类型复数向量 |
+| [].props[].oneOf[18] | string | 是 | 可选值：Unknown |
+| [].rsr_id | integer | 是 | resource id；格式：int64 |
+
+
+### 根据id列表查看设备属性分组列表
 
 - **方法**: `GET`
 - **路径**: `/devices/prop_groups/{ids}`
-- **函数名**: `get_devices_prop_groups_by_s`
+- **工具名**: `get_devices_prop_groups_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 设备属性分组id列表，以,间隔
+  - `version` (query, integer, 可选): 版本号，可选，若为空则默认0号版本；元信息：format=int32, nullable=true
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 设备属性分组id列表，以,间隔 |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| version | integer | 否 | 版本号，可选，若为空则默认0号版本 |
-
-### 28. 删除指定id的设备属性分组
+### 删除指定id的设备属性分组
 
 - **方法**: `DELETE`
 - **路径**: `/devices/prop_groups/{ids}`
-- **函数名**: `delete_devices_prop_groups_by_s`
+- **工具名**: `delete_devices_prop_groups_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 设备属性分组id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 设备属性分组id列表，以,间隔 |
-
-### 29. 清空资源
+### 清空资源
 
 - **方法**: `DELETE`
 - **路径**: `/devices/resources_clear`
-- **函数名**: `delete_devices_resources_clear`
+- **工具名**: `delete_devices_resources_clear`
 
-### 30. 查询电气岛所有版本
+### 查询电气岛所有版本
 
 - **方法**: `GET`
 - **路径**: `/devices/version`
-- **函数名**: `get_devices_version`
+- **工具名**: `get_devices_version`
 
-### 31. 新增电气岛版本
+### 新增电气岛版本
 
 - **方法**: `POST`
 - **路径**: `/devices/version`
-- **函数名**: `add_devices_version`
-
-**请求体**:
+- **工具名**: `add_devices_version`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | note | string | 是 | 提交时的注释 |
 | tree_id | string | 是 | 对应的tree_id |
-| version | integer | 是 | 版本号 |
+| version | integer | 是 | 版本号；格式：int32 |
 
-### 32. 删除指定id的电气岛版本
+
+### 删除指定id的电气岛版本
 
 - **方法**: `DELETE`
 - **路径**: `/devices/version/{id}`
-- **函数名**: `delete_devices_version_by`
+- **工具名**: `delete_devices_version_by`
+- **参数**:
+  - `id` (path, integer, 必填): 版本id；元信息：format=int32
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 版本id |
-
-### 33. 查询日志字节数组
+### 查询日志字节数组
 
 - **方法**: `GET`
 - **路径**: `/logs_bytes`
-- **函数名**: `get_logs_bytes`
+- **工具名**: `get_logs_bytes`
+- **参数**:
+  - `is_query_size` (query, boolean, 可选): 是否限制文件大小；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| is_query_size | boolean | 否 | 是否限制文件大小 |
-
-### 34. 导入所有模型字节数组
+### 导入所有模型字节数组
 
 - **方法**: `POST`
 - **路径**: `/multi_import_bytes`
-- **函数名**: `add_multi_import_bytes`
+- **工具名**: `add_multi_import_bytes`
+- **请求体**:
 
-**请求体**:
+  - 无法解析请求体结构
 
-JSON对象
 
-## Ems 模块
+***
 
-共 3 个接口
+## EMS 模块
 
-### 1. 对指定id的ems执行请求
+### 对指定id的ems执行请求
 
 - **方法**: `POST`
 - **路径**: `/ems/request/{ems_id}`
-- **函数名**: `add_ems_request_by_ems`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ems_id | string | 是 | ems_id |
-
-**请求体**:
+- **工具名**: `add_ems_request_by_ems`
+- **参数**:
+  - `ems_id` (path, string, 必填): ems_id
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| content | string | 否 |  |
-| function | string | 否 |  |
+| content | string | 否 | 允许空值 |
+| function | oneOf[string] | 否 | 可选值：Get、Post、Put、Delete、Test；可选结构：string |
+| function.oneOf[1] | string | 是 | 可选值：Get、Post、Put、Delete、Test |
 | header_keys | array[string] | 是 |  |
 | header_values | array[string] | 是 |  |
-| id | integer | 否 |  |
-| url | string | 否 |  |
+| id | integer | 否 | 格式：int64；允许空值 |
+| url | string | 否 | 允许空值 |
 
-### 2. 查询指定id的ems
+
+### 查询指定id的ems
 
 - **方法**: `GET`
 - **路径**: `/ems/{id}`
-- **函数名**: `get_ems_by`
+- **工具名**: `get_ems_by`
+- **参数**:
+  - `id` (path, string, 必填): ems_id
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 是 | ems_id |
-
-### 3. 查询所有的ems
+### 查询所有的ems
 
 - **方法**: `GET`
 - **路径**: `/ems_list`
-- **函数名**: `get_ems_list`
+- **工具名**: `get_ems_list`
 
-## Files 模块
+***
 
-共 3 个接口
+## FILES 模块
 
-### 1. 执行filetree的操作
+### 执行filetree的操作
 
 - **方法**: `POST`
 - **路径**: `/file_tree`
-- **函数名**: `add_file_tree`
-
-**请求体**:
+- **工具名**: `add_file_tree`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| op | string | 是 | 文件树的操作类型 |
+| op | string | 是 | 文件树的操作类型；可选值：Query、Add、Delete、Change、Apply、QueryApply |
 | op_paths | array[string] | 是 |  |
-| path | string | 否 |  |
+| path | string | 否 | 允许空值 |
 | tree_id | string | 是 |  |
-| version | integer | 否 |  |
+| version | integer | 否 | 格式：int32；允许空值 |
 
-### 2. 保存filetree的一个节点
+
+### 保存filetree的一个节点
 
 - **方法**: `POST`
 - **路径**: `/file_tree/{id}`
-- **函数名**: `add_file_tree_by`
+- **工具名**: `add_file_tree_by`
+- **参数**:
+  - `id` (path, string, 必填): tree_id
+- **请求体**:
 
-**路径参数**:
+  - 无法解析请求体结构
 
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 是 | tree_id |
 
-**请求体**:
-
-JSON对象
-
-### 3. 提交filetree版本
+### 提交filetree版本
 
 - **方法**: `POST`
 - **路径**: `/file_tree_version`
-- **函数名**: `add_file_tree_version`
-
-**请求体**:
+- **工具名**: `add_file_tree_version`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | note | string | 是 | 提交时的注释 |
 | tree_id | string | 是 | 对应的tree_id |
-| version | integer | 是 | 版本号 |
+| version | integer | 是 | 版本号；格式：int32 |
 
-## Flows 模块
 
-共 28 个接口
+***
 
-### 1. 查询报表结果（简洁模式）
+## FLOWS 模块
+
+### 查询报表结果（简洁模式）
 
 - **方法**: `GET`
 - **路径**: `/flows/brief_results`
-- **函数名**: `get_flows_brief_results`
+- **工具名**: `get_flows_brief_results`
+- **参数**:
+  - `id` (query, string, 可选): 测点id，多个id之间以,间隔；元信息：nullable=true
+  - `start` (query, integer, 可选): 开始时间, 13位时间戳；元信息：format=int64, nullable=true
+  - `end` (query, integer, 可选): 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end；元信息：format=int64, nullable=true
+  - `date` (query, string, 可选): 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准；元信息：nullable=true
+  - `source` (query, integer, 可选): 数据源；元信息：format=int32, nullable=true
+  - `last_only` (query, boolean, 可选): 是否查询只最新的数据；元信息：nullable=true
+  - `with_init` (query, boolean, 可选): 是否查询该天初始的数据；元信息：nullable=true
+  - `reverse_order` (query, boolean, 可选): 是否时间倒序查询；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 | 测点id，多个id之间以,间隔 |
-| start | integer | 否 | 开始时间, 13位时间戳 |
-| end | integer | 否 | 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end |
-| date | string | 否 | 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准 |
-| source | integer | 否 | 数据源 |
-| last_only | boolean | 否 | 是否查询只最新的数据 |
-| with_init | boolean | 否 | 是否查询该天初始的数据 |
-| reverse_order | boolean | 否 | 是否时间倒序查询 |
-
-### 2. 执行报表动作
+### 执行报表动作
 
 - **方法**: `POST`
 - **路径**: `/flows/controls`
-- **函数名**: `add_flows_controls`
+- **工具名**: `add_flows_controls`
+- **请求体**:
 
-**请求体**:
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| oneOf[1] | string | 是 | 开始；可选值：Start |
+| oneOf[2] | string | 是 | 停止；可选值：Stop |
+| oneOf[3] | object | 是 | 开始某个报表 |
+| oneOf[3].StartFlow | integer | 是 | 开始某个报表；格式：int64 |
+| oneOf[4] | object | 是 | 开始某些报表 |
+| oneOf[4].StartFlows | array[integer] | 是 | 开始某些报表 |
+| oneOf[4].StartFlows[] | integer | 是 | 开始某些报表；格式：int64 |
+| oneOf[5] | object | 是 | 停止某个报表 |
+| oneOf[5].StopFlow | integer | 是 | 停止某个报表；格式：int64 |
+| oneOf[6] | object | 是 | 停止某些报表 |
+| oneOf[6].StopFlows | array[integer] | 是 | 停止某些报表 |
+| oneOf[6].StopFlows[] | integer | 是 | 停止某些报表；格式：int64 |
+| oneOf[7] | string | 是 | 退出；可选值：QuitDb |
 
-JSON对象
 
-### 3. 报表节点测试
+### 报表节点测试
 
 - **方法**: `POST`
 - **路径**: `/flows/debug`
-- **函数名**: `add_flows_debug`
+- **工具名**: `add_flows_debug`
+- **请求体**:
 
-**请求体**:
+  - 无法解析请求体结构
 
-JSON对象
 
-### 4. 查询报表
+### 查询报表
 
 - **方法**: `GET`
 - **路径**: `/flows/models`
-- **函数名**: `get_flows_models`
+- **工具名**: `get_flows_models`
+- **参数**:
+  - `id` (query, integer, 可选): 测点id（优先）；元信息：format=int64, nullable=true
+  - `ids` (query, string, 可选): 测点id列表，以,间隔；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 否 | 测点id（优先） |
-| ids | string | 否 | 测点id列表，以,间隔 |
-
-### 5. 修改报表
-
-- **方法**: `PUT`
-- **路径**: `/flows/models`
-- **函数名**: `update_flows_models`
-
-**请求体**:
-
-| 字段名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| [] | object | 是 |  |
-| [].actions | array[DfActionEdge] | 是 | 边 |
-| [].actions[] | object | 是 | 边 |
-| [].actions[].action | object | 是 | 对单个Dataframe进行运算 |
-| [].actions[].action.Eval | array[Expr] | 是 | 对单个Dataframe进行运算 |
-| [].actions[].action.Eval[] | object | 是 | 对单个Dataframe进行运算 |
-| [].actions[].action.Eval[].rpn | array[Token] | 是 |  |
-| [].actions[].action.Eval[].rpn[] | object | 是 |  |
-| [].actions[].action.Eval[].rpn[].Binary | string | 是 | Mathematical operations. |
-| [].actions[].desc | string | 是 |  |
-| [].actions[].flow_id | integer | 是 |  |
-| [].actions[].name | string | 是 |  |
-| [].actions[].source_node | integer | 是 |  |
-| [].actions[].target_node | integer | 是 |  |
-| [].aoe_var | array[any] | 否 | destination of aoe variable |
-| [].id | integer | 是 | dff id |
-| [].is_on | boolean | 是 | should schedule |
-| [].name | string | 是 | dff name |
-| [].nodes | array[DfNode] | 是 | 节点 |
-| [].nodes[] | object | 是 | 节点 |
-| [].nodes[].flow_id | integer | 是 |  |
-| [].nodes[].id | integer | 是 |  |
-| [].nodes[].name | string | 是 |  |
-| [].nodes[].node_type | object | 是 | query data source |
-| [].nodes[].node_type.Source | object | 是 | 直接导入数据 |
-| [].nodes[].node_type.Source.Data | any | 是 | 直接导入数据 |
-| [].save_mode | string | 是 | Data frame save mode |
-| [].trigger_type | object | 是 | Dataframe flow 启动的方式 |
-| [].trigger_type.SimpleRepeat | object | 是 | 时间对象 |
-| [].trigger_type.SimpleRepeat.nanos | integer | 是 | 剩余纳秒 |
-| [].trigger_type.SimpleRepeat.secs | integer | 是 | 秒 |
-
-### 6. 新增报表
+### 新增报表
 
 - **方法**: `POST`
 - **路径**: `/flows/models`
-- **函数名**: `add_flows_models`
-
-**请求体**:
+- **工具名**: `add_flows_models`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | [] | object | 是 |  |
 | [].actions | array[DfActionEdge] | 是 | 边 |
 | [].actions[] | object | 是 | 边 |
-| [].actions[].action | object | 是 | 对单个Dataframe进行运算 |
-| [].actions[].action.Eval | array[Expr] | 是 | 对单个Dataframe进行运算 |
-| [].actions[].action.Eval[] | object | 是 | 对单个Dataframe进行运算 |
-| [].actions[].action.Eval[].rpn | array[Token] | 是 |  |
-| [].actions[].action.Eval[].rpn[] | object | 是 |  |
-| [].actions[].action.Eval[].rpn[].Binary | string | 是 | Mathematical operations. |
+| [].actions[].action | oneOf[object{Eval} | object{Sql} | object{Onnx} | object{OnnxUrl} | object{Nnef} | object{NnefUrl} | object{WriteFile} | object{WriteSql} | string] | 是 | 可选值：None；可选结构：object{Eval} | object{Sql} | object{Onnx} | object{OnnxUrl} | object{Nnef} | object{NnefUrl} | object{WriteFile} | object{WriteSql} | string |
+| [].actions[].action.oneOf[1] | object | 是 | 对单个Dataframe进行运算 |
+| [].actions[].action.oneOf[1].Eval | array[Expr] | 是 | 对单个Dataframe进行运算 |
+| [].actions[].action.oneOf[1].Eval[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[1].Eval[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[1].Eval[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[2] | object | 是 | 从DataFrame中进行sql查询 |
+| [].actions[].action.oneOf[2].Sql | string | 是 | 从DataFrame中进行sql查询 |
+| [].actions[].action.oneOf[3] | object | 是 | 用onnx表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[3].Onnx | array[integer] | 是 | 用onnx表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[3].Onnx[] | integer | 是 | 用onnx表达的神经网络对DataFrame进行运行；格式：int32 |
+| [].actions[].action.oneOf[4] | object | 是 | 用onnx表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[4].OnnxUrl | string | 是 | 用onnx表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[5] | object | 是 | 用nnef表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[5].Nnef | array[integer] | 是 | 用nnef表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[5].Nnef[] | integer | 是 | 用nnef表达的神经网络对DataFrame进行运行；格式：int32 |
+| [].actions[].action.oneOf[6] | object | 是 | 用nnef表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[6].NnefUrl | string | 是 | 用nnef表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[7] | object | 是 | 写到文件 |
+| [].actions[].action.oneOf[7].WriteFile | string | 是 | 写到文件 |
+| [].actions[].action.oneOf[8] | object | 是 | 写到数据库 |
+| [].actions[].action.oneOf[8].WriteSql | array[object] | 是 | 写到数据库 |
+| [].actions[].action.oneOf[9] | string | 是 | 不做任何操作；可选值：None |
 | [].actions[].desc | string | 是 |  |
-| [].actions[].flow_id | integer | 是 |  |
+| [].actions[].flow_id | integer | 是 | 格式：int64 |
 | [].actions[].name | string | 是 |  |
-| [].actions[].source_node | integer | 是 |  |
-| [].actions[].target_node | integer | 是 |  |
-| [].aoe_var | array[any] | 否 | destination of aoe variable |
-| [].id | integer | 是 | dff id |
+| [].actions[].source_node | integer | 是 | 格式：int64 |
+| [].actions[].target_node | integer | 是 | 格式：int64 |
+| [].aoe_var | array[any] | 否 | destination of aoe variable；允许空值 |
+| [].id | integer | 是 | dff id；格式：int64 |
 | [].is_on | boolean | 是 | should schedule |
 | [].name | string | 是 | dff name |
 | [].nodes | array[DfNode] | 是 | 节点 |
 | [].nodes[] | object | 是 | 节点 |
-| [].nodes[].flow_id | integer | 是 |  |
-| [].nodes[].id | integer | 是 |  |
+| [].nodes[].flow_id | integer | 是 | 格式：int64 |
+| [].nodes[].id | integer | 是 | 格式：int64 |
 | [].nodes[].name | string | 是 |  |
-| [].nodes[].node_type | object | 是 | query data source |
-| [].nodes[].node_type.Source | object | 是 | 直接导入数据 |
-| [].nodes[].node_type.Source.Data | any | 是 | 直接导入数据 |
-| [].save_mode | string | 是 | Data frame save mode |
-| [].trigger_type | object | 是 | Dataframe flow 启动的方式 |
-| [].trigger_type.SimpleRepeat | object | 是 | 时间对象 |
-| [].trigger_type.SimpleRepeat.nanos | integer | 是 | 剩余纳秒 |
-| [].trigger_type.SimpleRepeat.secs | integer | 是 | 秒 |
+| [].nodes[].node_type | oneOf[object{Source} | object{Transform} | object{TensorEval} | object{Sql} | object{Solve} | string | object{MILP} | object{NLP} | object{Wasm}] | 是 | 可选值：NLSolve、None；可选结构：object{Source} | object{Transform} | object{TensorEval} | object{Sql} | object{Solve} | string | object{MILP} | object{NLP} | object{Wasm} |
+| [].nodes[].node_type.oneOf[1] | object | 是 | query data source |
+| [].nodes[].node_type.oneOf[1].Source | oneOf[object{Data} | object{File} | object{Url} | object{Image} | object{Sql} | object{OtherFlow} | object{Dev} | object{Points} | object{Meas} | object{Plan} | object{PointsEval} | object{MeasEval}] | 是 | query data source；可选结构：object{Data} | object{File} | object{Url} | object{Image} | object{Sql} | object{OtherFlow} | object{Dev} | object{Points} | object{Meas} | object{Plan} | object{PointsEval} | object{MeasEval} |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[1] | object | 是 | 直接导入数据 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[1].Data | string | 是 | 直接导入数据 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[2] | object | 是 | 根据文件后缀parquet/xlsx/csv自动判断，如果没有后缀默认用csv |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[2].File | string | 是 | 根据文件后缀parquet/xlsx/csv自动判断，如果没有后缀默认用csv |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[3] | object | 是 | 根据url后缀parquet/xlsx/csv自动判断，如果没有后缀默认用csv |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[3].Url | string | 是 | 根据url后缀parquet/xlsx/csv自动判断，如果没有后缀默认用csv |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4] | object | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4].Image | object | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4].Image.color_type | string | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4].Image.filter_type | string | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4].Image.height | integer | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4].Image.is_url | boolean | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4].Image.url_or_path | string | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4].Image.width | integer | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[5] | object | 是 | 数据库 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[5].Sql | array[object] | 是 | 数据库 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[6] | object | 是 | 其他Flow |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[6].OtherFlow | integer | 是 | 其他Flow；格式：int64 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[7] | object | 是 | 内置的设备列表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[7].Dev | string | 是 | 内置的设备列表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[8] | object | 是 | 内置的测点表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[8].Points | string | 是 | 内置的测点表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[9] | object | 是 | 内置的量测表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[9].Meas | array[string] | 是 | 内置的量测表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[10] | object | 是 | 计划数据表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[10].Plan | string | 是 | 计划数据表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11] | object | 是 | 筛选测点，功能与DfSource::Points一样，参数是表达式而不是sql |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval | array[Expr] | 是 | 筛选测点，功能与DfSource::Points一样，参数是表达式而不是sql |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[] | object | 是 | 表达式对象 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn | array[Token] | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[12] | object | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[12] | object | 是 | 筛选量测，功能与DfSource::Meas一样，参数是表达式而不是sql |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[12].MeasEval | array[object] | 是 | 筛选量测，功能与DfSource::Meas一样，参数是表达式而不是sql |
+| [].nodes[].node_type.oneOf[2] | object | 是 | transformation |
+| [].nodes[].node_type.oneOf[2].Transform | object | 是 | transformation |
+| [].nodes[].node_type.oneOf[2].Transform.rpn | array[Token] | 是 |  |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[9] | object | 是 | A number. |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[12] | object | 是 |  |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[12].Str | string | 是 |  |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].nodes[].node_type.oneOf[3] | object | 是 | tensor eval script |
+| [].nodes[].node_type.oneOf[3].TensorEval | array[object] | 是 | tensor eval script |
+| [].nodes[].node_type.oneOf[4] | object | 是 | sql execute |
+| [].nodes[].node_type.oneOf[4].Sql | string | 是 | sql execute |
+| [].nodes[].node_type.oneOf[5] | object | 是 | linear equations |
+| [].nodes[].node_type.oneOf[5].Solve | boolean | 是 | linear equations |
+| [].nodes[].node_type.oneOf[6] | string | 是 | nonlinear equations；可选值：NLSolve |
+| [].nodes[].node_type.oneOf[7] | object | 是 | mixed integer linear programming, objective function related DF name, constraint related DF name |
+| [].nodes[].node_type.oneOf[7].MILP | array[object] | 是 | mixed integer linear programming, objective function related DF name, constraint related DF name |
+| [].nodes[].node_type.oneOf[8] | object | 是 | nonlinear programming |
+| [].nodes[].node_type.oneOf[8].NLP | array[string] | 是 | nonlinear programming |
+| [].nodes[].node_type.oneOf[9] | object | 是 | 脚本 |
+| [].nodes[].node_type.oneOf[9].Wasm | array[object] | 是 | 脚本 |
+| [].nodes[].node_type.oneOf[10] | string | 是 | end；可选值：None |
+| [].save_mode | string | 是 | Data frame save mode；可选值：EveryTime、Once、Memory、Never |
+| [].trigger_type | oneOf[object{SimpleRepeat} | object{TimeDrive} | object{EventDrive} | object{DataSource} | string] | 是 | Dataframe flow 启动的方式；可选值：Manual；可选结构：object{SimpleRepeat} | object{TimeDrive} | object{EventDrive} | object{DataSource} | string |
+| [].trigger_type.oneOf[1] | object | 是 |  |
+| [].trigger_type.oneOf[1].SimpleRepeat | object | 是 | 时间对象 |
+| [].trigger_type.oneOf[1].SimpleRepeat.nanos | integer | 是 | 剩余纳秒；格式：int32 |
+| [].trigger_type.oneOf[1].SimpleRepeat.secs | integer | 是 | 秒；格式：int64 |
+| [].trigger_type.oneOf[2] | object | 是 |  |
+| [].trigger_type.oneOf[2].TimeDrive | string | 是 |  |
+| [].trigger_type.oneOf[3] | object | 是 |  |
+| [].trigger_type.oneOf[3].EventDrive | object | 是 | 表达式对象 |
+| [].trigger_type.oneOf[3].EventDrive.rpn | array[Token] | 是 |  |
+| [].trigger_type.oneOf[3].EventDrive.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[9] | object | 是 | A number. |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[12] | object | 是 |  |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[12].Str | string | 是 |  |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].trigger_type.oneOf[4] | object | 是 |  |
+| [].trigger_type.oneOf[4].DataSource | array[integer] | 是 |  |
+| [].trigger_type.oneOf[4].DataSource[] | integer | 是 | 格式：int64 |
+| [].trigger_type.oneOf[5] | string | 是 | 可选值：Manual |
 
-### 7. 删除指定id的报表
+
+### 修改报表
+
+- **方法**: `PUT`
+- **路径**: `/flows/models`
+- **工具名**: `update_flows_models`
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | object | 是 |  |
+| [].actions | array[DfActionEdge] | 是 | 边 |
+| [].actions[] | object | 是 | 边 |
+| [].actions[].action | oneOf[object{Eval} | object{Sql} | object{Onnx} | object{OnnxUrl} | object{Nnef} | object{NnefUrl} | object{WriteFile} | object{WriteSql} | string] | 是 | 可选值：None；可选结构：object{Eval} | object{Sql} | object{Onnx} | object{OnnxUrl} | object{Nnef} | object{NnefUrl} | object{WriteFile} | object{WriteSql} | string |
+| [].actions[].action.oneOf[1] | object | 是 | 对单个Dataframe进行运算 |
+| [].actions[].action.oneOf[1].Eval | array[Expr] | 是 | 对单个Dataframe进行运算 |
+| [].actions[].action.oneOf[1].Eval[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[1].Eval[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[1].Eval[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[1].Eval[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[2] | object | 是 | 从DataFrame中进行sql查询 |
+| [].actions[].action.oneOf[2].Sql | string | 是 | 从DataFrame中进行sql查询 |
+| [].actions[].action.oneOf[3] | object | 是 | 用onnx表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[3].Onnx | array[integer] | 是 | 用onnx表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[3].Onnx[] | integer | 是 | 用onnx表达的神经网络对DataFrame进行运行；格式：int32 |
+| [].actions[].action.oneOf[4] | object | 是 | 用onnx表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[4].OnnxUrl | string | 是 | 用onnx表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[5] | object | 是 | 用nnef表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[5].Nnef | array[integer] | 是 | 用nnef表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[5].Nnef[] | integer | 是 | 用nnef表达的神经网络对DataFrame进行运行；格式：int32 |
+| [].actions[].action.oneOf[6] | object | 是 | 用nnef表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[6].NnefUrl | string | 是 | 用nnef表达的神经网络对DataFrame进行运行 |
+| [].actions[].action.oneOf[7] | object | 是 | 写到文件 |
+| [].actions[].action.oneOf[7].WriteFile | string | 是 | 写到文件 |
+| [].actions[].action.oneOf[8] | object | 是 | 写到数据库 |
+| [].actions[].action.oneOf[8].WriteSql | array[object] | 是 | 写到数据库 |
+| [].actions[].action.oneOf[9] | string | 是 | 不做任何操作；可选值：None |
+| [].actions[].desc | string | 是 |  |
+| [].actions[].flow_id | integer | 是 | 格式：int64 |
+| [].actions[].name | string | 是 |  |
+| [].actions[].source_node | integer | 是 | 格式：int64 |
+| [].actions[].target_node | integer | 是 | 格式：int64 |
+| [].aoe_var | array[any] | 否 | destination of aoe variable；允许空值 |
+| [].id | integer | 是 | dff id；格式：int64 |
+| [].is_on | boolean | 是 | should schedule |
+| [].name | string | 是 | dff name |
+| [].nodes | array[DfNode] | 是 | 节点 |
+| [].nodes[] | object | 是 | 节点 |
+| [].nodes[].flow_id | integer | 是 | 格式：int64 |
+| [].nodes[].id | integer | 是 | 格式：int64 |
+| [].nodes[].name | string | 是 |  |
+| [].nodes[].node_type | oneOf[object{Source} | object{Transform} | object{TensorEval} | object{Sql} | object{Solve} | string | object{MILP} | object{NLP} | object{Wasm}] | 是 | 可选值：NLSolve、None；可选结构：object{Source} | object{Transform} | object{TensorEval} | object{Sql} | object{Solve} | string | object{MILP} | object{NLP} | object{Wasm} |
+| [].nodes[].node_type.oneOf[1] | object | 是 | query data source |
+| [].nodes[].node_type.oneOf[1].Source | oneOf[object{Data} | object{File} | object{Url} | object{Image} | object{Sql} | object{OtherFlow} | object{Dev} | object{Points} | object{Meas} | object{Plan} | object{PointsEval} | object{MeasEval}] | 是 | query data source；可选结构：object{Data} | object{File} | object{Url} | object{Image} | object{Sql} | object{OtherFlow} | object{Dev} | object{Points} | object{Meas} | object{Plan} | object{PointsEval} | object{MeasEval} |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[1] | object | 是 | 直接导入数据 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[1].Data | string | 是 | 直接导入数据 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[2] | object | 是 | 根据文件后缀parquet/xlsx/csv自动判断，如果没有后缀默认用csv |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[2].File | string | 是 | 根据文件后缀parquet/xlsx/csv自动判断，如果没有后缀默认用csv |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[3] | object | 是 | 根据url后缀parquet/xlsx/csv自动判断，如果没有后缀默认用csv |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[3].Url | string | 是 | 根据url后缀parquet/xlsx/csv自动判断，如果没有后缀默认用csv |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4] | object | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4].Image | object | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4].Image.color_type | string | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4].Image.filter_type | string | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4].Image.height | integer | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4].Image.is_url | boolean | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4].Image.url_or_path | string | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[4].Image.width | integer | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[5] | object | 是 | 数据库 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[5].Sql | array[object] | 是 | 数据库 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[6] | object | 是 | 其他Flow |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[6].OtherFlow | integer | 是 | 其他Flow；格式：int64 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[7] | object | 是 | 内置的设备列表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[7].Dev | string | 是 | 内置的设备列表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[8] | object | 是 | 内置的测点表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[8].Points | string | 是 | 内置的测点表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[9] | object | 是 | 内置的量测表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[9].Meas | array[string] | 是 | 内置的量测表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[10] | object | 是 | 计划数据表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[10].Plan | string | 是 | 计划数据表 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11] | object | 是 | 筛选测点，功能与DfSource::Points一样，参数是表达式而不是sql |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval | array[Expr] | 是 | 筛选测点，功能与DfSource::Points一样，参数是表达式而不是sql |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[] | object | 是 | 表达式对象 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn | array[Token] | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[12] | object | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[11].PointsEval[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[12] | object | 是 | 筛选量测，功能与DfSource::Meas一样，参数是表达式而不是sql |
+| [].nodes[].node_type.oneOf[1].Source.oneOf[12].MeasEval | array[object] | 是 | 筛选量测，功能与DfSource::Meas一样，参数是表达式而不是sql |
+| [].nodes[].node_type.oneOf[2] | object | 是 | transformation |
+| [].nodes[].node_type.oneOf[2].Transform | object | 是 | transformation |
+| [].nodes[].node_type.oneOf[2].Transform.rpn | array[Token] | 是 |  |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[9] | object | 是 | A number. |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[12] | object | 是 |  |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[12].Str | string | 是 |  |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].nodes[].node_type.oneOf[2].Transform.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].nodes[].node_type.oneOf[3] | object | 是 | tensor eval script |
+| [].nodes[].node_type.oneOf[3].TensorEval | array[object] | 是 | tensor eval script |
+| [].nodes[].node_type.oneOf[4] | object | 是 | sql execute |
+| [].nodes[].node_type.oneOf[4].Sql | string | 是 | sql execute |
+| [].nodes[].node_type.oneOf[5] | object | 是 | linear equations |
+| [].nodes[].node_type.oneOf[5].Solve | boolean | 是 | linear equations |
+| [].nodes[].node_type.oneOf[6] | string | 是 | nonlinear equations；可选值：NLSolve |
+| [].nodes[].node_type.oneOf[7] | object | 是 | mixed integer linear programming, objective function related DF name, constraint related DF name |
+| [].nodes[].node_type.oneOf[7].MILP | array[object] | 是 | mixed integer linear programming, objective function related DF name, constraint related DF name |
+| [].nodes[].node_type.oneOf[8] | object | 是 | nonlinear programming |
+| [].nodes[].node_type.oneOf[8].NLP | array[string] | 是 | nonlinear programming |
+| [].nodes[].node_type.oneOf[9] | object | 是 | 脚本 |
+| [].nodes[].node_type.oneOf[9].Wasm | array[object] | 是 | 脚本 |
+| [].nodes[].node_type.oneOf[10] | string | 是 | end；可选值：None |
+| [].save_mode | string | 是 | Data frame save mode；可选值：EveryTime、Once、Memory、Never |
+| [].trigger_type | oneOf[object{SimpleRepeat} | object{TimeDrive} | object{EventDrive} | object{DataSource} | string] | 是 | Dataframe flow 启动的方式；可选值：Manual；可选结构：object{SimpleRepeat} | object{TimeDrive} | object{EventDrive} | object{DataSource} | string |
+| [].trigger_type.oneOf[1] | object | 是 |  |
+| [].trigger_type.oneOf[1].SimpleRepeat | object | 是 | 时间对象 |
+| [].trigger_type.oneOf[1].SimpleRepeat.nanos | integer | 是 | 剩余纳秒；格式：int32 |
+| [].trigger_type.oneOf[1].SimpleRepeat.secs | integer | 是 | 秒；格式：int64 |
+| [].trigger_type.oneOf[2] | object | 是 |  |
+| [].trigger_type.oneOf[2].TimeDrive | string | 是 |  |
+| [].trigger_type.oneOf[3] | object | 是 |  |
+| [].trigger_type.oneOf[3].EventDrive | object | 是 | 表达式对象 |
+| [].trigger_type.oneOf[3].EventDrive.rpn | array[Token] | 是 |  |
+| [].trigger_type.oneOf[3].EventDrive.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[9] | object | 是 | A number. |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[12] | object | 是 |  |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[12].Str | string | 是 |  |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].trigger_type.oneOf[3].EventDrive.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].trigger_type.oneOf[4] | object | 是 |  |
+| [].trigger_type.oneOf[4].DataSource | array[integer] | 是 |  |
+| [].trigger_type.oneOf[4].DataSource[] | integer | 是 | 格式：int64 |
+| [].trigger_type.oneOf[5] | string | 是 | 可选值：Manual |
+
+
+### 删除指定id的报表
 
 - **方法**: `DELETE`
 - **路径**: `/flows/models/{ids}`
-- **函数名**: `delete_flows_models_by_s`
+- **工具名**: `delete_flows_models_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 报表id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 报表id列表，以,间隔 |
-
-### 8. 新增报表（多文件形式）
+### 新增报表（多文件形式）
 
 - **方法**: `POST`
 - **路径**: `/flows/models_file2`
-- **函数名**: `add_flows_models_file2`
-
-**请求体**:
+- **工具名**: `add_flows_models_file2`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | file | array[string] | 是 |  |
+| file[] | string | 是 | 格式：binary |
 
-### 9. 查询报表（自定义JSON格式）
+
+### 查询报表（自定义JSON格式）
 
 - **方法**: `GET`
 - **路径**: `/flows/models_json`
-- **函数名**: `get_flows_models_json`
+- **工具名**: `get_flows_models_json`
+- **参数**:
+  - `id` (query, integer, 可选): 测点id（优先）；元信息：format=int64, nullable=true
+  - `ids` (query, string, 可选): 测点id列表，以,间隔；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 否 | 测点id（优先） |
-| ids | string | 否 | 测点id列表，以,间隔 |
-
-### 10. 解析prog（多文件形式）
+### 解析prog（多文件形式）
 
 - **方法**: `POST`
 - **路径**: `/flows/prog_file2`
-- **函数名**: `add_flows_prog_file2`
-
-**请求体**:
+- **工具名**: `add_flows_prog_file2`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | file | array[string] | 是 |  |
+| file[] | string | 是 | 格式：binary |
 
-### 11. 重新加载报表
+
+### 重新加载报表
 
 - **方法**: `POST`
 - **路径**: `/flows/reload_dff/{flow_id}`
-- **函数名**: `add_flows_reload_dff_by_flow`
+- **工具名**: `add_flows_reload_dff_by_flow`
+- **参数**:
+  - `flow_id` (path, string, 必填): 报表id
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| flow_id | string | 是 | 报表id |
-
-### 12. 查询报表结果keys
+### 查询报表结果keys
 
 - **方法**: `GET`
 - **路径**: `/flows/result_keys`
-- **函数名**: `get_flows_result_keys`
+- **工具名**: `get_flows_result_keys`
+- **参数**:
+  - `id` (query, integer, 可选): 测点id（优先）；元信息：format=int64, nullable=true
+  - `ids` (query, string, 可选): 测点id列表，以,间隔；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 否 | 测点id（优先） |
-| ids | string | 否 | 测点id列表，以,间隔 |
-
-### 13. 根据id查询报表执行结果
+### 根据id查询报表执行结果
 
 - **方法**: `GET`
 - **路径**: `/flows/results`
-- **函数名**: `get_flows_results`
+- **工具名**: `get_flows_results`
+- **参数**:
+  - `id` (query, string, 可选): 测点id，多个id之间以,间隔；元信息：nullable=true
+  - `start` (query, integer, 可选): 开始时间, 13位时间戳；元信息：format=int64, nullable=true
+  - `end` (query, integer, 可选): 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end；元信息：format=int64, nullable=true
+  - `date` (query, string, 可选): 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准；元信息：nullable=true
+  - `source` (query, integer, 可选): 数据源；元信息：format=int32, nullable=true
+  - `last_only` (query, boolean, 可选): 是否查询只最新的数据；元信息：nullable=true
+  - `with_init` (query, boolean, 可选): 是否查询该天初始的数据；元信息：nullable=true
+  - `reverse_order` (query, boolean, 可选): 是否时间倒序查询；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 | 测点id，多个id之间以,间隔 |
-| start | integer | 否 | 开始时间, 13位时间戳 |
-| end | integer | 否 | 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end |
-| date | string | 否 | 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准 |
-| source | integer | 否 | 数据源 |
-| last_only | boolean | 否 | 是否查询只最新的数据 |
-| with_init | boolean | 否 | 是否查询该天初始的数据 |
-| reverse_order | boolean | 否 | 是否时间倒序查询 |
-
-### 14. 删除指定报表id指定key的报表结果
+### 删除指定报表id指定key的报表结果
 
 - **方法**: `DELETE`
 - **路径**: `/flows/results`
-- **函数名**: `delete_flows_results`
+- **工具名**: `delete_flows_results`
+- **请求体**:
 
-**请求体**:
+  - 无法解析请求体结构
 
-JSON对象
 
-### 15. 重命名报表结果（简洁模式）
+### 重命名报表结果（简洁模式）
 
 - **方法**: `POST`
 - **路径**: `/flows/results/rename`
-- **函数名**: `add_flows_results_rename`
+- **工具名**: `add_flows_results_rename`
+- **请求体**:
 
-**请求体**:
+  - 无法解析请求体结构
 
-JSON对象
 
-### 16. query_flows_result_and_eval
+### query_flows_result_and_eval
 
 - **方法**: `PUT`
 - **路径**: `/flows/results/{id}/{key}`
-- **函数名**: `update_flows_results_by_by_key`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 是 | 报表id |
-| key | string | 是 | key |
-
-**请求体**:
+- **工具名**: `update_flows_results_by_by_key`
+- **参数**:
+  - `id` (path, string, 必填): 报表id
+  - `key` (path, string, 必填): key
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
+| [] | object | 是 | 表达式对象 |
 | [].rpn | array[Token] | 是 |  |
-| [].rpn[] | object | 是 |  |
-| [].rpn[].Binary | string | 是 | Mathematical operations. |
+| [].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].rpn[].oneOf[9] | object | 是 | A number. |
+| [].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].rpn[].oneOf[12] | object | 是 |  |
+| [].rpn[].oneOf[12].Str | string | 是 |  |
+| [].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
 
-### 17. query_flows_result_in_view
+
+### query_flows_result_in_view
 
 - **方法**: `GET`
 - **路径**: `/flows/results/{id}/{key}/{view}`
-- **函数名**: `get_flows_results_by_by_key_by_view`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 是 | 报表id |
-| key | string | 是 | key |
-| view | string | 是 | view |
-
-**请求体**:
+- **工具名**: `get_flows_results_by_by_key_by_view`
+- **参数**:
+  - `id` (path, string, 必填): 报表id
+  - `key` (path, string, 必填): key
+  - `view` (path, string, 必填): view
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
+| [] | object | 是 | 表达式对象 |
 | [].rpn | array[Token] | 是 |  |
-| [].rpn[] | object | 是 |  |
-| [].rpn[].Binary | string | 是 | Mathematical operations. |
+| [].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].rpn[].oneOf[9] | object | 是 | A number. |
+| [].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].rpn[].oneOf[12] | object | 是 |  |
+| [].rpn[].oneOf[12].Str | string | 是 |  |
+| [].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
 
-### 18. 根据id查询报表执行结果（Parquet格式）
+
+### 根据id查询报表执行结果（Parquet格式）
 
 - **方法**: `GET`
 - **路径**: `/flows/results_json`
-- **函数名**: `get_flows_results_json`
+- **工具名**: `get_flows_results_json`
+- **参数**:
+  - `id` (query, string, 可选): 测点id，多个id之间以,间隔；元信息：nullable=true
+  - `start` (query, integer, 可选): 开始时间, 13位时间戳；元信息：format=int64, nullable=true
+  - `end` (query, integer, 可选): 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end；元信息：format=int64, nullable=true
+  - `date` (query, string, 可选): 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准；元信息：nullable=true
+  - `source` (query, integer, 可选): 数据源；元信息：format=int32, nullable=true
+  - `last_only` (query, boolean, 可选): 是否查询只最新的数据；元信息：nullable=true
+  - `with_init` (query, boolean, 可选): 是否查询该天初始的数据；元信息：nullable=true
+  - `reverse_order` (query, boolean, 可选): 是否时间倒序查询；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 | 测点id，多个id之间以,间隔 |
-| start | integer | 否 | 开始时间, 13位时间戳 |
-| end | integer | 否 | 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end |
-| date | string | 否 | 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准 |
-| source | integer | 否 | 数据源 |
-| last_only | boolean | 否 | 是否查询只最新的数据 |
-| with_init | boolean | 否 | 是否查询该天初始的数据 |
-| reverse_order | boolean | 否 | 是否时间倒序查询 |
-
-### 19. 根据id查询报表执行结果（逐行写入方式）
+### 根据id查询报表执行结果（逐行写入方式）
 
 - **方法**: `GET`
 - **路径**: `/flows/results_json_rows`
-- **函数名**: `get_flows_results_json_rows`
+- **工具名**: `get_flows_results_json_rows`
+- **参数**:
+  - `id` (query, string, 可选): 测点id，多个id之间以,间隔；元信息：nullable=true
+  - `start` (query, integer, 可选): 开始时间, 13位时间戳；元信息：format=int64, nullable=true
+  - `end` (query, integer, 可选): 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end；元信息：format=int64, nullable=true
+  - `date` (query, string, 可选): 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准；元信息：nullable=true
+  - `source` (query, integer, 可选): 数据源；元信息：format=int32, nullable=true
+  - `last_only` (query, boolean, 可选): 是否查询只最新的数据；元信息：nullable=true
+  - `with_init` (query, boolean, 可选): 是否查询该天初始的数据；元信息：nullable=true
+  - `reverse_order` (query, boolean, 可选): 是否时间倒序查询；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 | 测点id，多个id之间以,间隔 |
-| start | integer | 否 | 开始时间, 13位时间戳 |
-| end | integer | 否 | 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end |
-| date | string | 否 | 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准 |
-| source | integer | 否 | 数据源 |
-| last_only | boolean | 否 | 是否查询只最新的数据 |
-| with_init | boolean | 否 | 是否查询该天初始的数据 |
-| reverse_order | boolean | 否 | 是否时间倒序查询 |
-
-### 20. 查询运行中的报表
+### 查询运行中的报表
 
 - **方法**: `GET`
 - **路径**: `/flows/running`
-- **函数名**: `get_flows_running`
+- **工具名**: `get_flows_running`
 
-### 21. 查询报表（不包含Dataframe）
+### 查询报表（不包含Dataframe）
 
 - **方法**: `GET`
 - **路径**: `/flows/simple_models`
-- **函数名**: `get_flows_simple_models`
+- **工具名**: `get_flows_simple_models`
+- **参数**:
+  - `id` (query, integer, 可选): 测点id（优先）；元信息：format=int64, nullable=true
+  - `ids` (query, string, 可选): 测点id列表，以,间隔；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 否 | 测点id（优先） |
-| ids | string | 否 | 测点id列表，以,间隔 |
-
-### 22. 查询未运行的报表
+### 查询未运行的报表
 
 - **方法**: `GET`
 - **路径**: `/flows/unrun`
-- **函数名**: `get_flows_unrun`
+- **工具名**: `get_flows_unrun`
 
-### 23. 查询报表展示模型
+### 查询报表展示模型
 
 - **方法**: `GET`
 - **路径**: `/flows/view`
-- **函数名**: `get_flows_view`
+- **工具名**: `get_flows_view`
+- **参数**:
+  - `id` (query, string, 可选): 展示模型id；元信息：nullable=true
+  - `flow_id` (query, integer, 可选): 报表id；元信息：format=int64, nullable=true
 
-**查询参数**:
+### 新增报表展示模型
 
-| 参数名 | 类型 | 必填 | 说明 |
+- **方法**: `POST`
+- **路径**: `/flows/view`
+- **工具名**: `add_flows_view`
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| id | string | 否 | 展示模型id |
-| flow_id | integer | 否 | 报表id |
+| config | string | 是 |  |
+| echart_js | string | 否 | 允许空值 |
+| exprs | string | 是 |  |
+| flow_id | integer | 是 | 格式：int64 |
+| id | integer | 是 | 格式：int64 |
+| is_show | boolean | 是 |  |
+| layout | string | 是 |  |
+| name | string | 是 |  |
+| plot_template | string | 是 |  |
+| plot_type | string | 是 | 可选值：Bar、BarPolar、Box、Candlestick、Contour、Carpet、Graph、Heatmap、Histogram、Histogram2d、Histogram2dContour、Indicator、IsoSurface、Mesh3d、Ohlc、Pie、Sankey、Scatter、Scatter3d、ScatterPolar、Sunburst、Surface、Table、Violin、EChart、Undefined |
+| refresh_interval | integer | 否 | 格式：int32；允许空值 |
+| series_style | string | 是 |  |
 
-### 24. 修改报表展示模型
+
+### 修改报表展示模型
 
 - **方法**: `PUT`
 - **路径**: `/flows/view`
-- **函数名**: `update_flows_view`
-
-**请求体**:
-
-| 字段名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| config | any | 是 |  |
-| echart_js | string | 否 |  |
-| exprs | string | 是 |  |
-| flow_id | integer | 是 |  |
-| id | integer | 是 |  |
-| is_show | boolean | 是 |  |
-| layout | any | 是 |  |
-| name | string | 是 |  |
-| plot_template | string | 是 |  |
-| plot_type | string | 是 |  |
-| refresh_interval | integer | 否 |  |
-| series_style | any | 是 |  |
-
-### 25. 新增报表展示模型
-
-- **方法**: `POST`
-- **路径**: `/flows/view`
-- **函数名**: `add_flows_view`
-
-**请求体**:
+- **工具名**: `update_flows_view`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| config | any | 是 |  |
-| echart_js | string | 否 |  |
+| config | string | 是 |  |
+| echart_js | string | 否 | 允许空值 |
 | exprs | string | 是 |  |
-| flow_id | integer | 是 |  |
-| id | integer | 是 |  |
+| flow_id | integer | 是 | 格式：int64 |
+| id | integer | 是 | 格式：int64 |
 | is_show | boolean | 是 |  |
-| layout | any | 是 |  |
+| layout | string | 是 |  |
 | name | string | 是 |  |
 | plot_template | string | 是 |  |
-| plot_type | string | 是 |  |
-| refresh_interval | integer | 否 |  |
-| series_style | any | 是 |  |
+| plot_type | string | 是 | 可选值：Bar、BarPolar、Box、Candlestick、Contour、Carpet、Graph、Heatmap、Histogram、Histogram2d、Histogram2dContour、Indicator、IsoSurface、Mesh3d、Ohlc、Pie、Sankey、Scatter、Scatter3d、ScatterPolar、Sunburst、Surface、Table、Violin、EChart、Undefined |
+| refresh_interval | integer | 否 | 格式：int32；允许空值 |
+| series_style | string | 是 |  |
 
-### 26. 删除指定id的报表展示模型
+
+### 删除指定id的报表展示模型
 
 - **方法**: `DELETE`
 - **路径**: `/flows/view/{ids}`
-- **函数名**: `delete_flows_view_by_s`
+- **工具名**: `delete_flows_view_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 报表展示模型id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 报表展示模型id列表，以,间隔 |
-
-### 27. 加载其他mems来的Dataframe
+### 加载其他mems来的Dataframe
 
 - **方法**: `POST`
 - **路径**: `/north/dataframe/{flow}/{node}`
-- **函数名**: `add_north_dataframe_by_flow_by_node`
+- **工具名**: `add_north_dataframe_by_flow_by_node`
+- **参数**:
+  - `flow` (path, integer, 必填): 报表id；元信息：format=int64
+  - `node` (path, integer, 必填): 节点id；元信息：format=int64
+- **请求体**:
 
-**路径参数**:
+  - 无法解析请求体结构
 
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| flow | integer | 是 | 报表id |
-| node | integer | 是 | 节点id |
 
-**请求体**:
-
-JSON对象
-
-### 28. 重启北向服务
+### 重启北向服务
 
 - **方法**: `POST`
 - **路径**: `/north/restart`
-- **函数名**: `add_north_restart`
+- **工具名**: `add_north_restart`
 
-## Graphs 模块
+***
 
-共 11 个接口
+## GRAPHS 模块
 
-### 1. 设置svg是否显示
+### 设置svg是否显示
 
 - **方法**: `POST`
 - **路径**: `/graphs/apply/additional`
-- **函数名**: `add_graphs_apply_additional`
+- **工具名**: `add_graphs_apply_additional`
+- **请求体**:
 
-**请求体**:
+  - 无法解析请求体结构
 
-JSON对象
 
-### 2. 获取应用版本某个名称的svg
+### 获取应用版本某个名称的svg
 
 - **方法**: `GET`
 - **路径**: `/graphs/apply/models/{path}`
-- **函数名**: `get_graphs_apply_models_by_path`
+- **工具名**: `get_graphs_apply_models_by_path`
+- **参数**:
+  - `path` (path, string, 必填): svg名称
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| path | string | 是 | svg名称 |
-
-### 3. 获取应用版本的所有svg名称
+### 获取应用版本的所有svg名称
 
 - **方法**: `GET`
 - **路径**: `/graphs/apply/paths`
-- **函数名**: `get_graphs_apply_paths`
+- **工具名**: `get_graphs_apply_paths`
 
-### 4. 应用一个svg版本
+### 应用一个svg版本
 
 - **方法**: `POST`
 - **路径**: `/graphs/apply/version`
-- **函数名**: `add_graphs_apply_version`
+- **工具名**: `add_graphs_apply_version`
+- **请求体**:
 
-**请求体**:
+  - 无法解析请求体结构
 
-JSON对象
 
-### 5. 新增svg
+### 新增svg
 
 - **方法**: `POST`
 - **路径**: `/graphs/models`
-- **函数名**: `add_graphs_models`
-
-**请求体**:
+- **工具名**: `add_graphs_models`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | [] | object | 是 |  |
-| [].fileContent | array[integer] | 否 |  |
-| [].fileName | string | 否 |  |
-| [].is_zip | boolean | 否 |  |
-| [].op | string | 否 |  |
+| [].fileContent | array[integer] | 否 | 允许空值 |
+| [].fileContent[] | integer | 是 | 格式：int32 |
+| [].fileName | string | 否 | 允许空值 |
+| [].is_zip | boolean | 否 | 允许空值 |
+| [].op | oneOf[string] | 否 | 可选值：UPDATE、DELETE、RENAME；可选结构：string |
+| [].op.oneOf[1] | string | 是 | 可选值：UPDATE、DELETE、RENAME |
 
-### 6. 根据path查询指定的svg内容
+
+### 根据path查询指定的svg内容
 
 - **方法**: `GET`
 - **路径**: `/graphs/models/{path}`
-- **函数名**: `get_graphs_models_by_path`
+- **工具名**: `get_graphs_models_by_path`
+- **参数**:
+  - `path` (path, string, 必填): svg名称
+  - `version` (query, integer, 可选): 版本号，可选，若为空则默认0号版本；元信息：format=int32, nullable=true
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| path | string | 是 | svg名称 |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| version | integer | 否 | 版本号，可选，若为空则默认0号版本 |
-
-### 7. 删除指定名称的svg
+### 删除指定名称的svg
 
 - **方法**: `DELETE`
 - **路径**: `/graphs/models/{path}`
-- **函数名**: `delete_graphs_models_by_path`
+- **工具名**: `delete_graphs_models_by_path`
+- **参数**:
+  - `path` (path, string, 必填): svg名称列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| path | string | 是 | svg名称列表，以,间隔 |
-
-### 8. 查询所有svg的名称
+### 查询所有svg的名称
 
 - **方法**: `GET`
 - **路径**: `/graphs/paths`
-- **函数名**: `get_graphs_paths`
+- **工具名**: `get_graphs_paths`
+- **参数**:
+  - `version` (query, integer, 可选): 版本号，可选，若为空则默认0号版本；元信息：format=int32, nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| version | integer | 否 | 版本号，可选，若为空则默认0号版本 |
-
-### 9. 查询所有的svg版本信息
+### 查询所有的svg版本信息
 
 - **方法**: `GET`
 - **路径**: `/graphs/version`
-- **函数名**: `get_graphs_version`
+- **工具名**: `get_graphs_version`
 
-### 10. 提交svg版本
+### 提交svg版本
 
 - **方法**: `POST`
 - **路径**: `/graphs/version`
-- **函数名**: `add_graphs_version`
-
-**请求体**:
+- **工具名**: `add_graphs_version`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | note | string | 是 | 提交时的注释 |
 | tree_id | string | 是 | 对应的tree_id |
-| version | integer | 是 | 版本号 |
+| version | integer | 是 | 版本号；格式：int32 |
 
-### 11. 删除指定svg版本
+
+### 删除指定svg版本
 
 - **方法**: `DELETE`
 - **路径**: `/graphs/version/{v}`
-- **函数名**: `delete_graphs_version_by_v`
+- **工具名**: `delete_graphs_version_by_v`
+- **参数**:
+  - `v` (path, integer, 必填): 版本id；元信息：format=int32
 
-**路径参数**:
+***
 
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| v | integer | 是 | 版本id |
+## LCC 模块
 
-## Lcc 模块
-
-共 43 个接口
-
-### 1. 查询指定lcc的告警通知配置信息
+### 查询指定lcc的告警通知配置信息
 
 - **方法**: `GET`
 - **路径**: `/lcc/alarm/config/{lcc_id}`
-- **函数名**: `get_lcc_alarm_config_by_lcc`
+- **工具名**: `get_lcc_alarm_config_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-### 2. 配置指定lcc的告警通知格式
+### 配置指定lcc的告警通知格式
 
 - **方法**: `POST`
 - **路径**: `/lcc/alarm/config/{lcc_id}`
-- **函数名**: `add_lcc_alarm_config_by_lcc`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**请求体**:
+- **工具名**: `add_lcc_alarm_config_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| common | object | 是 | 告警通知形式 |
+| common | object | 是 | 普通 |
 | common.popup_window | boolean | 是 | 桌面弹窗 |
 | common.sound_light | boolean | 是 | 声光 |
 | common.text_messages | boolean | 是 | 短信 |
-| emergency | object | 是 | 告警通知形式 |
+| emergency | object | 是 | 紧急 |
 | emergency.popup_window | boolean | 是 | 桌面弹窗 |
 | emergency.sound_light | boolean | 是 | 声光 |
 | emergency.text_messages | boolean | 是 | 短信 |
-| important | object | 是 | 告警通知形式 |
+| important | object | 是 | 严重 |
 | important.popup_window | boolean | 是 | 桌面弹窗 |
 | important.sound_light | boolean | 是 | 声光 |
 | important.text_messages | boolean | 是 | 短信 |
 
-### 3. 指定lcc确认告警
+
+### 指定lcc确认告警
 
 - **方法**: `POST`
 - **路径**: `/lcc/alarm/confirm/{lcc_id}/{user_id}`
-- **函数名**: `add_lcc_alarm_confirm_by_lcc_by_user`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-| user_id | integer | 是 | 用户id |
-
-**请求体**:
-
-JSON对象
-
-### 4. 查询指定lcc的已确认告警
-
-- **方法**: `GET`
-- **路径**: `/lcc/alarm/confirm_status/{lcc_id}`
-- **函数名**: `get_lcc_alarm_confirm_status_by_lcc`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-### 5. 查询指定lcc的告警总数
-
-- **方法**: `GET`
-- **路径**: `/lcc/alarm/count/{lcc_id}`
-- **函数名**: `get_lcc_alarm_count_by_lcc`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-### 6. 上传指定lcc的单个告警定义
-
-- **方法**: `POST`
-- **路径**: `/lcc/alarm/define/{lcc_id}`
-- **函数名**: `add_lcc_alarm_define_by_lcc`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**请求体**:
+- **工具名**: `add_lcc_alarm_confirm_by_lcc_by_user`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `user_id` (path, integer, 必填): 用户id；元信息：format=int32
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| desc | string | 否 |  |
-| id | integer | 否 |  |
-| level | string | 否 |  |
-| name | string | 否 |  |
-| owners | string | 否 |  |
-| rule | string | 否 |  |
+| [] | integer | 是 | 格式：int64 |
 
-### 7. 查询指定lcc中指定id的告警定义
+
+### 查询指定lcc的已确认告警
+
+- **方法**: `GET`
+- **路径**: `/lcc/alarm/confirm_status/{lcc_id}`
+- **工具名**: `get_lcc_alarm_confirm_status_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+
+### 查询指定lcc的告警总数
+
+- **方法**: `GET`
+- **路径**: `/lcc/alarm/count/{lcc_id}`
+- **工具名**: `get_lcc_alarm_count_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+
+### 上传指定lcc的单个告警定义
+
+- **方法**: `POST`
+- **路径**: `/lcc/alarm/define/{lcc_id}`
+- **工具名**: `add_lcc_alarm_define_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| desc | string | 否 | 允许空值 |
+| id | integer | 否 | 格式：int32；允许空值 |
+| level | oneOf[string] | 否 | 可选值：Common、Important、Emergency；可选结构：string |
+| level.oneOf[1] | string | 是 | 可选值：Common、Important、Emergency |
+| name | string | 否 | 允许空值 |
+| owners | string | 否 | 允许空值 |
+| rule | string | 否 | 允许空值 |
+
+
+### 查询指定lcc中指定id的告警定义
 
 - **方法**: `GET`
 - **路径**: `/lcc/alarm/define/{lcc_id}/{id}`
-- **函数名**: `get_lcc_alarm_define_by_lcc_by`
+- **工具名**: `get_lcc_alarm_define_by_lcc_by`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `id` (path, integer, 必填): 告警id；元信息：format=int32
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-| id | integer | 是 | 告警id |
-
-### 8. 查询指定lcc的所有告警定义
+### 查询指定lcc的所有告警定义
 
 - **方法**: `GET`
 - **路径**: `/lcc/alarm/defines/{lcc_id}`
-- **函数名**: `get_lcc_alarm_defines_by_lcc`
+- **工具名**: `get_lcc_alarm_defines_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-### 9. 上传指定lcc的告警定义
+### 上传指定lcc的告警定义
 
 - **方法**: `POST`
 - **路径**: `/lcc/alarm/defines/{lcc_id}`
-- **函数名**: `add_lcc_alarm_defines_by_lcc`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**请求体**:
+- **工具名**: `add_lcc_alarm_defines_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | defines | array[PbAlarmDefine] | 是 |  |
 | defines[] | object | 是 |  |
-| defines[].desc | string | 否 |  |
-| defines[].id | integer | 否 |  |
-| defines[].level | string | 否 |  |
-| defines[].name | string | 否 |  |
-| defines[].owners | string | 否 |  |
-| defines[].rule | string | 否 |  |
+| defines[].desc | string | 否 | 允许空值 |
+| defines[].id | integer | 否 | 格式：int32；允许空值 |
+| defines[].level | oneOf[string] | 否 | 可选值：Common、Important、Emergency；可选结构：string |
+| defines[].level.oneOf[1] | string | 是 | 可选值：Common、Important、Emergency |
+| defines[].name | string | 否 | 允许空值 |
+| defines[].owners | string | 否 | 允许空值 |
+| defines[].rule | string | 否 | 允许空值 |
 
-### 10. 删除指定lcc的指定id们的告警定义
+
+### 删除指定lcc的指定id们的告警定义
 
 - **方法**: `DELETE`
 - **路径**: `/lcc/alarm/defines/{lcc_id}/{ids}`
-- **函数名**: `delete_lcc_alarm_defines_by_lcc_by_s`
+- **工具名**: `delete_lcc_alarm_defines_by_lcc_by_s`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `ids` (path, string, 必填): 告警定义id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-| ids | string | 是 | 告警定义id列表，以,间隔 |
-
-### 11. 查询指定lcc的未确认告警数
+### 查询指定lcc的未确认告警数
 
 - **方法**: `GET`
 - **路径**: `/lcc/alarm/unconfirmed_number/{lcc_id}`
-- **函数名**: `get_lcc_alarm_unconfirmed_number_by_lcc`
+- **工具名**: `get_lcc_alarm_unconfirmed_number_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-### 12. 查询指定lcc的未确认告警列表
+### 查询指定lcc的未确认告警列表
 
 - **方法**: `GET`
 - **路径**: `/lcc/alarms/unconfirmed/{lcc_id}`
-- **函数名**: `get_lcc_alarms_unconfirmed_by_lcc`
+- **工具名**: `get_lcc_alarms_unconfirmed_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-### 13. 查询指定lcc的告警结果
+### 查询指定lcc的告警结果
 查询告警，结果按照时间排序
 
 - **方法**: `GET`
 - **路径**: `/lcc/alarms/{lcc_id}`
-- **函数名**: `get_lcc_alarms_by_lcc`
+- **工具名**: `get_lcc_alarms_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `id` (query, string, 可选): 测点id，多个id之间以,间隔；元信息：nullable=true
+  - `start` (query, integer, 可选): 开始时间, 13位时间戳；元信息：format=int64, nullable=true
+  - `end` (query, integer, 可选): 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end；元信息：format=int64, nullable=true
+  - `date` (query, string, 可选): 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准；元信息：nullable=true
+  - `source` (query, integer, 可选): 数据源；元信息：format=int32, nullable=true
+  - `last_only` (query, boolean, 可选): 是否查询只最新的数据；元信息：nullable=true
+  - `with_init` (query, boolean, 可选): 是否查询该天初始的数据；元信息：nullable=true
+  - `reverse_order` (query, boolean, 可选): 是否时间倒序查询；元信息：nullable=true
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 | 测点id，多个id之间以,间隔 |
-| start | integer | 否 | 开始时间, 13位时间戳 |
-| end | integer | 否 | 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end |
-| date | string | 否 | 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准 |
-| source | integer | 否 | 数据源 |
-| last_only | boolean | 否 | 是否查询只最新的数据 |
-| with_init | boolean | 否 | 是否查询该天初始的数据 |
-| reverse_order | boolean | 否 | 是否时间倒序查询 |
-
-### 14. 导出指定lcc的所有模型字节数组
+### 导出指定lcc的所有模型字节数组
 
 - **方法**: `GET`
 - **路径**: `/lcc/allmodels_bytes/{lcc_id}`
-- **函数名**: `get_lcc_allmodels_bytes_by_lcc`
+- **工具名**: `get_lcc_allmodels_bytes_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `lang` (query, string, 必填): 语言
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lang | string | 是 | 语言 |
-
-### 15. 导入指定lcc的所有模型字节数组
+### 导入指定lcc的所有模型字节数组
 
 - **方法**: `POST`
 - **路径**: `/lcc/allmodels_bytes/{lcc_id}`
-- **函数名**: `add_lcc_allmodels_bytes_by_lcc`
+- **工具名**: `add_lcc_allmodels_bytes_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+- **请求体**:
 
-**路径参数**:
+  - 无法解析请求体结构
 
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
 
-**请求体**:
-
-JSON对象
-
-### 16. 查询指定lcc的AOE执行结果
+### 查询指定lcc的AOE执行结果
 
 - **方法**: `GET`
 - **路径**: `/lcc/aoe_results/{lcc_id}`
-- **函数名**: `get_lcc_aoe_results_by_lcc`
+- **工具名**: `get_lcc_aoe_results_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `id` (query, string, 可选): 测点id，多个id之间以,间隔；元信息：nullable=true
+  - `start` (query, integer, 可选): 开始时间, 13位时间戳；元信息：format=int64, nullable=true
+  - `end` (query, integer, 可选): 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end；元信息：format=int64, nullable=true
+  - `date` (query, string, 可选): 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准；元信息：nullable=true
+  - `source` (query, integer, 可选): 数据源；元信息：format=int32, nullable=true
+  - `last_only` (query, boolean, 可选): 是否查询只最新的数据；元信息：nullable=true
+  - `with_init` (query, boolean, 可选): 是否查询该天初始的数据；元信息：nullable=true
+  - `reverse_order` (query, boolean, 可选): 是否时间倒序查询；元信息：nullable=true
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 | 测点id，多个id之间以,间隔 |
-| start | integer | 否 | 开始时间, 13位时间戳 |
-| end | integer | 否 | 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end |
-| date | string | 否 | 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准 |
-| source | integer | 否 | 数据源 |
-| last_only | boolean | 否 | 是否查询只最新的数据 |
-| with_init | boolean | 否 | 是否查询该天初始的数据 |
-| reverse_order | boolean | 否 | 是否时间倒序查询 |
-
-### 17. 查询指定lcc的AOE
+### 查询指定lcc的AOE
 
 - **方法**: `GET`
 - **路径**: `/lcc/aoes/models/{lcc_id}`
-- **函数名**: `get_lcc_aoes_models_by_lcc`
+- **工具名**: `get_lcc_aoes_models_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `id` (query, string, 可选): aoe id列表，以,间隔；元信息：nullable=true
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 | aoe id列表，以,间隔 |
-
-### 18. 保存指定lcc的AOE
+### 保存指定lcc的AOE
 
 - **方法**: `POST`
 - **路径**: `/lcc/aoes/models/{lcc_id}`
-- **函数名**: `add_lcc_aoes_models_by_lcc`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**请求体**:
+- **工具名**: `add_lcc_aoes_models_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
+| [] | object | 是 | aoe模型 |
 | [].actions | array[ActionEdge] | 是 | 动作列表 |
-| [].actions[] | object | 是 | 动作列表 |
-| [].actions[].action | string | 是 | 无动作 |
-| [].actions[].aoe_id | integer | 是 | AOE id |
-| [].actions[].failure_mode | string | 是 | 失败模式 |
+| [].actions[] | object | 是 | 边对象 |
+| [].actions[].action | oneOf[string | object{SetPoints} | object{SetPointsWithCheck} | object{SetPoints2} | object{SetPointsWithCheck2} | object{Solve} | object{Nlsolve} | object{Milp} | object{SimpleMilp} | object{Nlp}] | 是 | 动作定义；可选值：None；可选结构：string | object{SetPoints} | object{SetPointsWithCheck} | object{SetPoints2} | object{SetPointsWithCheck2} | object{Solve} | object{Nlsolve} | object{Milp} | object{SimpleMilp} | object{Nlp} |
+| [].actions[].action.oneOf[1] | string | 是 | 无动作；可选值：None |
+| [].actions[].action.oneOf[2] | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[2].SetPoints | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[2].SetPoints.analog_id | array[string] | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.analog_v | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_id | array[string] | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[3] | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[3].SetPointsWithCheck | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_id | array[string] | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_id | array[string] | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[4] | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[4].SetPoints2 | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[4].SetPoints2.analogs | array[PointsToExp] | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[] | object | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr | object | 是 | 表达式 |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[4].SetPoints2.analogs[].ids | array[string] | 是 | id列表 |
+| [].actions[].action.oneOf[4].SetPoints2.discretes | array[PointsToExp] | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[] | object | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr | object | 是 | 表达式 |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[4].SetPoints2.discretes[].ids | array[string] | 是 | id列表 |
+| [].actions[].action.oneOf[5] | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2 | object | 是 | 设点动作 |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs | array[PointsToExp] | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[] | object | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr | object | 是 | 表达式 |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].ids | array[string] | 是 | id列表 |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes | array[PointsToExp] | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[] | object | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr | object | 是 | 表达式 |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].ids | array[string] | 是 | id列表 |
+| [].actions[].action.oneOf[6] | object | 是 | 求方程 |
+| [].actions[].action.oneOf[6].Solve | object | 是 | 求方程 |
+| [].actions[].action.oneOf[6].Solve.a | object | 是 | A矩阵 |
+| [].actions[].action.oneOf[6].Solve.a.m | integer | 是 | 行数 |
+| [].actions[].action.oneOf[6].Solve.a.n | integer | 是 | 列数 |
+| [].actions[].action.oneOf[6].Solve.a.v | array[array[any]] | 是 |  |
+| [].actions[].action.oneOf[6].Solve.b | array[Expr] | 是 | b向量 |
+| [].actions[].action.oneOf[6].Solve.b[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[6].Solve.b[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[6].Solve.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| [].actions[].action.oneOf[6].Solve.x_init | array[Expr] | 是 | 变量初始值 |
+| [].actions[].action.oneOf[6].Solve.x_init[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[6].Solve.x_name | array[string] | 是 | 变量名称 |
+| [].actions[].action.oneOf[7] | object | 是 | 求非线性方程组 |
+| [].actions[].action.oneOf[7].Nlsolve | object | 是 | 求非线性方程组 |
+| [].actions[].action.oneOf[7].Nlsolve.f | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.f[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[7].Nlsolve.parameters | object[string, string] | 是 | 额外属性：string |
+| [].actions[].action.oneOf[7].Nlsolve.x_init | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[7].Nlsolve.x_name | array[string] | 是 |  |
+| [].actions[].action.oneOf[8] | object | 是 | 混合整数线性规划稀疏表示 |
+| [].actions[].action.oneOf[8].Milp | object | 是 | 混合整数线性规划稀疏表示 |
+| [].actions[].action.oneOf[8].Milp.a | object | 是 | Ax >=/<= b |
+| [].actions[].action.oneOf[8].Milp.a.m | integer | 是 | 行数 |
+| [].actions[].action.oneOf[8].Milp.a.n | integer | 是 | 列数 |
+| [].actions[].action.oneOf[8].Milp.a.v | array[array[any]] | 是 |  |
+| [].actions[].action.oneOf[8].Milp.b | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[8].Milp.b[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[8].Milp.b[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[8].Milp.binary_int_float | array[integer] | 是 | 整数变量在x中的位置 |
+| [].actions[].action.oneOf[8].Milp.binary_int_float[] | integer | 是 | 整数变量在x中的位置；格式：int32 |
+| [].actions[].action.oneOf[8].Milp.c | array[array[any]] | 是 | min/max c^T*x |
+| [].actions[].action.oneOf[8].Milp.constraint_type | array[Operation] | 是 |  |
+| [].actions[].action.oneOf[8].Milp.constraint_type[] | string | 是 | Mathematical operations.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[8].Milp.min_or_max | boolean | 是 | min: true, max: false |
+| [].actions[].action.oneOf[8].Milp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| [].actions[].action.oneOf[8].Milp.x_lower | array[array[any]] | 是 | 变量的下界约束：变量位置、约束表达式 |
+| [].actions[].action.oneOf[8].Milp.x_name | array[string] | 是 | 变量名称 |
+| [].actions[].action.oneOf[8].Milp.x_upper | array[array[any]] | 是 | 变量的上界约束：变量位置、约束表达式 |
+| [].actions[].action.oneOf[9] | object | 是 | 混合整数线性规划稠密表示 |
+| [].actions[].action.oneOf[9].SimpleMilp | object | 是 | 混合整数线性规划稠密表示 |
+| [].actions[].action.oneOf[9].SimpleMilp.a | object | 是 | Ax >=/<= b |
+| [].actions[].action.oneOf[9].SimpleMilp.a.m | integer | 是 | 行数 |
+| [].actions[].action.oneOf[9].SimpleMilp.a.n | integer | 是 | 列数 |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v | array[Expr] | 是 | 值 |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[9].SimpleMilp.b | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.b[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[9].SimpleMilp.binary_int_float | array[integer] | 是 | 整数变量在x中的位置 |
+| [].actions[].action.oneOf[9].SimpleMilp.binary_int_float[] | integer | 是 | 整数变量在x中的位置；格式：int32 |
+| [].actions[].action.oneOf[9].SimpleMilp.c | array[Expr] | 是 | min/max c^T*x |
+| [].actions[].action.oneOf[9].SimpleMilp.c[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[9].SimpleMilp.constraint_type | array[Operation] | 是 |  |
+| [].actions[].action.oneOf[9].SimpleMilp.constraint_type[] | string | 是 | Mathematical operations.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[9].SimpleMilp.min_or_max | boolean | 是 | min: true, max: false |
+| [].actions[].action.oneOf[9].SimpleMilp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| [].actions[].action.oneOf[9].SimpleMilp.x_lower | array[array[any]] | 是 | 变量的下界约束：变量位置、约束表达式 |
+| [].actions[].action.oneOf[9].SimpleMilp.x_name | array[string] | 是 | 变量名称 |
+| [].actions[].action.oneOf[9].SimpleMilp.x_upper | array[array[any]] | 是 |  |
+| [].actions[].action.oneOf[10] | object | 是 | 非整数线性规划 |
+| [].actions[].action.oneOf[10].Nlp | object | 是 | 非整数线性规划 |
+| [].actions[].action.oneOf[10].Nlp.g | array[Expr] | 是 | 等式约束式 g(x) == b |
+| [].actions[].action.oneOf[10].Nlp.g[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.g_lower | array[Expr] | 是 | 不等式约束式 g(x) <= b |
+| [].actions[].action.oneOf[10].Nlp.g_lower[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.g_upper | array[Expr] | 是 | 不等式约束式 g(x) >= b |
+| [].actions[].action.oneOf[10].Nlp.g_upper[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.min_or_max | boolean | 是 | min: true, max: false |
+| [].actions[].action.oneOf[10].Nlp.obj_expr | object | 是 | 目标函数表达式 min obj |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| [].actions[].action.oneOf[10].Nlp.x_init | array[Expr] | 是 | 变量初始值x0 |
+| [].actions[].action.oneOf[10].Nlp.x_init[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.x_lower | array[Expr] | 是 | 整数变量在x中的位置 |
+| [].actions[].action.oneOf[10].Nlp.x_lower[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.x_name | array[string] | 是 | 变量名称 |
+| [].actions[].action.oneOf[10].Nlp.x_upper | array[Expr] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_upper[] | object | 是 | 表达式对象 |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn | array[Token] | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[9] | object | 是 | A number. |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[11] | object | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[12] | object | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[12].Str | string | 是 |  |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].actions[].aoe_id | integer | 是 | AOE id；格式：int64 |
+| [].actions[].failure_mode | string | 是 | action失败时的处理方式；可选值：Default、Ignore、StopAll、StopFailed |
 | [].actions[].name | string | 是 | 动作名称 |
-| [].actions[].source_node | integer | 是 | 源节点 |
-| [].actions[].target_node | integer | 是 | 目标节点 |
+| [].actions[].source_node | integer | 是 | 源节点；格式：int64 |
+| [].actions[].target_node | integer | 是 | 目标节点；格式：int64 |
 | [].events | array[EventNode] | 是 | 节点列表 |
-| [].events[] | object | 是 | 节点列表 |
-| [].events[].aoe_id | integer | 是 | AOE id |
-| [].events[].expr | object | 是 | 表达式对象 |
+| [].events[] | object | 是 | 节点对象 |
+| [].events[].aoe_id | integer | 是 | AOE id；格式：int64 |
+| [].events[].expr | object | 是 | 事件是否发生判断的bool表达式 |
 | [].events[].expr.rpn | array[Token] | 是 |  |
-| [].events[].expr.rpn[] | object | 是 |  |
-| [].events[].expr.rpn[].Binary | string | 是 | Mathematical operations. |
-| [].events[].id | integer | 是 | 节点id |
+| [].events[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| [].events[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| [].events[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].events[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| [].events[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| [].events[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| [].events[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| [].events[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| [].events[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| [].events[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| [].events[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| [].events[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| [].events[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| [].events[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| [].events[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| [].events[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| [].events[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| [].events[].expr.rpn[].oneOf[12] | object | 是 |  |
+| [].events[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| [].events[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| [].events[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| [].events[].id | integer | 是 | 节点id；格式：int64 |
 | [].events[].name | string | 是 | 节点名 |
-| [].events[].node_type | string | 是 | 节点类型 |
-| [].events[].timeout | integer | 是 | 事件还未发生时等待超时时间 |
-| [].id | integer | 是 | aoe id |
+| [].events[].node_type | string | 是 | 节点类型；可选值：ConditionNode、SwitchNode、SwitchOfActionResult |
+| [].events[].timeout | integer | 是 | 事件还未发生时等待超时时间；格式：int64 |
+| [].id | integer | 是 | aoe id；格式：int64 |
 | [].name | string | 是 | aoe名称 |
-| [].trigger_type | object | 是 | 简单固定周期触发 |
-| [].trigger_type.SimpleRepeat | object | 是 | 时间对象 |
-| [].trigger_type.SimpleRepeat.nanos | integer | 是 | 剩余纳秒 |
-| [].trigger_type.SimpleRepeat.secs | integer | 是 | 秒 |
+| [].trigger_type | oneOf[object{SimpleRepeat} | object{TimeDrive} | string | object{EventRepeatMix} | object{EventTimeMix}] | 是 | 触发类型；可选值：EventDrive；可选结构：object{SimpleRepeat} | object{TimeDrive} | string | object{EventRepeatMix} | object{EventTimeMix} |
+| [].trigger_type.oneOf[1] | object | 是 | 简单固定周期触发 |
+| [].trigger_type.oneOf[1].SimpleRepeat | object | 是 | 简单固定周期触发 |
+| [].trigger_type.oneOf[1].SimpleRepeat.nanos | integer | 是 | 剩余纳秒；格式：int32 |
+| [].trigger_type.oneOf[1].SimpleRepeat.secs | integer | 是 | 秒；格式：int64 |
+| [].trigger_type.oneOf[2] | object | 是 | cron表达式 |
+| [].trigger_type.oneOf[2].TimeDrive | string | 是 | cron表达式 |
+| [].trigger_type.oneOf[3] | string | 是 | 事件驱动，AOE开始节点条件满足即触发；可选值：EventDrive |
+| [].trigger_type.oneOf[4] | object | 是 | 事件驱动 && 简单固定周期 联合 |
+| [].trigger_type.oneOf[4].EventRepeatMix | object | 是 | 事件驱动 && 简单固定周期 联合 |
+| [].trigger_type.oneOf[4].EventRepeatMix.nanos | integer | 是 | 剩余纳秒；格式：int32 |
+| [].trigger_type.oneOf[4].EventRepeatMix.secs | integer | 是 | 秒；格式：int64 |
+| [].trigger_type.oneOf[5] | object | 是 | 事件驱动 && cron表达式 联合 |
+| [].trigger_type.oneOf[5].EventTimeMix | string | 是 | 事件驱动 && cron表达式 联合 |
 | [].variables | array[array[any]] | 是 | 用户自定义的变量：变量名和表达式 |
 
-### 19. 删除指定lcc指定id的AOE
+
+### 删除指定lcc指定id的AOE
 
 - **方法**: `DELETE`
 - **路径**: `/lcc/aoes/models/{lcc_id}/{ids}`
-- **函数名**: `delete_lcc_aoes_models_by_lcc_by_s`
+- **工具名**: `delete_lcc_aoes_models_by_lcc_by_s`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `ids` (path, string, 必填): AOE_id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-| ids | string | 是 | AOE_id列表，以,间隔 |
-
-### 20. 查询指定lcc的所有用户
+### 查询指定lcc的所有用户
 
 - **方法**: `GET`
 - **路径**: `/lcc/auth/users/{lcc_id}`
-- **函数名**: `get_lcc_auth_users_by_lcc`
+- **工具名**: `get_lcc_auth_users_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-### 21. 查询指定lcc的历史设点执行结果
+### 查询指定lcc的历史设点执行结果
 
 - **方法**: `GET`
 - **路径**: `/lcc/commands/{lcc_id}`
-- **函数名**: `get_lcc_commands_by_lcc`
+- **工具名**: `get_lcc_commands_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `sender_id` (query, integer, 可选): 元信息：format=int64, nullable=true
+  - `point_id` (query, integer, 可选): 测点id；元信息：format=int64, nullable=true
+  - `start` (query, integer, 可选): 开始时间；元信息：format=int64, nullable=true
+  - `end` (query, integer, 可选): 结束时间；元信息：format=int64, nullable=true
+  - `date` (query, string, 可选): 时间字符串，yyyy-MM-dd；元信息：nullable=true
+  - `reverse_order` (query, boolean, 可选): 是否时间倒序查询；元信息：nullable=true
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| sender_id | integer | 否 |  |
-| point_id | integer | 否 | 测点id |
-| start | integer | 否 | 开始时间 |
-| end | integer | 否 | 结束时间 |
-| date | string | 否 | 时间字符串，yyyy-MM-dd |
-| reverse_order | boolean | 否 | 是否时间倒序查询 |
-
-### 22. 执行指定lcc的map映射操作
+### 执行指定lcc的map映射操作
 
 - **方法**: `POST`
 - **路径**: `/lcc/common_map/{lcc_id}`
-- **函数名**: `add_lcc_common_map_by_lcc`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**请求体**:
+- **工具名**: `add_lcc_common_map_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| Query | array[integer] | 是 | 查询 |
+| oneOf[1] | object | 是 | 查询 |
+| oneOf[1].Query | array[integer] | 是 | 查询 |
+| oneOf[1].Query[] | integer | 是 | 查询；格式：int32 |
+| oneOf[2] | object | 是 | 增加 |
+| oneOf[2].Update | array[array[integer]] | 是 | 增加 |
+| oneOf[2].Update[] | array[integer] | 是 | 增加 |
+| oneOf[2].Update[][] | integer | 是 | 增加；格式：int32 |
+| oneOf[3] | object | 是 |  |
+| oneOf[3].Update2 | array[array[integer]] | 是 |  |
+| oneOf[3].Update2[] | array[integer] | 是 |  |
+| oneOf[3].Update2[][] | integer | 是 | 格式：int32 |
+| oneOf[4] | object | 是 | 删除 |
+| oneOf[4].Delete | array[integer] | 是 | 删除 |
+| oneOf[4].Delete[] | integer | 是 | 删除；格式：int32 |
 
-### 23. 查询指定lcc的配置
+
+### 查询指定lcc的配置
 
 - **方法**: `GET`
 - **路径**: `/lcc/config/{lcc_id}`
-- **函数名**: `get_lcc_config_by_lcc`
+- **工具名**: `get_lcc_config_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-### 24. 保存指定lcc的配置
+### 保存指定lcc的配置
 
 - **方法**: `POST`
 - **路径**: `/lcc/config/{lcc_id}`
-- **函数名**: `add_lcc_config_by_lcc`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**请求体**:
+- **工具名**: `add_lcc_config_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| properties | object | 是 | 主要配置属性 |
-| properties2 | object | 是 | 次要配置属性 |
+| properties | object[string, string] | 是 | 主要配置属性；额外属性：string |
+| properties2 | object[string, string] | 是 | 次要配置属性；额外属性：string |
 
-### 25. 执行Lcc操作
+
+### 执行Lcc操作
 
 - **方法**: `POST`
 - **路径**: `/lcc/controls/{lcc_id}`
-- **函数名**: `add_lcc_controls_by_lcc`
+- **工具名**: `add_lcc_controls_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+- **请求体**:
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
+| 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
+| oneOf[1] | string | 是 | 强制退出；可选值：QuitForce |
+| oneOf[2] | string | 是 | 重启；可选值：Restart |
+| oneOf[3] | string | 是 | 重置；可选值：Reset |
+| oneOf[4] | string | 是 | 可选值：Recover |
+| oneOf[5] | object | 是 | 控制AOE启动，停止或更新 |
+| oneOf[5].AoeControl | object | 是 | 控制AOE启动，停止或更新 |
+| oneOf[5].AoeControl.AoeActions | array[AoeAction] | 是 | AOE指令列表 |
+| oneOf[5].AoeControl.AoeActions[] | oneOf[object{StartAoe} | object{StopAoe} | object{UpdateAoe} | object{UpdateAoeCsv}] | 是 | AOE指令对象；可选结构：object{StartAoe} | object{StopAoe} | object{UpdateAoe} | object{UpdateAoeCsv} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[1] | object | 是 | 开始AOE |
+| oneOf[5].AoeControl.AoeActions[].oneOf[1].StartAoe | integer | 是 | 开始AOE；格式：int64 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[2] | object | 是 | 停止AOE |
+| oneOf[5].AoeControl.AoeActions[].oneOf[2].StopAoe | integer | 是 | 停止AOE；格式：int64 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3] | object | 是 | 更新AOE |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe | object | 是 | 更新AOE |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions | array[ActionEdge] | 是 | 动作列表 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[] | object | 是 | 边对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action | oneOf[string | object{SetPoints} | object{SetPointsWithCheck} | object{SetPoints2} | object{SetPointsWithCheck2} | object{Solve} | object{Nlsolve} | object{Milp} | object{SimpleMilp} | object{Nlp}] | 是 | 动作定义；可选值：None；可选结构：string | object{SetPoints} | object{SetPointsWithCheck} | object{SetPoints2} | object{SetPointsWithCheck2} | object{Solve} | object{Nlsolve} | object{Milp} | object{SimpleMilp} | object{Nlp} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[1] | string | 是 | 无动作；可选值：None |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2] | object | 是 | 设点动作 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints | object | 是 | 设点动作 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_id | array[string] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v | array[Expr] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_id | array[string] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v | array[Expr] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3] | object | 是 | 设点动作 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck | object | 是 | 设点动作 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_id | array[string] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v | array[Expr] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_id | array[string] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v | array[Expr] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4] | object | 是 | 设点动作 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2 | object | 是 | 设点动作 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs | array[PointsToExp] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr | object | 是 | 表达式 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.analogs[].ids | array[string] | 是 | id列表 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes | array[PointsToExp] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr | object | 是 | 表达式 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[4].SetPoints2.discretes[].ids | array[string] | 是 | id列表 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5] | object | 是 | 设点动作 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2 | object | 是 | 设点动作 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs | array[PointsToExp] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr | object | 是 | 表达式 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].ids | array[string] | 是 | id列表 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes | array[PointsToExp] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr | object | 是 | 表达式 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].ids | array[string] | 是 | id列表 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6] | object | 是 | 求方程 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve | object | 是 | 求方程 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.a | object | 是 | A矩阵 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.a.m | integer | 是 | 行数 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.a.n | integer | 是 | 列数 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.a.v | array[array[any]] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b | array[Expr] | 是 | b向量 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init | array[Expr] | 是 | 变量初始值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[6].Solve.x_name | array[string] | 是 | 变量名称 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7] | object | 是 | 求非线性方程组 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve | object | 是 | 求非线性方程组 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f | array[Expr] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.parameters | object[string, string] | 是 | 额外属性：string |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init | array[Expr] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx | array[Expr] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[7].Nlsolve.x_name | array[string] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8] | object | 是 | 混合整数线性规划稀疏表示 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp | object | 是 | 混合整数线性规划稀疏表示 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.a | object | 是 | Ax >=/<= b |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.a.m | integer | 是 | 行数 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.a.n | integer | 是 | 列数 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.a.v | array[array[any]] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b | array[Expr] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.binary_int_float | array[integer] | 是 | 整数变量在x中的位置 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.binary_int_float[] | integer | 是 | 整数变量在x中的位置；格式：int32 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.c | array[array[any]] | 是 | min/max c^T*x |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.constraint_type | array[Operation] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.constraint_type[] | string | 是 | Mathematical operations.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.min_or_max | boolean | 是 | min: true, max: false |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.x_lower | array[array[any]] | 是 | 变量的下界约束：变量位置、约束表达式 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.x_name | array[string] | 是 | 变量名称 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[8].Milp.x_upper | array[array[any]] | 是 | 变量的上界约束：变量位置、约束表达式 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9] | object | 是 | 混合整数线性规划稠密表示 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp | object | 是 | 混合整数线性规划稠密表示 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a | object | 是 | Ax >=/<= b |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.m | integer | 是 | 行数 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.n | integer | 是 | 列数 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v | array[Expr] | 是 | 值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b | array[Expr] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.binary_int_float | array[integer] | 是 | 整数变量在x中的位置 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.binary_int_float[] | integer | 是 | 整数变量在x中的位置；格式：int32 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c | array[Expr] | 是 | min/max c^T*x |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.constraint_type | array[Operation] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.constraint_type[] | string | 是 | Mathematical operations.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.min_or_max | boolean | 是 | min: true, max: false |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.x_lower | array[array[any]] | 是 | 变量的下界约束：变量位置、约束表达式 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.x_name | array[string] | 是 | 变量名称 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[9].SimpleMilp.x_upper | array[array[any]] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10] | object | 是 | 非整数线性规划 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp | object | 是 | 非整数线性规划 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g | array[Expr] | 是 | 等式约束式 g(x) == b |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower | array[Expr] | 是 | 不等式约束式 g(x) <= b |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper | array[Expr] | 是 | 不等式约束式 g(x) >= b |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.min_or_max | boolean | 是 | min: true, max: false |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr | object | 是 | 目标函数表达式 min obj |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init | array[Expr] | 是 | 变量初始值x0 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower | array[Expr] | 是 | 整数变量在x中的位置 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_name | array[string] | 是 | 变量名称 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper | array[Expr] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[] | object | 是 | 表达式对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].aoe_id | integer | 是 | AOE id；格式：int64 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].failure_mode | string | 是 | action失败时的处理方式；可选值：Default、Ignore、StopAll、StopFailed |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].name | string | 是 | 动作名称 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].source_node | integer | 是 | 源节点；格式：int64 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.actions[].target_node | integer | 是 | 目标节点；格式：int64 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events | array[EventNode] | 是 | 节点列表 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[] | object | 是 | 节点对象 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].aoe_id | integer | 是 | AOE id；格式：int64 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr | object | 是 | 事件是否发生判断的bool表达式 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn | array[Token] | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[12] | object | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].id | integer | 是 | 节点id；格式：int64 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].name | string | 是 | 节点名 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].node_type | string | 是 | 节点类型；可选值：ConditionNode、SwitchNode、SwitchOfActionResult |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.events[].timeout | integer | 是 | 事件还未发生时等待超时时间；格式：int64 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.id | integer | 是 | aoe id；格式：int64 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.name | string | 是 | aoe名称 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.trigger_type | oneOf[object{SimpleRepeat} | object{TimeDrive} | string | object{EventRepeatMix} | object{EventTimeMix}] | 是 | 触发类型；可选值：EventDrive；可选结构：object{SimpleRepeat} | object{TimeDrive} | string | object{EventRepeatMix} | object{EventTimeMix} |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[1] | object | 是 | 简单固定周期触发 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[1].SimpleRepeat | object | 是 | 简单固定周期触发 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[1].SimpleRepeat.nanos | integer | 是 | 剩余纳秒；格式：int32 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[1].SimpleRepeat.secs | integer | 是 | 秒；格式：int64 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[2] | object | 是 | cron表达式 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[2].TimeDrive | string | 是 | cron表达式 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[3] | string | 是 | 事件驱动，AOE开始节点条件满足即触发；可选值：EventDrive |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[4] | object | 是 | 事件驱动 && 简单固定周期 联合 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[4].EventRepeatMix | object | 是 | 事件驱动 && 简单固定周期 联合 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[4].EventRepeatMix.nanos | integer | 是 | 剩余纳秒；格式：int32 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[4].EventRepeatMix.secs | integer | 是 | 秒；格式：int64 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[5] | object | 是 | 事件驱动 && cron表达式 联合 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.trigger_type.oneOf[5].EventTimeMix | string | 是 | 事件驱动 && cron表达式 联合 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[3].UpdateAoe.variables | array[array[any]] | 是 | 用户自定义的变量：变量名和表达式 |
+| oneOf[5].AoeControl.AoeActions[].oneOf[4] | object | 是 | 更新AOE（字节数组） |
+| oneOf[5].AoeControl.AoeActions[].oneOf[4].UpdateAoeCsv | array[integer] | 是 | 更新AOE（字节数组） |
+| oneOf[5].AoeControl.AoeActions[].oneOf[4].UpdateAoeCsv[] | integer | 是 | 更新AOE（字节数组）；格式：int32 |
+| oneOf[6] | object | 是 | 设置测点 |
+| oneOf[6].PointControl | object | 是 | 设置测点 |
+| oneOf[6].PointControl.analogs | array[SetFloatValue] | 是 |  |
+| oneOf[6].PointControl.analogs[] | object | 是 | 浮点型指令数据 |
+| oneOf[6].PointControl.analogs[].point_id | integer | 是 | 格式：int64 |
+| oneOf[6].PointControl.analogs[].sender_id | integer | 是 | 格式：int64 |
+| oneOf[6].PointControl.analogs[].timestamp | integer | 是 | 格式：int64 |
+| oneOf[6].PointControl.analogs[].yt_command | number | 是 | 格式：double |
+| oneOf[6].PointControl.discretes | array[SetIntValue] | 是 |  |
+| oneOf[6].PointControl.discretes[] | object | 是 | 整型指令数据 |
+| oneOf[6].PointControl.discretes[].point_id | integer | 是 | 格式：int64 |
+| oneOf[6].PointControl.discretes[].sender_id | integer | 是 | 格式：int64 |
+| oneOf[6].PointControl.discretes[].timestamp | integer | 是 | 格式：int64 |
+| oneOf[6].PointControl.discretes[].yk_command | integer | 是 | 格式：int64 |
 
-**请求体**:
 
-JSON对象
-
-### 26. 查询指定lcc的日志
+### 查询指定lcc的日志
 
 - **方法**: `GET`
 - **路径**: `/lcc/logs_bytes/{lcc_id}`
-- **函数名**: `get_lcc_logs_bytes_by_lcc`
+- **工具名**: `get_lcc_logs_bytes_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `is_query_size` (query, boolean, 可选): 是否限制文件大小；元信息：nullable=true
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| is_query_size | boolean | 否 | 是否限制文件大小 |
-
-### 27. 查询指定lcc的历史量测
+### 查询指定lcc的历史量测
 
 - **方法**: `GET`
 - **路径**: `/lcc/measures/{lcc_id}`
-- **函数名**: `get_lcc_measures_by_lcc`
+- **工具名**: `get_lcc_measures_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `id` (query, string, 可选): 测点id，多个id之间以,间隔；元信息：nullable=true
+  - `start` (query, integer, 可选): 开始时间, 13位时间戳；元信息：format=int64, nullable=true
+  - `end` (query, integer, 可选): 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end；元信息：format=int64, nullable=true
+  - `date` (query, string, 可选): 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准；元信息：nullable=true
+  - `source` (query, integer, 可选): 数据源；元信息：format=int32, nullable=true
+  - `last_only` (query, boolean, 可选): 是否查询只最新的数据；元信息：nullable=true
+  - `with_init` (query, boolean, 可选): 是否查询该天初始的数据；元信息：nullable=true
+  - `reverse_order` (query, boolean, 可选): 是否时间倒序查询；元信息：nullable=true
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 | 测点id，多个id之间以,间隔 |
-| start | integer | 否 | 开始时间, 13位时间戳 |
-| end | integer | 否 | 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end |
-| date | string | 否 | 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准 |
-| source | integer | 否 | 数据源 |
-| last_only | boolean | 否 | 是否查询只最新的数据 |
-| with_init | boolean | 否 | 是否查询该天初始的数据 |
-| reverse_order | boolean | 否 | 是否时间倒序查询 |
-
-### 28. 加载LCC的测点到base服务
+### 加载LCC的测点到base服务
 
 - **方法**: `POST`
 - **路径**: `/lcc/points/import_str/{lcc_id}`
-- **函数名**: `add_lcc_points_import_str_by_lcc`
+- **工具名**: `add_lcc_points_import_str_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+- **请求体**:
 
-**路径参数**:
+  - 无法解析请求体结构
 
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
 
-**请求体**:
-
-JSON对象
-
-### 29. 查询指定lcc的测点信息
+### 查询指定lcc的测点信息
 
 - **方法**: `GET`
 - **路径**: `/lcc/points/models/{lcc_id}`
-- **函数名**: `get_lcc_points_models_by_lcc`
+- **工具名**: `get_lcc_points_models_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `id` (query, string, 可选): 元信息：nullable=true
+  - `name` (query, string, 可选): 元信息：nullable=true
+  - `is_soe` (query, boolean, 可选): 元信息：nullable=true
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 |  |
-| name | string | 否 |  |
-| is_soe | boolean | 否 |  |
-
-### 30. 保存指定lcc的测点信息
+### 保存指定lcc的测点信息
 
 - **方法**: `POST`
 - **路径**: `/lcc/points/models/{lcc_id}`
-- **函数名**: `add_lcc_points_models_by_lcc`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**请求体**:
+- **工具名**: `add_lcc_points_models_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
+| [] | object | 是 | 测点对象 |
 | [].alarm_level1_expr | string | 是 | 告警级别1的表达式 |
 | [].alarm_level2_expr | string | 是 | 告警级别2的表达式 |
 | [].alias_id | string | 是 | 字符串id |
@@ -2629,430 +5483,680 @@ JSON对象
 | [].data_unit | string | 是 | 单位 |
 | [].desc | string | 是 | Description |
 | [].expression | string | 是 | 如果是计算点，这是表达式 |
-| [].init_value | integer | 是 | 默认值存储在8个字节，需要根据is_discrete来转换成具体的值 |
+| [].init_value | integer | 是 | 默认值存储在8个字节，需要根据is_discrete来转换成具体的值；格式：int64 |
 | [].inv_trans_expr | string | 是 | 逆变换公式 |
 | [].is_computing_point | boolean | 是 | 是否是计算点 |
 | [].is_discrete | boolean | 是 | 是否是离散量 |
 | [].is_realtime | boolean | 是 | 如是，则不判断是否"变化"，均上传 |
 | [].is_soe | boolean | 是 | 是否是soe点 |
-| [].lower_limit | number | 是 | 下限，用于坏数据辨识 |
-| [].point_id | integer | 是 | 唯一的id |
+| [].lower_limit | number | 是 | 下限，用于坏数据辨识；格式：double |
+| [].point_id | integer | 是 | 唯一的id；格式：int64 |
 | [].point_name | string | 是 | 测点名 |
 | [].trans_expr | string | 是 | 变换公式 |
-| [].upper_limit | number | 是 | 上限，用于坏数据辨识 |
+| [].upper_limit | number | 是 | 上限，用于坏数据辨识；格式：double |
 | [].zero_expr | string | 是 | 判断是否为0值的公式 |
 
-### 31. 删除指定lcc的测点
+
+### 删除指定lcc的测点
 
 - **方法**: `DELETE`
 - **路径**: `/lcc/points/models/{lcc_id}`
-- **函数名**: `delete_lcc_points_models_by_lcc`
+- **工具名**: `delete_lcc_points_models_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+- **请求体**:
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
+| 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
+| [] | integer | 是 | 格式：int64 |
 
-**请求体**:
 
-JSON对象
-
-### 32. 查询指定lcc运行中的AOE
+### 查询指定lcc运行中的AOE
 
 - **方法**: `GET`
 - **路径**: `/lcc/running_aoes/{lcc_id}`
-- **函数名**: `get_lcc_running_aoes_by_lcc`
+- **工具名**: `get_lcc_running_aoes_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-### 33. 查询指定lcc的SOE
+### 查询指定lcc的SOE
 
 - **方法**: `GET`
 - **路径**: `/lcc/soes/{lcc_id}`
-- **函数名**: `get_lcc_soes_by_lcc`
+- **工具名**: `get_lcc_soes_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `id` (query, string, 可选): 测点id，多个id之间以,间隔；元信息：nullable=true
+  - `start` (query, integer, 可选): 开始时间, 13位时间戳；元信息：format=int64, nullable=true
+  - `end` (query, integer, 可选): 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end；元信息：format=int64, nullable=true
+  - `date` (query, string, 可选): 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准；元信息：nullable=true
+  - `source` (query, integer, 可选): 数据源；元信息：format=int32, nullable=true
+  - `last_only` (query, boolean, 可选): 是否查询只最新的数据；元信息：nullable=true
+  - `with_init` (query, boolean, 可选): 是否查询该天初始的数据；元信息：nullable=true
+  - `reverse_order` (query, boolean, 可选): 是否时间倒序查询；元信息：nullable=true
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 | 测点id，多个id之间以,间隔 |
-| start | integer | 否 | 开始时间, 13位时间戳 |
-| end | integer | 否 | 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end |
-| date | string | 否 | 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准 |
-| source | integer | 否 | 数据源 |
-| last_only | boolean | 否 | 是否查询只最新的数据 |
-| with_init | boolean | 否 | 是否查询该天初始的数据 |
-| reverse_order | boolean | 否 | 是否时间倒序查询 |
-
-### 34. 查询指定lcc指定分组的标签名称及id列表
+### 查询指定lcc指定分组的标签名称及id列表
 
 - **方法**: `GET`
 - **路径**: `/lcc/tag_defines/{lcc_id}/{group}`
-- **函数名**: `get_lcc_tag_defines_by_lcc_by_group`
+- **工具名**: `get_lcc_tag_defines_by_lcc_by_group`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `group` (path, integer, 必填): 分组id；元信息：format=int32
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-| group | integer | 是 | 分组id |
-
-### 35. 更新指定lcc指定分组下标签名和测点数组关系
-
-- **方法**: `PUT`
-- **路径**: `/lcc/tags/{lcc_id}/{group}`
-- **函数名**: `update_lcc_tags_by_lcc_by_group`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-| group | integer | 是 | 分组id |
-
-**请求体**:
-
-JSON对象
-
-### 36. 查询指定lcc指定分组下标签id对应的测点数组
+### 查询指定lcc指定分组下标签id对应的测点数组
 
 - **方法**: `POST`
 - **路径**: `/lcc/tags/{lcc_id}/{group}`
-- **函数名**: `add_lcc_tags_by_lcc_by_group`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-| group | integer | 是 | 分组id |
-
-**请求体**:
-
-JSON对象
-
-### 37. 删除指定lcc指定分组下标签id和测点的关系
-
-- **方法**: `DELETE`
-- **路径**: `/lcc/tags/{lcc_id}/{group}`
-- **函数名**: `delete_lcc_tags_by_lcc_by_group`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-| group | integer | 是 | 分组id |
-
-**请求体**:
-
-JSON对象
-
-### 38. 查询指定lcc的通道信息
-
-- **方法**: `GET`
-- **路径**: `/lcc/transports/models/{lcc_id}`
-- **函数名**: `get_lcc_transports_models_by_lcc`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 | 通道id列表，以,间隔 |
-| transport_type | string | 否 | 通道类型 |
-
-### 39. 保存指定lcc的通道信息
-
-- **方法**: `POST`
-- **路径**: `/lcc/transports/models/{lcc_id}`
-- **函数名**: `add_lcc_transports_models_by_lcc`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-**请求体**:
+- **工具名**: `add_lcc_tags_by_lcc_by_group`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `group` (path, integer, 必填): 分组id；元信息：format=int32
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
-| [].MbcTcp | object | 是 | ModbusTcp客户端通道信息 |
-| [].MbcTcp.connections | array[MbConnection] | 是 | Modbus通道连接信息 |
-| [].MbcTcp.connections[] | object | 是 | Modbus通道连接信息 |
-| [].MbcTcp.connections[].coil_write_code | integer | 否 |  |
-| [].MbcTcp.connections[].default_polling_period_in_milli | integer | 是 |  |
-| [].MbcTcp.connections[].delay_between_requests | integer | 是 | 两条请求直接的间隔 |
-| [].MbcTcp.connections[].holding_write_code | integer | 否 |  |
-| [].MbcTcp.connections[].max_read_bit_count | integer | 是 |  |
-| [].MbcTcp.connections[].max_read_register_count | integer | 是 |  |
-| [].MbcTcp.connections[].max_write_bit_count | integer | 是 |  |
-| [].MbcTcp.connections[].max_write_register_count | integer | 是 |  |
-| [].MbcTcp.connections[].mb_data_configure | array[RegisterData] | 是 | register settings |
-| [].MbcTcp.connections[].mb_data_configure[] | object | 是 | register settings |
-| [].MbcTcp.connections[].mb_data_configure[].data_id | integer | 是 | 数据标识 |
-| [].MbcTcp.connections[].mb_data_configure[].point_ids | array[integer] | 是 | 对应的测点Id |
-| [].MbcTcp.connections[].mb_data_configure[].polling_period_in_milli | integer | 是 | 轮询周期，毫秒 |
-| [].MbcTcp.connections[].name | string | 是 |  |
-| [].MbcTcp.connections[].point_id | integer | 是 | 通道状态对应的测点号 |
-| [].MbcTcp.connections[].point_id_to_rd | object | 是 | key is point id, value is position of register data |
-| [].MbcTcp.connections[].polling_period_to_data | object | 是 | 轮询周期不同的数据, key is period in milli, value is position. |
-| [].MbcTcp.connections[].protocol_type | string | 是 | Modbus协议类型 |
-| [].MbcTcp.connections[].register_addr_to_rd | object | 是 | key:寄存器地址,value:setting中vec<RegisterData>的位置 |
-| [].MbcTcp.connections[].slave_id | integer | 是 |  |
-| [].MbcTcp.connections[].timeout_in_milli | integer | 是 | 超时设置 |
-| [].MbcTcp.id | integer | 是 | 通道id |
-| [].MbcTcp.name | string | 是 | 通道名称 |
-| [].MbcTcp.tcp_server | array[any] | 是 | 服务端的ip和port |
+| [] | integer | 是 | 格式：int32 |
 
-### 40. 删除指定lcc指定id的通道
+
+### 更新指定lcc指定分组下标签名和测点数组关系
+
+- **方法**: `PUT`
+- **路径**: `/lcc/tags/{lcc_id}/{group}`
+- **工具名**: `update_lcc_tags_by_lcc_by_group`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `group` (path, integer, 必填): 分组id；元信息：format=int32
+- **请求体**:
+
+  - 无法解析请求体结构
+
+
+### 删除指定lcc指定分组下标签id和测点的关系
+
+- **方法**: `DELETE`
+- **路径**: `/lcc/tags/{lcc_id}/{group}`
+- **工具名**: `delete_lcc_tags_by_lcc_by_group`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `group` (path, integer, 必填): 分组id；元信息：format=int32
+- **请求体**:
+
+  - 无法解析请求体结构
+
+
+### 查询指定lcc的通道信息
+
+- **方法**: `GET`
+- **路径**: `/lcc/transports/models/{lcc_id}`
+- **工具名**: `get_lcc_transports_models_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `id` (query, string, 可选): 通道id列表，以,间隔；元信息：nullable=true
+  - `transport_type` (query, string, 可选): 通道类型；元信息：oneOf=TransportType；可选结构：TransportType
+
+### 保存指定lcc的通道信息
+
+- **方法**: `POST`
+- **路径**: `/lcc/transports/models/{lcc_id}`
+- **工具名**: `add_lcc_transports_models_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| [] | oneOf[object{MbcTcp} | object{MbdTcp} | object{MbcRtu} | object{MbdRtu} | object{DLT645c} | object{Mqtt} | object{Iec104c} | object{Iec104d} | object{HYMqtt} | object{EtherCAT} | object{MemoryPosix} | object{MemorySystemV} | object{OpcuaClient} | object{OpcuaServer}] | 是 | 通道对象；可选结构：object{MbcTcp} | object{MbdTcp} | object{MbcRtu} | object{MbdRtu} | object{DLT645c} | object{Mqtt} | object{Iec104c} | object{Iec104d} | object{HYMqtt} | object{EtherCAT} | object{MemoryPosix} | object{MemorySystemV} | object{OpcuaClient} | object{OpcuaServer} |
+| [].oneOf[1] | object | 是 |  |
+| [].oneOf[1].MbcTcp | object | 是 | ModbusTcp客户端通道信息 |
+| [].oneOf[1].MbcTcp.connections | array[MbConnection] | 是 | Modbus通道连接信息 |
+| [].oneOf[1].MbcTcp.connections[] | object | 是 | Modbus通道连接信息 |
+| [].oneOf[1].MbcTcp.connections[].coil_write_code | integer | 否 | 格式：int32；允许空值 |
+| [].oneOf[1].MbcTcp.connections[].default_polling_period_in_milli | integer | 是 | 格式：int64 |
+| [].oneOf[1].MbcTcp.connections[].delay_between_requests | integer | 是 | 两条请求直接的间隔；格式：int64 |
+| [].oneOf[1].MbcTcp.connections[].holding_write_code | integer | 否 | 格式：int32；允许空值 |
+| [].oneOf[1].MbcTcp.connections[].max_read_bit_count | integer | 是 | 格式：int32 |
+| [].oneOf[1].MbcTcp.connections[].max_read_register_count | integer | 是 | 格式：int32 |
+| [].oneOf[1].MbcTcp.connections[].max_write_bit_count | integer | 是 | 格式：int32 |
+| [].oneOf[1].MbcTcp.connections[].max_write_register_count | integer | 是 | 格式：int32 |
+| [].oneOf[1].MbcTcp.connections[].mb_data_configure | array[RegisterData] | 是 | register settings |
+| [].oneOf[1].MbcTcp.connections[].mb_data_configure[] | object | 是 | Dlt645注册信息 |
+| [].oneOf[1].MbcTcp.connections[].mb_data_configure[].data_id | integer | 是 | 数据标识；格式：int32 |
+| [].oneOf[1].MbcTcp.connections[].mb_data_configure[].point_ids | array[integer] | 是 | 对应的测点Id |
+| [].oneOf[1].MbcTcp.connections[].mb_data_configure[].point_ids[] | integer | 是 | 对应的测点Id；格式：int64 |
+| [].oneOf[1].MbcTcp.connections[].mb_data_configure[].polling_period_in_milli | integer | 是 | 轮询周期，毫秒；格式：int64 |
+| [].oneOf[1].MbcTcp.connections[].name | string | 是 |  |
+| [].oneOf[1].MbcTcp.connections[].point_id | integer | 是 | 通道状态对应的测点号；格式：int64 |
+| [].oneOf[1].MbcTcp.connections[].point_id_to_rd | object[string, integer] | 是 | key is point id, value is position of register data；额外属性：integer |
+| [].oneOf[1].MbcTcp.connections[].polling_period_to_data | object[string, array[integer]] | 是 | 轮询周期不同的数据, key is period in milli, value is position.；额外属性：array[integer] |
+| [].oneOf[1].MbcTcp.connections[].protocol_type | string | 是 | 协议类型；可选值：ENCAP、XA、RTU |
+| [].oneOf[1].MbcTcp.connections[].register_addr_to_rd | object[string, integer] | 是 | key:寄存器地址,value:setting中vec<RegisterData>的位置；额外属性：integer |
+| [].oneOf[1].MbcTcp.connections[].slave_id | integer | 是 | 格式：int32 |
+| [].oneOf[1].MbcTcp.connections[].timeout_in_milli | integer | 是 | 超时设置；格式：int64 |
+| [].oneOf[1].MbcTcp.id | integer | 是 | 通道id；格式：int64 |
+| [].oneOf[1].MbcTcp.name | string | 是 | 通道名称 |
+| [].oneOf[1].MbcTcp.tcp_server | array[any] | 是 | 服务端的ip和port |
+| [].oneOf[2] | object | 是 |  |
+| [].oneOf[2].MbdTcp | object | 是 | ModbusTcp服务端通道信息 |
+| [].oneOf[2].MbdTcp.connections | array[array[any]] | 是 | 通道连接信息 |
+| [].oneOf[2].MbdTcp.id | integer | 是 | 通道id；格式：int64 |
+| [].oneOf[2].MbdTcp.name | string | 是 | 通道名称 |
+| [].oneOf[2].MbdTcp.tcp_server_port | integer | 是 | 服务的port；格式：int32 |
+| [].oneOf[3] | object | 是 |  |
+| [].oneOf[3].MbcRtu | object | 是 | ModbusRtu客户端通道信息 |
+| [].oneOf[3].MbcRtu.connections | array[MbConnection] | 是 | 通道连接信息 |
+| [].oneOf[3].MbcRtu.connections[] | object | 是 | Modbus通道连接信息 |
+| [].oneOf[3].MbcRtu.connections[].coil_write_code | integer | 否 | 格式：int32；允许空值 |
+| [].oneOf[3].MbcRtu.connections[].default_polling_period_in_milli | integer | 是 | 格式：int64 |
+| [].oneOf[3].MbcRtu.connections[].delay_between_requests | integer | 是 | 两条请求直接的间隔；格式：int64 |
+| [].oneOf[3].MbcRtu.connections[].holding_write_code | integer | 否 | 格式：int32；允许空值 |
+| [].oneOf[3].MbcRtu.connections[].max_read_bit_count | integer | 是 | 格式：int32 |
+| [].oneOf[3].MbcRtu.connections[].max_read_register_count | integer | 是 | 格式：int32 |
+| [].oneOf[3].MbcRtu.connections[].max_write_bit_count | integer | 是 | 格式：int32 |
+| [].oneOf[3].MbcRtu.connections[].max_write_register_count | integer | 是 | 格式：int32 |
+| [].oneOf[3].MbcRtu.connections[].mb_data_configure | array[RegisterData] | 是 | register settings |
+| [].oneOf[3].MbcRtu.connections[].mb_data_configure[] | object | 是 | Dlt645注册信息 |
+| [].oneOf[3].MbcRtu.connections[].mb_data_configure[].data_id | integer | 是 | 数据标识；格式：int32 |
+| [].oneOf[3].MbcRtu.connections[].mb_data_configure[].point_ids | array[integer] | 是 | 对应的测点Id |
+| [].oneOf[3].MbcRtu.connections[].mb_data_configure[].point_ids[] | integer | 是 | 对应的测点Id；格式：int64 |
+| [].oneOf[3].MbcRtu.connections[].mb_data_configure[].polling_period_in_milli | integer | 是 | 轮询周期，毫秒；格式：int64 |
+| [].oneOf[3].MbcRtu.connections[].name | string | 是 |  |
+| [].oneOf[3].MbcRtu.connections[].point_id | integer | 是 | 通道状态对应的测点号；格式：int64 |
+| [].oneOf[3].MbcRtu.connections[].point_id_to_rd | object[string, integer] | 是 | key is point id, value is position of register data；额外属性：integer |
+| [].oneOf[3].MbcRtu.connections[].polling_period_to_data | object[string, array[integer]] | 是 | 轮询周期不同的数据, key is period in milli, value is position.；额外属性：array[integer] |
+| [].oneOf[3].MbcRtu.connections[].protocol_type | string | 是 | 协议类型；可选值：ENCAP、XA、RTU |
+| [].oneOf[3].MbcRtu.connections[].register_addr_to_rd | object[string, integer] | 是 | key:寄存器地址,value:setting中vec<RegisterData>的位置；额外属性：integer |
+| [].oneOf[3].MbcRtu.connections[].slave_id | integer | 是 | 格式：int32 |
+| [].oneOf[3].MbcRtu.connections[].timeout_in_milli | integer | 是 | 超时设置；格式：int64 |
+| [].oneOf[3].MbcRtu.id | integer | 是 | 通道id；格式：int64 |
+| [].oneOf[3].MbcRtu.name | string | 是 | 通道名称 |
+| [].oneOf[3].MbcRtu.para | object | 是 | 串口参数 |
+| [].oneOf[3].MbcRtu.para.baud_rate | integer | 是 | 格式：int32 |
+| [].oneOf[3].MbcRtu.para.data_bits | integer | 是 | 格式：int32 |
+| [].oneOf[3].MbcRtu.para.delay_between_requests | integer | 是 | 格式：int64 |
+| [].oneOf[3].MbcRtu.para.file_path | string | 是 |  |
+| [].oneOf[3].MbcRtu.para.parity | string | 是 | 奇偶校验位；可选值：None、Odd、Even、Mark、Space |
+| [].oneOf[3].MbcRtu.para.stop_bits | integer | 是 | 格式：int32 |
+| [].oneOf[4] | object | 是 |  |
+| [].oneOf[4].MbdRtu | object | 是 | ModbusRtu服务端通道信息 |
+| [].oneOf[4].MbdRtu.connections | array[MbConnection] | 是 | 通道连接信息 |
+| [].oneOf[4].MbdRtu.connections[] | object | 是 | Modbus通道连接信息 |
+| [].oneOf[4].MbdRtu.connections[].coil_write_code | integer | 否 | 格式：int32；允许空值 |
+| [].oneOf[4].MbdRtu.connections[].default_polling_period_in_milli | integer | 是 | 格式：int64 |
+| [].oneOf[4].MbdRtu.connections[].delay_between_requests | integer | 是 | 两条请求直接的间隔；格式：int64 |
+| [].oneOf[4].MbdRtu.connections[].holding_write_code | integer | 否 | 格式：int32；允许空值 |
+| [].oneOf[4].MbdRtu.connections[].max_read_bit_count | integer | 是 | 格式：int32 |
+| [].oneOf[4].MbdRtu.connections[].max_read_register_count | integer | 是 | 格式：int32 |
+| [].oneOf[4].MbdRtu.connections[].max_write_bit_count | integer | 是 | 格式：int32 |
+| [].oneOf[4].MbdRtu.connections[].max_write_register_count | integer | 是 | 格式：int32 |
+| [].oneOf[4].MbdRtu.connections[].mb_data_configure | array[RegisterData] | 是 | register settings |
+| [].oneOf[4].MbdRtu.connections[].mb_data_configure[] | object | 是 | Dlt645注册信息 |
+| [].oneOf[4].MbdRtu.connections[].mb_data_configure[].data_id | integer | 是 | 数据标识；格式：int32 |
+| [].oneOf[4].MbdRtu.connections[].mb_data_configure[].point_ids | array[integer] | 是 | 对应的测点Id |
+| [].oneOf[4].MbdRtu.connections[].mb_data_configure[].point_ids[] | integer | 是 | 对应的测点Id；格式：int64 |
+| [].oneOf[4].MbdRtu.connections[].mb_data_configure[].polling_period_in_milli | integer | 是 | 轮询周期，毫秒；格式：int64 |
+| [].oneOf[4].MbdRtu.connections[].name | string | 是 |  |
+| [].oneOf[4].MbdRtu.connections[].point_id | integer | 是 | 通道状态对应的测点号；格式：int64 |
+| [].oneOf[4].MbdRtu.connections[].point_id_to_rd | object[string, integer] | 是 | key is point id, value is position of register data；额外属性：integer |
+| [].oneOf[4].MbdRtu.connections[].polling_period_to_data | object[string, array[integer]] | 是 | 轮询周期不同的数据, key is period in milli, value is position.；额外属性：array[integer] |
+| [].oneOf[4].MbdRtu.connections[].protocol_type | string | 是 | 协议类型；可选值：ENCAP、XA、RTU |
+| [].oneOf[4].MbdRtu.connections[].register_addr_to_rd | object[string, integer] | 是 | key:寄存器地址,value:setting中vec<RegisterData>的位置；额外属性：integer |
+| [].oneOf[4].MbdRtu.connections[].slave_id | integer | 是 | 格式：int32 |
+| [].oneOf[4].MbdRtu.connections[].timeout_in_milli | integer | 是 | 超时设置；格式：int64 |
+| [].oneOf[4].MbdRtu.id | integer | 是 | 通道id；格式：int64 |
+| [].oneOf[4].MbdRtu.name | string | 是 | 通道名称 |
+| [].oneOf[4].MbdRtu.para | object | 是 | 串口参数 |
+| [].oneOf[4].MbdRtu.para.baud_rate | integer | 是 | 格式：int32 |
+| [].oneOf[4].MbdRtu.para.data_bits | integer | 是 | 格式：int32 |
+| [].oneOf[4].MbdRtu.para.delay_between_requests | integer | 是 | 格式：int64 |
+| [].oneOf[4].MbdRtu.para.file_path | string | 是 |  |
+| [].oneOf[4].MbdRtu.para.parity | string | 是 | 奇偶校验位；可选值：None、Odd、Even、Mark、Space |
+| [].oneOf[4].MbdRtu.para.stop_bits | integer | 是 | 格式：int32 |
+| [].oneOf[5] | object | 是 |  |
+| [].oneOf[5].DLT645c | object | 是 | Dlt645客户端通道信息 |
+| [].oneOf[5].DLT645c.connections | array[Dlt645Connection] | 是 | 通道连接信息 |
+| [].oneOf[5].DLT645c.connections[] | object | 是 | Dlt645通道连接信息 |
+| [].oneOf[5].DLT645c.connections[].data_configure | array[RegisterData] | 是 | register settings |
+| [].oneOf[5].DLT645c.connections[].data_configure[] | object | 是 | Dlt645注册信息 |
+| [].oneOf[5].DLT645c.connections[].data_configure[].data_id | integer | 是 | 数据标识；格式：int32 |
+| [].oneOf[5].DLT645c.connections[].data_configure[].point_ids | array[integer] | 是 | 对应的测点Id |
+| [].oneOf[5].DLT645c.connections[].data_configure[].point_ids[] | integer | 是 | 对应的测点Id；格式：int64 |
+| [].oneOf[5].DLT645c.connections[].data_configure[].polling_period_in_milli | integer | 是 | 轮询周期，毫秒；格式：int64 |
+| [].oneOf[5].DLT645c.connections[].data_id_to_rd | object[string, integer] | 是 | key:寄存器地址,value:setting中vec<RegisterData>的位置；额外属性：integer |
+| [].oneOf[5].DLT645c.connections[].default_polling_period_in_milli | integer | 是 | 默认的轮询周期；格式：int64 |
+| [].oneOf[5].DLT645c.connections[].name | string | 是 | 连接名称 |
+| [].oneOf[5].DLT645c.connections[].point_id | integer | 是 | 通道状态对应的测点号；格式：int64 |
+| [].oneOf[5].DLT645c.connections[].point_id_to_rd | object[string, integer] | 是 | key is point id, value is position of register data；额外属性：integer |
+| [].oneOf[5].DLT645c.connections[].polling_period_to_data | object[string, array[integer]] | 是 | 轮询周期不同的数据, key is period in milli, value is position.；额外属性：array[integer] |
+| [].oneOf[5].DLT645c.connections[].slave_id | integer | 是 | 格式：int64 |
+| [].oneOf[5].DLT645c.connections[].timeout_in_milli | integer | 是 | 超时设置；格式：int64 |
+| [].oneOf[5].DLT645c.id | integer | 是 | 通道id；格式：int64 |
+| [].oneOf[5].DLT645c.name | string | 是 | 通道名称 |
+| [].oneOf[5].DLT645c.para | oneOf[object{Serial} | object{Socket}] | 是 | 参数；可选结构：object{Serial} | object{Socket} |
+| [].oneOf[5].DLT645c.para.oneOf[1] | object | 是 |  |
+| [].oneOf[5].DLT645c.para.oneOf[1].Serial | object | 是 | 串口通道参数 |
+| [].oneOf[5].DLT645c.para.oneOf[1].Serial.baud_rate | integer | 是 | 格式：int32 |
+| [].oneOf[5].DLT645c.para.oneOf[1].Serial.data_bits | integer | 是 | 格式：int32 |
+| [].oneOf[5].DLT645c.para.oneOf[1].Serial.delay_between_requests | integer | 是 | 格式：int64 |
+| [].oneOf[5].DLT645c.para.oneOf[1].Serial.file_path | string | 是 |  |
+| [].oneOf[5].DLT645c.para.oneOf[1].Serial.parity | string | 是 | 奇偶校验位；可选值：None、Odd、Even、Mark、Space |
+| [].oneOf[5].DLT645c.para.oneOf[1].Serial.stop_bits | integer | 是 | 格式：int32 |
+| [].oneOf[5].DLT645c.para.oneOf[2] | object | 是 |  |
+| [].oneOf[5].DLT645c.para.oneOf[2].Socket | array[object] | 是 |  |
+| [].oneOf[6] | object | 是 |  |
+| [].oneOf[6].Mqtt | object | 是 | Mqtt通道信息 |
+| [].oneOf[6].Mqtt.array_filter | string | 否 | 总的提取器，有些情况测量数据作为一个数组放在json中；允许空值 |
+| [].oneOf[6].Mqtt.filter_keys | array[array[string]] | 否 | json格式过滤器；允许空值 |
+| [].oneOf[6].Mqtt.filter_values | array[array[string]] | 否 | 允许空值 |
+| [].oneOf[6].Mqtt.filter_values[] | array[string] | 是 | 允许空值 |
+| [].oneOf[6].Mqtt.id | integer | 是 | 通道id；格式：int64 |
+| [].oneOf[6].Mqtt.is_json | boolean | 是 | 编码格式，默认是protobuf |
+| [].oneOf[6].Mqtt.is_transfer | boolean | 是 | 是否转发通道 |
+| [].oneOf[6].Mqtt.json_tags | object[string, object[string, integer]] | 否 | json测点对应的数据标识, key是过滤器对应Array的json字符串，value是标识以及测点的索引；允许空值；额外属性：object[string, integer] |
+| [].oneOf[6].Mqtt.json_write_tag | object[string, string] | 否 | json写测点模板；允许空值；额外属性：string |
+| [].oneOf[6].Mqtt.json_write_template | object[string, string] | 否 | json写测点模板；允许空值；额外属性：string |
+| [].oneOf[6].Mqtt.keep_alive | integer | 否 | 心跳时间；格式：int32；允许空值 |
+| [].oneOf[6].Mqtt.mqtt_broker | array[any] | 是 | 服务端的ip和por |
+| [].oneOf[6].Mqtt.name | string | 是 | 通道名称 |
+| [].oneOf[6].Mqtt.point_id | integer | 是 | 通道状态对应的测点号；格式：int64 |
+| [].oneOf[6].Mqtt.point_ids | array[array[any]] | 是 | 通过mqtt读写的测点 |
+| [].oneOf[6].Mqtt.read_topic | string | 是 | 读测点的主题 |
+| [].oneOf[6].Mqtt.user_name | string | 否 | 用户名，可选；允许空值 |
+| [].oneOf[6].Mqtt.user_password | string | 否 | 用户密码，可选；允许空值 |
+| [].oneOf[6].Mqtt.write_topic | string | 是 | 写测点的主题 |
+| [].oneOf[7] | object | 是 |  |
+| [].oneOf[7].Iec104c | object | 是 | Iec104客户端通道信息 |
+| [].oneOf[7].Iec104c.connection | object | 是 | 连接信息 |
+| [].oneOf[7].Iec104c.connection.call_counter_time | integer | 否 | 点度量总召时间间隔；格式：int64；允许空值 |
+| [].oneOf[7].Iec104c.connection.call_time | integer | 否 | 总召时间间隔；格式：int64；允许空值 |
+| [].oneOf[7].Iec104c.connection.common_address | integer | 是 | 公共地址；格式：int32 |
+| [].oneOf[7].Iec104c.connection.common_address_field_length | integer | 是 | 公共地址字节个数；格式：int32 |
+| [].oneOf[7].Iec104c.connection.cot_field_length | integer | 是 | 传输原因字节个数；格式：int32 |
+| [].oneOf[7].Iec104c.connection.data_configure | array[Iec104Point] | 是 | register settings |
+| [].oneOf[7].Iec104c.connection.data_configure[] | object | 是 | Iec104测点信息 |
+| [].oneOf[7].Iec104c.connection.data_configure[].control_ioa | integer | 否 | 控制点地址，若进行配置控制点地址，则说明该点可写；格式：int32；允许空值 |
+| [].oneOf[7].Iec104c.connection.data_configure[].ioa | integer | 是 | 协议地址；格式：int32 |
+| [].oneOf[7].Iec104c.connection.data_configure[].is_yx | boolean | 是 | 是否是遥信量 |
+| [].oneOf[7].Iec104c.connection.data_configure[].point_id | integer | 是 | 对应的测点Id；格式：int64 |
+| [].oneOf[7].Iec104c.connection.direct_yk | boolean | 否 | 遥控遥调是否为直控，默认为false |
+| [].oneOf[7].Iec104c.connection.direct_yt | boolean | 否 |  |
+| [].oneOf[7].Iec104c.connection.extension_config | array[array[any]] | 否 | 扩展配置 |
+| [].oneOf[7].Iec104c.connection.ioa_field_length | integer | 是 | 信息体地址字节个数；格式：int32 |
+| [].oneOf[7].Iec104c.connection.ioa_to_pos | object[string, integer] | 是 | key:Point地址,value:data_configure中的位置；额外属性：integer |
+| [].oneOf[7].Iec104c.connection.is_client | boolean | 是 | 是否为客户端 |
+| [].oneOf[7].Iec104c.connection.is_control_with_time | boolean | 是 | 控制方向是否带时标 |
+| [].oneOf[7].Iec104c.connection.max_idle_time | integer | 是 | t3；格式：int64 |
+| [].oneOf[7].Iec104c.connection.max_time_no_ack_received | integer | 是 | t1；格式：int64 |
+| [].oneOf[7].Iec104c.connection.max_time_no_ack_sent | integer | 是 | t2；格式：int64 |
+| [].oneOf[7].Iec104c.connection.max_unconfirmed_apdus_received | integer | 是 | w，接收方收到w个I格式报文后发送确认；格式：int32 |
+| [].oneOf[7].Iec104c.connection.max_unconfirmed_apdus_sent | integer | 是 | k，发送方发送k条连续的未被确认的I格式报文，停止发送；格式：int32 |
+| [].oneOf[7].Iec104c.connection.name | string | 是 | 连接名称 |
+| [].oneOf[7].Iec104c.connection.originator_address | integer | 是 | 源发地址；格式：int32 |
+| [].oneOf[7].Iec104c.connection.point_id | integer | 是 | 通道状态对应的测点号；格式：int64 |
+| [].oneOf[7].Iec104c.connection.point_id_to_ioa | object[string, integer] | 是 | key is point id, value is information object address；额外属性：integer |
+| [].oneOf[7].Iec104c.id | integer | 是 | 通道id；格式：int64 |
+| [].oneOf[7].Iec104c.name | string | 是 | 通道名称 |
+| [].oneOf[7].Iec104c.tcp_server | array[any] | 是 | 服务端的ip和port |
+| [].oneOf[7].Iec104c.yc_data_type | integer | 否 | 遥测点号的数据类型；格式：int32 |
+| [].oneOf[7].Iec104c.yx_data_type | integer | 否 | 遥信点号的数据类型；格式：int32 |
+| [].oneOf[8] | object | 是 |  |
+| [].oneOf[8].Iec104d | object | 是 | Iec104服务端通道信息 |
+| [].oneOf[8].Iec104d.connections | array[array[any]] | 是 | 连接信息 |
+| [].oneOf[8].Iec104d.id | integer | 是 | 通道id；格式：int64 |
+| [].oneOf[8].Iec104d.name | string | 是 | 通道名称 |
+| [].oneOf[8].Iec104d.tcp_server_port | integer | 是 | 服务的port；格式：int32 |
+| [].oneOf[8].Iec104d.yc_data_type | integer | 是 | 遥测点号的数据类型；格式：int32 |
+| [].oneOf[8].Iec104d.yx_data_type | integer | 是 | 遥信点号的数据类型；格式：int32 |
+| [].oneOf[9] | object | 是 |  |
+| [].oneOf[9].HYMqtt | object | 是 | 华云Mqtt通道信息 |
+| [].oneOf[9].HYMqtt.app_name | string | 是 | APP的名称，用于生成topic |
+| [].oneOf[9].HYMqtt.data_configure | array[HYPoint] | 是 | 测点列表 |
+| [].oneOf[9].HYMqtt.data_configure[] | object | 是 | 华云-台区智能融合终端测点 |
+| [].oneOf[9].HYMqtt.data_configure[].device_id | integer | 是 | 测点归属的设备序号；格式：int32 |
+| [].oneOf[9].HYMqtt.data_configure[].not_realtime | boolean | 是 | 暂时无用 |
+| [].oneOf[9].HYMqtt.data_configure[].point_id | integer | 是 | 对应的测点Id；格式：int64 |
+| [].oneOf[9].HYMqtt.data_configure[].point_info | object | 是 | 测点信息 |
+| [].oneOf[9].HYMqtt.data_configure[].point_info.deadzone | string | 是 |  |
+| [].oneOf[9].HYMqtt.data_configure[].point_info.isReport | string | 是 |  |
+| [].oneOf[9].HYMqtt.data_configure[].point_info.name | string | 是 |  |
+| [].oneOf[9].HYMqtt.data_configure[].point_info.ratio | string | 是 |  |
+| [].oneOf[9].HYMqtt.data_configure[].point_info.type | string | 是 |  |
+| [].oneOf[9].HYMqtt.data_configure[].point_info.unit | string | 是 |  |
+| [].oneOf[9].HYMqtt.data_configure[].point_info.userdefine | string | 是 | 名字不能改！！！ |
+| [].oneOf[9].HYMqtt.device_configure | object[string, HYDevice] | 是 | 设备key is 设备序号, value is (dev,设备的信息)；额外属性：HYDevice |
+| [].oneOf[9].HYMqtt.id | integer | 是 | 通道id；格式：int64 |
+| [].oneOf[9].HYMqtt.is_new | boolean | 是 | 版本，false是配电物联2020版本，true是2021版本，该参数会导致topic不同 |
+| [].oneOf[9].HYMqtt.is_poll | boolean | 是 |  |
+| [].oneOf[9].HYMqtt.model_to_pos | object[string, array[integer]] | 是 | 模型列表key is model, value is 测点索引；额外属性：array[integer] |
+| [].oneOf[9].HYMqtt.mqtt_broker | array[any] | 是 | 服务端的ip和por |
+| [].oneOf[9].HYMqtt.name | string | 是 | 通道名称 |
+| [].oneOf[9].HYMqtt.point_id | integer | 是 | 通道状态对应的测点号；格式：int64 |
+| [].oneOf[9].HYMqtt.point_id_to_pos | object[string, integer] | 是 | key is point id, value is information object address(data_configure的索引)；额外属性：integer |
+| [].oneOf[9].HYMqtt.poll_time | integer | 是 | 轮询周期，单位毫秒；格式：int64 |
+| [].oneOf[9].HYMqtt.read_topic | string | 是 | 读测点的主题 |
+| [].oneOf[9].HYMqtt.user_name | string | 否 | 用户名，可选；允许空值 |
+| [].oneOf[9].HYMqtt.user_password | string | 否 | 用户密码，可选；允许空值 |
+| [].oneOf[9].HYMqtt.write_topic | string | 是 | 写测点的主题 |
+| [].oneOf[10] | object | 是 |  |
+| [].oneOf[10].EtherCAT | object | 是 | EtherCAT通道信息 |
+| [].oneOf[10].EtherCAT.connections | array[EcConnection] | 是 | 连接信息 |
+| [].oneOf[10].EtherCAT.connections[] | object | 是 | EtherCAT通道连接信息 |
+| [].oneOf[10].EtherCAT.connections[].cycle_time_in_micro | integer | 是 | 格式：int64 |
+| [].oneOf[10].EtherCAT.connections[].data | array[PdiData] | 是 |  |
+| [].oneOf[10].EtherCAT.connections[].data[] | object | 是 |  |
+| [].oneOf[10].EtherCAT.connections[].data[].data_type | string | 是 | 数据类型；可选值：Binary、OneByteIntSigned、OneByteIntSignedLower、OneByteIntSignedUpper、OneByteIntUnsigned、OneByteIntUnsignedLower、OneByteIntUnsignedUpper、TwoByteIntUnsigned、TwoByteIntUnsignedSwapped、TwoByteIntSigned、TwoByteIntSignedSwapped、TwoByteBcd、FourByteIntUnsigned、FourByteIntSigned、FourByteIntUnsignedSwapped、FourByteIntSignedSwapped、FourByteIntUnsignedSwappedSwapped、FourByteIntSignedSwappedSwapped、FourByteFloat、FourByteFloatSwapped、FourByteFloatSwappedSwapped、FourByteBcd、FourByteBcdSwapped、FourByteMod10k、FourByteMod10kSwapped、SixByteMod10k、SixByteMod10kSwapped、EightByteIntUnsigned、EightByteIntSigned、EightByteIntUnsignedSwapped、EightByteIntSignedSwapped、EightByteIntUnsignedSwappedSwapped、EightByteIntSignedSwappedSwapped、EightByteFloat、EightByteFloatSwapped、EightByteFloatSwappedSwapped、EightByteMod10kSwapped、EightByteMod10k |
+| [].oneOf[10].EtherCAT.connections[].data[].from | integer | 是 | 格式：int32 |
+| [].oneOf[10].EtherCAT.connections[].data[].is_writable | boolean | 是 | 是否可写 |
+| [].oneOf[10].EtherCAT.connections[].data[].point_id | integer | 是 | 对应的测点Id；格式：int64 |
+| [].oneOf[10].EtherCAT.connections[].dc_sync | boolean | 是 | is DC sync |
+| [].oneOf[10].EtherCAT.connections[].index | integer | 是 |  |
+| [].oneOf[10].EtherCAT.connections[].module_name | string | 是 |  |
+| [].oneOf[10].EtherCAT.connections[].name | string | 是 |  |
+| [].oneOf[10].EtherCAT.connections[].point_id | integer | 是 | 格式：int64 |
+| [].oneOf[10].EtherCAT.connections[].point_to_pos | object[string, integer] | 是 | 额外属性：integer |
+| [].oneOf[10].EtherCAT.connections[].watchdog_multi | integer | 否 | defaukt to 2498；格式：int32；允许空值 |
+| [].oneOf[10].EtherCAT.connections[].watchdog_pdi | integer | 否 | 1/25M*(multi_watchdog+2)*pdi_watchdog；格式：int32；允许空值 |
+| [].oneOf[10].EtherCAT.connections[].watchdog_sm | integer | 否 | 1/25M*(multi_watchdog+2)*sm_watchdog, defaukt to 1000；格式：int32；允许空值 |
+| [].oneOf[10].EtherCAT.eth | string | 是 |  |
+| [].oneOf[10].EtherCAT.id | integer | 是 | 通道id；格式：int64 |
+| [].oneOf[10].EtherCAT.name | string | 是 | 通道名称 |
+| [].oneOf[11] | object | 是 |  |
+| [].oneOf[11].MemoryPosix | object | 是 | Posix内存通道 |
+| [].oneOf[11].MemoryPosix.connections | array[MemConnection] | 是 | 连接信息 |
+| [].oneOf[11].MemoryPosix.connections[] | object | 是 | 内存通道连接信息 |
+| [].oneOf[11].MemoryPosix.connections[].base_addr | integer | 是 |  |
+| [].oneOf[11].MemoryPosix.connections[].data | array[MemData] | 是 |  |
+| [].oneOf[11].MemoryPosix.connections[].data[] | object | 是 |  |
+| [].oneOf[11].MemoryPosix.connections[].data[].data_type | string | 是 | 数据类型；可选值：Binary、OneByteIntSigned、OneByteIntSignedLower、OneByteIntSignedUpper、OneByteIntUnsigned、OneByteIntUnsignedLower、OneByteIntUnsignedUpper、TwoByteIntUnsigned、TwoByteIntUnsignedSwapped、TwoByteIntSigned、TwoByteIntSignedSwapped、TwoByteBcd、FourByteIntUnsigned、FourByteIntSigned、FourByteIntUnsignedSwapped、FourByteIntSignedSwapped、FourByteIntUnsignedSwappedSwapped、FourByteIntSignedSwappedSwapped、FourByteFloat、FourByteFloatSwapped、FourByteFloatSwappedSwapped、FourByteBcd、FourByteBcdSwapped、FourByteMod10k、FourByteMod10kSwapped、SixByteMod10k、SixByteMod10kSwapped、EightByteIntUnsigned、EightByteIntSigned、EightByteIntUnsignedSwapped、EightByteIntSignedSwapped、EightByteIntUnsignedSwappedSwapped、EightByteIntSignedSwappedSwapped、EightByteFloat、EightByteFloatSwapped、EightByteFloatSwappedSwapped、EightByteMod10kSwapped、EightByteMod10k |
+| [].oneOf[11].MemoryPosix.connections[].data[].from | integer | 是 |  |
+| [].oneOf[11].MemoryPosix.connections[].data[].is_writable | boolean | 是 |  |
+| [].oneOf[11].MemoryPosix.connections[].data[].point_id | integer | 是 | 对应的测点Id；格式：int64 |
+| [].oneOf[11].MemoryPosix.connections[].data[].polling_period_in_milli | integer | 是 | 格式：int64 |
+| [].oneOf[11].MemoryPosix.connections[].default_polling_period_in_milli | integer | 是 | 格式：int64 |
+| [].oneOf[11].MemoryPosix.connections[].lock_method | oneOf[string | object{Mutex}] | 是 | 可选值：None、Semaphore；可选结构：string | object{Mutex} |
+| [].oneOf[11].MemoryPosix.connections[].lock_method.oneOf[1] | string | 是 | 可选值：None |
+| [].oneOf[11].MemoryPosix.connections[].lock_method.oneOf[2] | object | 是 |  |
+| [].oneOf[11].MemoryPosix.connections[].lock_method.oneOf[2].Mutex | integer | 是 |  |
+| [].oneOf[11].MemoryPosix.connections[].lock_method.oneOf[3] | string | 是 | 可选值：Semaphore |
+| [].oneOf[11].MemoryPosix.connections[].mem_addr_to_pos | object[string, integer] | 是 | key:寄存器地址,value:setting中vec<MemData>的位置；额外属性：integer |
+| [].oneOf[11].MemoryPosix.connections[].name | string | 是 |  |
+| [].oneOf[11].MemoryPosix.connections[].point_to_pos | object[string, integer] | 是 | 额外属性：integer |
+| [].oneOf[11].MemoryPosix.connections[].polling_period_to_data | object[string, array[integer]] | 是 | 轮询周期不同的数据, key is period in milli, value is position.；额外属性：array[integer] |
+| [].oneOf[11].MemoryPosix.connections[].total_size | integer | 否 | 取决于计算机位数，如果溢出，应该报错。；允许空值 |
+| [].oneOf[11].MemoryPosix.id | integer | 是 | 通道id；格式：int64 |
+| [].oneOf[11].MemoryPosix.is_transfer | boolean | 是 |  |
+| [].oneOf[11].MemoryPosix.name | string | 是 | 通道名称 |
+| [].oneOf[11].MemoryPosix.path | string | 否 | 允许空值 |
+| [].oneOf[12] | object | 是 |  |
+| [].oneOf[12].MemorySystemV | object | 是 | SystemV内存通道 |
+| [].oneOf[12].MemorySystemV.connection | object | 是 | 内存通道连接信息 |
+| [].oneOf[12].MemorySystemV.connection.base_addr | integer | 是 |  |
+| [].oneOf[12].MemorySystemV.connection.data | array[MemData] | 是 |  |
+| [].oneOf[12].MemorySystemV.connection.data[] | object | 是 |  |
+| [].oneOf[12].MemorySystemV.connection.data[].data_type | string | 是 | 数据类型；可选值：Binary、OneByteIntSigned、OneByteIntSignedLower、OneByteIntSignedUpper、OneByteIntUnsigned、OneByteIntUnsignedLower、OneByteIntUnsignedUpper、TwoByteIntUnsigned、TwoByteIntUnsignedSwapped、TwoByteIntSigned、TwoByteIntSignedSwapped、TwoByteBcd、FourByteIntUnsigned、FourByteIntSigned、FourByteIntUnsignedSwapped、FourByteIntSignedSwapped、FourByteIntUnsignedSwappedSwapped、FourByteIntSignedSwappedSwapped、FourByteFloat、FourByteFloatSwapped、FourByteFloatSwappedSwapped、FourByteBcd、FourByteBcdSwapped、FourByteMod10k、FourByteMod10kSwapped、SixByteMod10k、SixByteMod10kSwapped、EightByteIntUnsigned、EightByteIntSigned、EightByteIntUnsignedSwapped、EightByteIntSignedSwapped、EightByteIntUnsignedSwappedSwapped、EightByteIntSignedSwappedSwapped、EightByteFloat、EightByteFloatSwapped、EightByteFloatSwappedSwapped、EightByteMod10kSwapped、EightByteMod10k |
+| [].oneOf[12].MemorySystemV.connection.data[].from | integer | 是 |  |
+| [].oneOf[12].MemorySystemV.connection.data[].is_writable | boolean | 是 |  |
+| [].oneOf[12].MemorySystemV.connection.data[].point_id | integer | 是 | 对应的测点Id；格式：int64 |
+| [].oneOf[12].MemorySystemV.connection.data[].polling_period_in_milli | integer | 是 | 格式：int64 |
+| [].oneOf[12].MemorySystemV.connection.default_polling_period_in_milli | integer | 是 | 格式：int64 |
+| [].oneOf[12].MemorySystemV.connection.lock_method | oneOf[string | object{Mutex}] | 是 | 可选值：None、Semaphore；可选结构：string | object{Mutex} |
+| [].oneOf[12].MemorySystemV.connection.lock_method.oneOf[1] | string | 是 | 可选值：None |
+| [].oneOf[12].MemorySystemV.connection.lock_method.oneOf[2] | object | 是 |  |
+| [].oneOf[12].MemorySystemV.connection.lock_method.oneOf[2].Mutex | integer | 是 |  |
+| [].oneOf[12].MemorySystemV.connection.lock_method.oneOf[3] | string | 是 | 可选值：Semaphore |
+| [].oneOf[12].MemorySystemV.connection.mem_addr_to_pos | object[string, integer] | 是 | key:寄存器地址,value:setting中vec<MemData>的位置；额外属性：integer |
+| [].oneOf[12].MemorySystemV.connection.name | string | 是 |  |
+| [].oneOf[12].MemorySystemV.connection.point_to_pos | object[string, integer] | 是 | 额外属性：integer |
+| [].oneOf[12].MemorySystemV.connection.polling_period_to_data | object[string, array[integer]] | 是 | 轮询周期不同的数据, key is period in milli, value is position.；额外属性：array[integer] |
+| [].oneOf[12].MemorySystemV.connection.total_size | integer | 否 | 取决于计算机位数，如果溢出，应该报错。；允许空值 |
+| [].oneOf[12].MemorySystemV.id | integer | 是 | 通道id；格式：int64 |
+| [].oneOf[12].MemorySystemV.identifier | integer | 是 | 格式：int32 |
+| [].oneOf[12].MemorySystemV.is_transfer | boolean | 是 |  |
+| [].oneOf[12].MemorySystemV.name | string | 是 | 通道名称 |
+| [].oneOf[12].MemorySystemV.path | string | 是 |  |
+| [].oneOf[13] | object | 是 |  |
+| [].oneOf[13].OpcuaClient | object | 是 | Opcua客户端通道信息 |
+| [].oneOf[13].OpcuaClient.certificate | array[integer] | 否 | certificate；允许空值 |
+| [].oneOf[13].OpcuaClient.certificate[] | integer | 是 | certificate；格式：int32 |
+| [].oneOf[13].OpcuaClient.id | integer | 是 | 通道id；格式：int64 |
+| [].oneOf[13].OpcuaClient.is_writable | array[boolean] | 是 |  |
+| [].oneOf[13].OpcuaClient.name | string | 是 | 通道名称 |
+| [].oneOf[13].OpcuaClient.node_ids | array[NodeInfo] | 是 | corresponding node ids in opc ua server |
+| [].oneOf[13].OpcuaClient.node_ids[] | object | 是 | corresponding node ids in opc ua server |
+| [].oneOf[13].OpcuaClient.node_ids[].node_id | oneOf[object{Num} | object{Str}] | 是 | 可选结构：object{Num} | object{Str} |
+| [].oneOf[13].OpcuaClient.node_ids[].node_id.oneOf[1] | object | 是 |  |
+| [].oneOf[13].OpcuaClient.node_ids[].node_id.oneOf[1].Num | integer | 是 | 格式：int32 |
+| [].oneOf[13].OpcuaClient.node_ids[].node_id.oneOf[2] | object | 是 |  |
+| [].oneOf[13].OpcuaClient.node_ids[].node_id.oneOf[2].Str | string | 是 |  |
+| [].oneOf[13].OpcuaClient.node_ids[].node_ns | integer | 是 | 格式：int32 |
+| [].oneOf[13].OpcuaClient.point_id | integer | 是 | 通道状态对应的测点号；格式：int64 |
+| [].oneOf[13].OpcuaClient.point_ids | array[array[any]] | 是 | 通过opcua读写的测点 |
+| [].oneOf[13].OpcuaClient.poll_period | array[integer] | 是 |  |
+| [].oneOf[13].OpcuaClient.poll_period[] | integer | 是 | 格式：int64 |
+| [].oneOf[13].OpcuaClient.private_key | array[integer] | 否 | private_key；允许空值 |
+| [].oneOf[13].OpcuaClient.private_key[] | integer | 是 | private_key；格式：int32 |
+| [].oneOf[13].OpcuaClient.server | array[any] | 是 | 服务端的ip和port |
+| [].oneOf[13].OpcuaClient.sub_properties | object[string, string] | 是 | subscribe properties；额外属性：string |
+| [].oneOf[13].OpcuaClient.user_name | string | 否 | 用户名，可选；允许空值 |
+| [].oneOf[13].OpcuaClient.user_password | string | 否 | 用户密码，可选；允许空值 |
+| [].oneOf[14] | object | 是 |  |
+| [].oneOf[14].OpcuaServer | object | 是 | Opcua服务端通道信息 |
+| [].oneOf[14].OpcuaServer.browse_name | array[string] | 是 |  |
+| [].oneOf[14].OpcuaServer.browse_name[] | string | 是 | 允许空值 |
+| [].oneOf[14].OpcuaServer.certificate | array[integer] | 否 | certificate；允许空值 |
+| [].oneOf[14].OpcuaServer.certificate[] | integer | 是 | certificate；格式：int32 |
+| [].oneOf[14].OpcuaServer.id | integer | 是 | 通道id；格式：int64 |
+| [].oneOf[14].OpcuaServer.is_writable | array[boolean] | 是 |  |
+| [].oneOf[14].OpcuaServer.name | string | 是 | 通道名称 |
+| [].oneOf[14].OpcuaServer.node_ids | array[array[NodeInfo]] | 是 |  |
+| [].oneOf[14].OpcuaServer.node_ids[] | array[NodeInfo] | 是 |  |
+| [].oneOf[14].OpcuaServer.node_ids[][] | object | 是 |  |
+| [].oneOf[14].OpcuaServer.node_ids[][].node_id | oneOf[object{Num} | object{Str}] | 是 | 可选结构：object{Num} | object{Str} |
+| [].oneOf[14].OpcuaServer.node_ids[][].node_id.oneOf[1] | object | 是 |  |
+| [].oneOf[14].OpcuaServer.node_ids[][].node_id.oneOf[1].Num | integer | 是 | 格式：int32 |
+| [].oneOf[14].OpcuaServer.node_ids[][].node_id.oneOf[2] | object | 是 |  |
+| [].oneOf[14].OpcuaServer.node_ids[][].node_id.oneOf[2].Str | string | 是 |  |
+| [].oneOf[14].OpcuaServer.node_ids[][].node_ns | integer | 是 | 格式：int32 |
+| [].oneOf[14].OpcuaServer.point_ids | array[array[any]] | 是 | register settings |
+| [].oneOf[14].OpcuaServer.private_key | array[integer] | 否 | private_key；允许空值 |
+| [].oneOf[14].OpcuaServer.private_key[] | integer | 是 | private_key；格式：int32 |
+| [].oneOf[14].OpcuaServer.server_port | integer | 是 | 服务端的ip和port；格式：int32 |
+| [].oneOf[14].OpcuaServer.users | array[array[any]] | 否 | 用户；允许空值 |
+
+
+### 删除指定lcc指定id的通道
 
 - **方法**: `DELETE`
 - **路径**: `/lcc/transports/models/{lcc_id}/{ids}`
-- **函数名**: `delete_lcc_transports_models_by_lcc_by_s`
+- **工具名**: `delete_lcc_transports_models_by_lcc_by_s`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
+  - `ids` (path, string, 必填): 通道id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-| ids | string | 是 | 通道id列表，以,间隔 |
-
-### 41. 查询指定lcc未运行的AOE
+### 查询指定lcc未运行的AOE
 
 - **方法**: `GET`
 - **路径**: `/lcc/unrun_aoes/{lcc_id}`
-- **函数名**: `get_lcc_unrun_aoes_by_lcc`
+- **工具名**: `get_lcc_unrun_aoes_by_lcc`
+- **参数**:
+  - `lcc_id` (path, string, 必填): lcc_id
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| lcc_id | string | 是 | lcc_id |
-
-### 42. 查询指定id的lcc
+### 查询指定id的lcc
 
 - **方法**: `GET`
 - **路径**: `/lcc/{id}`
-- **函数名**: `get_lcc_by`
+- **工具名**: `get_lcc_by`
+- **参数**:
+  - `id` (path, string, 必填): lcc_id
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 是 | lcc_id |
-
-### 43. 查询所有的lcc
+### 查询所有的lcc
 
 - **方法**: `GET`
 - **路径**: `/lcc_list`
-- **函数名**: `get_lcc_list`
+- **工具名**: `get_lcc_list`
 
-## Measures 模块
+***
 
-共 3 个接口
+## MEASURES 模块
 
-### 1. 量测值初始化
+### 量测值初始化
 
 - **方法**: `POST`
 - **路径**: `/measureinits/{day}`
-- **函数名**: `add_measureinits_by_day`
+- **工具名**: `add_measureinits_by_day`
+- **参数**:
+  - `day` (path, integer, 必填): 时间戳；元信息：format=int64
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| day | integer | 是 | 时间戳 |
-
-### 2. 查询历史量测
+### 查询历史量测
 
 - **方法**: `GET`
 - **路径**: `/measures`
-- **函数名**: `get_measures`
+- **工具名**: `get_measures`
+- **参数**:
+  - `id` (query, string, 可选): 测点id，多个id之间以,间隔；元信息：nullable=true
+  - `start` (query, integer, 可选): 开始时间, 13位时间戳；元信息：format=int64, nullable=true
+  - `end` (query, integer, 可选): 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end；元信息：format=int64, nullable=true
+  - `date` (query, string, 可选): 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准；元信息：nullable=true
+  - `source` (query, integer, 可选): 数据源；元信息：format=int32, nullable=true
+  - `last_only` (query, boolean, 可选): 是否查询只最新的数据；元信息：nullable=true
+  - `with_init` (query, boolean, 可选): 是否查询该天初始的数据；元信息：nullable=true
+  - `reverse_order` (query, boolean, 可选): 是否时间倒序查询；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 | 测点id，多个id之间以,间隔 |
-| start | integer | 否 | 开始时间, 13位时间戳 |
-| end | integer | 否 | 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end |
-| date | string | 否 | 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准 |
-| source | integer | 否 | 数据源 |
-| last_only | boolean | 否 | 是否查询只最新的数据 |
-| with_init | boolean | 否 | 是否查询该天初始的数据 |
-| reverse_order | boolean | 否 | 是否时间倒序查询 |
-
-### 3. 查询SOE，结果按照时间排序
+### 查询SOE，结果按照时间排序
 
 - **方法**: `GET`
 - **路径**: `/soes`
-- **函数名**: `get_soes`
+- **工具名**: `get_soes`
+- **参数**:
+  - `id` (query, string, 可选): 测点id，多个id之间以,间隔；元信息：nullable=true
+  - `start` (query, integer, 可选): 开始时间, 13位时间戳；元信息：format=int64, nullable=true
+  - `end` (query, integer, 可选): 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end；元信息：format=int64, nullable=true
+  - `date` (query, string, 可选): 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准；元信息：nullable=true
+  - `source` (query, integer, 可选): 数据源；元信息：format=int32, nullable=true
+  - `last_only` (query, boolean, 可选): 是否查询只最新的数据；元信息：nullable=true
+  - `with_init` (query, boolean, 可选): 是否查询该天初始的数据；元信息：nullable=true
+  - `reverse_order` (query, boolean, 可选): 是否时间倒序查询；元信息：nullable=true
 
-**查询参数**:
+***
 
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 | 测点id，多个id之间以,间隔 |
-| start | integer | 否 | 开始时间, 13位时间戳 |
-| end | integer | 否 | 结束时间, 13位时间戳，（start、end） 如果仅设置1个参数，则查询范围为start-当天结束 或 当天开始-end |
-| date | string | 否 | 时间字符串，yyyy-MM-dd，（start、end）、date参数至少设定1个，如果同时设定，则以start、end为准 |
-| source | integer | 否 | 数据源 |
-| last_only | boolean | 否 | 是否查询只最新的数据 |
-| with_init | boolean | 否 | 是否查询该天初始的数据 |
-| reverse_order | boolean | 否 | 是否时间倒序查询 |
+## PLANS 模块
 
-## Plans 模块
-
-共 10 个接口
-
-### 1. 查询所有计划
+### 查询所有计划
 
 - **方法**: `GET`
 - **路径**: `/plans/models`
-- **函数名**: `get_plans_models`
+- **工具名**: `get_plans_models`
 
-### 2. 修改计划
-
-- **方法**: `PUT`
-- **路径**: `/plans/models`
-- **函数名**: `update_plans_models`
-
-**请求体**:
-
-| 字段名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| desc | string | 是 | 计划描述 |
-| id | integer | 是 | 计划id |
-| name | string | 是 | 计划名称 |
-| plan | array[array[any]] | 是 | 计划内容数组，tuple格式为(开始时间:u64, 结束时间:u64, 功率值:f64) |
-
-### 3. 新增计划
+### 新增计划
 
 - **方法**: `POST`
 - **路径**: `/plans/models`
-- **函数名**: `add_plans_models`
-
-**请求体**:
+- **工具名**: `add_plans_models`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | desc | string | 是 | 计划描述 |
-| id | integer | 是 | 计划id |
+| id | integer | 是 | 计划id；格式：int64 |
 | name | string | 是 | 计划名称 |
 | plan | array[array[any]] | 是 | 计划内容数组，tuple格式为(开始时间:u64, 结束时间:u64, 功率值:f64) |
 
-### 4. 查询指定id的计划列表
+
+### 修改计划
+
+- **方法**: `PUT`
+- **路径**: `/plans/models`
+- **工具名**: `update_plans_models`
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| desc | string | 是 | 计划描述 |
+| id | integer | 是 | 计划id；格式：int64 |
+| name | string | 是 | 计划名称 |
+| plan | array[array[any]] | 是 | 计划内容数组，tuple格式为(开始时间:u64, 结束时间:u64, 功率值:f64) |
+
+
+### 查询指定id的计划列表
 
 - **方法**: `GET`
 - **路径**: `/plans/models/by_ids/{ids}`
-- **函数名**: `get_plans_models_by_ids`
+- **工具名**: `get_plans_models_by_ids`
+- **参数**:
+  - `ids` (path, string, 必填): 计划id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 计划id列表，以,间隔 |
-
-### 5. 删除指定id的计划
+### 删除指定id的计划
 
 - **方法**: `DELETE`
 - **路径**: `/plans/models/{ids}`
-- **函数名**: `delete_plans_models_by_s`
+- **工具名**: `delete_plans_models_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 计划id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 计划id列表，以,间隔 |
-
-### 6. 查询指定id的计划
+### 查询指定id的计划
 
 - **方法**: `GET`
 - **路径**: `/plans/models/{id}`
-- **函数名**: `get_plans_models_by`
+- **工具名**: `get_plans_models_by`
+- **参数**:
+  - `id` (path, integer, 必填): 计划id；元信息：format=int64
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 计划id |
-
-### 7. 查询所有计划路径
+### 查询所有计划路径
 
 - **方法**: `GET`
 - **路径**: `/plans/paths`
-- **函数名**: `get_plans_paths`
+- **工具名**: `get_plans_paths`
 
-### 8. 修改计划路径
+### 新增计划路径
+
+- **方法**: `POST`
+- **路径**: `/plans/paths`
+- **工具名**: `add_plans_paths`
+- **请求体**:
+
+  - 无法解析请求体结构
+
+
+### 修改计划路径
 
 - **方法**: `PUT`
 - **路径**: `/plans/paths`
-- **函数名**: `update_plans_paths`
+- **工具名**: `update_plans_paths`
+- **请求体**:
 
-**请求体**:
+  - 无法解析请求体结构
 
-JSON对象
 
-### 9. 新增计划路径
-
-- **方法**: `POST`
-- **路径**: `/plans/paths`
-- **函数名**: `add_plans_paths`
-
-**请求体**:
-
-JSON对象
-
-### 10. 删除指定的计划路径
+### 删除指定的计划路径
 
 - **方法**: `DELETE`
 - **路径**: `/plans/paths`
-- **函数名**: `delete_plans_paths`
+- **工具名**: `delete_plans_paths`
+- **请求体**:
 
-**请求体**:
+  - 无法解析请求体结构
 
-JSON对象
 
-## Points 模块
+***
 
-共 14 个接口
+## POINTS 模块
 
-### 1. 查询所有测点
+### 查询所有测点
 
 - **方法**: `GET`
 - **路径**: `/points/models`
-- **函数名**: `get_points_models`
+- **工具名**: `get_points_models`
 
-### 2. 保存测点
+### 保存测点
 
 - **方法**: `POST`
 - **路径**: `/points/models`
-- **函数名**: `add_points_models`
-
-**请求体**:
+- **工具名**: `add_points_models`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| [] | object | 是 |  |
+| [] | object | 是 | 测点对象 |
 | [].alarm_level1_expr | string | 是 | 告警级别1的表达式 |
 | [].alarm_level2_expr | string | 是 | 告警级别2的表达式 |
 | [].alias_id | string | 是 | 字符串id |
@@ -3060,286 +6164,953 @@ JSON对象
 | [].data_unit | string | 是 | 单位 |
 | [].desc | string | 是 | Description |
 | [].expression | string | 是 | 如果是计算点，这是表达式 |
-| [].init_value | integer | 是 | 默认值存储在8个字节，需要根据is_discrete来转换成具体的值 |
+| [].init_value | integer | 是 | 默认值存储在8个字节，需要根据is_discrete来转换成具体的值；格式：int64 |
 | [].inv_trans_expr | string | 是 | 逆变换公式 |
 | [].is_computing_point | boolean | 是 | 是否是计算点 |
 | [].is_discrete | boolean | 是 | 是否是离散量 |
 | [].is_realtime | boolean | 是 | 如是，则不判断是否"变化"，均上传 |
 | [].is_soe | boolean | 是 | 是否是soe点 |
-| [].lower_limit | number | 是 | 下限，用于坏数据辨识 |
-| [].point_id | integer | 是 | 唯一的id |
+| [].lower_limit | number | 是 | 下限，用于坏数据辨识；格式：double |
+| [].point_id | integer | 是 | 唯一的id；格式：int64 |
 | [].point_name | string | 是 | 测点名 |
 | [].trans_expr | string | 是 | 变换公式 |
-| [].upper_limit | number | 是 | 上限，用于坏数据辨识 |
+| [].upper_limit | number | 是 | 上限，用于坏数据辨识；格式：double |
 | [].zero_expr | string | 是 | 判断是否为0值的公式 |
 
-### 3. 删除指定id的测点（body形式）
+
+### 删除指定id的测点（body形式）
 
 - **方法**: `DELETE`
 - **路径**: `/points/models`
-- **函数名**: `delete_points_models`
-
-**请求体**:
-
-JSON对象
-
-### 4. 获取根据版本号组装的测点应用对象
-
-- **方法**: `GET`
-- **路径**: `/points/models/for_apply`
-- **函数名**: `get_points_models_for_apply`
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| version | integer | 否 | 版本号，可选，若为空则默认0号版本 |
-
-### 5. 删除指定id的测点
-
-- **方法**: `DELETE`
-- **路径**: `/points/models/{ids}`
-- **函数名**: `delete_points_models_by_s`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 测点id列表，以,间隔 |
-
-### 6. 保存测点（文件形式）
-
-- **方法**: `POST`
-- **路径**: `/points/models_file`
-- **函数名**: `add_points_models_file`
-
-**请求体**:
+- **工具名**: `delete_points_models`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| fileContent | array[integer] | 否 |  |
-| fileName | string | 否 |  |
-| is_zip | boolean | 否 |  |
-| op | string | 否 |  |
+| [] | integer | 是 | 格式：int64 |
 
-### 7. 保存测点（多文件形式）
+
+### 获取根据版本号组装的测点应用对象
+
+- **方法**: `GET`
+- **路径**: `/points/models/for_apply`
+- **工具名**: `get_points_models_for_apply`
+- **参数**:
+  - `version` (query, integer, 可选): 版本号，可选，若为空则默认0号版本；元信息：format=int32, nullable=true
+
+### 删除指定id的测点
+
+- **方法**: `DELETE`
+- **路径**: `/points/models/{ids}`
+- **工具名**: `delete_points_models_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 测点id列表，以,间隔
+
+### 保存测点（文件形式）
+
+- **方法**: `POST`
+- **路径**: `/points/models_file`
+- **工具名**: `add_points_models_file`
+- **请求体**:
+
+| 字段名 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| fileContent | array[integer] | 否 | 允许空值 |
+| fileContent[] | integer | 是 | 格式：int32 |
+| fileName | string | 否 | 允许空值 |
+| is_zip | boolean | 否 | 允许空值 |
+| op | oneOf[string] | 否 | 可选值：UPDATE、DELETE、RENAME；可选结构：string |
+| op.oneOf[1] | string | 是 | 可选值：UPDATE、DELETE、RENAME |
+
+
+### 保存测点（多文件形式）
 
 - **方法**: `POST`
 - **路径**: `/points/models_file2`
-- **函数名**: `add_points_models_file2`
-
-**请求体**:
+- **工具名**: `add_points_models_file2`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | file | array[string] | 是 |  |
+| file[] | string | 是 | 格式：binary |
 
-### 8. 查询控制器与测点的对应关系
+
+### 查询控制器与测点的对应关系
 
 - **方法**: `GET`
 - **路径**: `/points/remote`
-- **函数名**: `get_points_remote`
+- **工具名**: `get_points_remote`
 
-### 9. 更新控制器与测点的关系
+### 更新控制器与测点的关系
 
 - **方法**: `POST`
 - **路径**: `/points/remote`
-- **函数名**: `add_points_remote`
+- **工具名**: `add_points_remote`
+- **请求体**:
 
-**请求体**:
+  - 无法解析请求体结构
 
-JSON对象
 
-### 10. 查询所有测点数据源
+### 查询所有测点数据源
 
 - **方法**: `GET`
 - **路径**: `/points/source`
-- **函数名**: `get_points_source`
+- **工具名**: `get_points_source`
 
-### 11. 保存测点数据源
+### 保存测点数据源
 
 - **方法**: `POST`
 - **路径**: `/points/source`
-- **函数名**: `add_points_source`
+- **工具名**: `add_points_source`
+- **请求体**:
 
-**请求体**:
+  - 无法解析请求体结构
 
-JSON对象
 
-### 12. 查询所有的测点版本信息
+### 查询所有的测点版本信息
 
 - **方法**: `GET`
 - **路径**: `/points/version`
-- **函数名**: `get_points_version`
+- **工具名**: `get_points_version`
 
-### 13. 新增测点版本
+### 新增测点版本
 
 - **方法**: `POST`
 - **路径**: `/points/version`
-- **函数名**: `add_points_version`
-
-**请求体**:
+- **工具名**: `add_points_version`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | note | string | 是 | 提交时的注释 |
 | tree_id | string | 是 | 对应的tree_id |
-| version | integer | 是 | 版本号 |
+| version | integer | 是 | 版本号；格式：int32 |
 
-### 14. 删除某一个测点版本
+
+### 删除某一个测点版本
 
 - **方法**: `DELETE`
 - **路径**: `/points/version/{v}`
-- **函数名**: `delete_points_version_by_v`
+- **工具名**: `delete_points_version_by_v`
+- **参数**:
+  - `v` (path, integer, 必填): 版本id；元信息：format=int32
 
-**路径参数**:
+***
 
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| v | integer | 是 | 版本id |
+## PSCPU 模块
 
-## Pscpu 模块
-
-共 17 个接口
-
-### 1. 更新当前应用的AOE
+### 更新当前应用的AOE
 
 - **方法**: `POST`
 - **路径**: `/pscpu/aoes`
-- **函数名**: `add_pscpu_aoes`
-
-**请求体**:
+- **工具名**: `add_pscpu_aoes`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | aoes | array[AoeModel] | 是 | AOE列表 |
-| aoes[] | object | 是 | AOE列表 |
+| aoes[] | object | 是 | aoe模型 |
 | aoes[].actions | array[ActionEdge] | 是 | 动作列表 |
-| aoes[].actions[] | object | 是 | 动作列表 |
-| aoes[].actions[].action | string | 是 | 无动作 |
-| aoes[].actions[].aoe_id | integer | 是 | AOE id |
-| aoes[].actions[].failure_mode | string | 是 | 失败模式 |
+| aoes[].actions[] | object | 是 | 边对象 |
+| aoes[].actions[].action | oneOf[string | object{SetPoints} | object{SetPointsWithCheck} | object{SetPoints2} | object{SetPointsWithCheck2} | object{Solve} | object{Nlsolve} | object{Milp} | object{SimpleMilp} | object{Nlp}] | 是 | 动作定义；可选值：None；可选结构：string | object{SetPoints} | object{SetPointsWithCheck} | object{SetPoints2} | object{SetPointsWithCheck2} | object{Solve} | object{Nlsolve} | object{Milp} | object{SimpleMilp} | object{Nlp} |
+| aoes[].actions[].action.oneOf[1] | string | 是 | 无动作；可选值：None |
+| aoes[].actions[].action.oneOf[2] | object | 是 | 设点动作 |
+| aoes[].actions[].action.oneOf[2].SetPoints | object | 是 | 设点动作 |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_id | array[string] | 是 |  |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v | array[Expr] | 是 |  |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[2].SetPoints.analog_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_id | array[string] | 是 |  |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v | array[Expr] | 是 |  |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[2].SetPoints.discrete_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[3] | object | 是 | 设点动作 |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck | object | 是 | 设点动作 |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_id | array[string] | 是 |  |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v | array[Expr] | 是 |  |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.analog_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_id | array[string] | 是 |  |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v | array[Expr] | 是 |  |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[3].SetPointsWithCheck.discrete_v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[4] | object | 是 | 设点动作 |
+| aoes[].actions[].action.oneOf[4].SetPoints2 | object | 是 | 设点动作 |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs | array[PointsToExp] | 是 |  |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[] | object | 是 |  |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr | object | 是 | 表达式 |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.analogs[].ids | array[string] | 是 | id列表 |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes | array[PointsToExp] | 是 |  |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[] | object | 是 |  |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr | object | 是 | 表达式 |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[4].SetPoints2.discretes[].ids | array[string] | 是 | id列表 |
+| aoes[].actions[].action.oneOf[5] | object | 是 | 设点动作 |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2 | object | 是 | 设点动作 |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs | array[PointsToExp] | 是 |  |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[] | object | 是 |  |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr | object | 是 | 表达式 |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.analogs[].ids | array[string] | 是 | id列表 |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes | array[PointsToExp] | 是 |  |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[] | object | 是 |  |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr | object | 是 | 表达式 |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[5].SetPointsWithCheck2.discretes[].ids | array[string] | 是 | id列表 |
+| aoes[].actions[].action.oneOf[6] | object | 是 | 求方程 |
+| aoes[].actions[].action.oneOf[6].Solve | object | 是 | 求方程 |
+| aoes[].actions[].action.oneOf[6].Solve.a | object | 是 | A矩阵 |
+| aoes[].actions[].action.oneOf[6].Solve.a.m | integer | 是 | 行数 |
+| aoes[].actions[].action.oneOf[6].Solve.a.n | integer | 是 | 列数 |
+| aoes[].actions[].action.oneOf[6].Solve.a.v | array[array[any]] | 是 |  |
+| aoes[].actions[].action.oneOf[6].Solve.b | array[Expr] | 是 | b向量 |
+| aoes[].actions[].action.oneOf[6].Solve.b[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[6].Solve.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[6].Solve.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| aoes[].actions[].action.oneOf[6].Solve.x_init | array[Expr] | 是 | 变量初始值 |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[6].Solve.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[6].Solve.x_name | array[string] | 是 | 变量名称 |
+| aoes[].actions[].action.oneOf[7] | object | 是 | 求非线性方程组 |
+| aoes[].actions[].action.oneOf[7].Nlsolve | object | 是 | 求非线性方程组 |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f | array[Expr] | 是 |  |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.f[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.parameters | object[string, string] | 是 | 额外属性：string |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init | array[Expr] | 是 |  |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx | array[Expr] | 是 |  |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_init_cx[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[7].Nlsolve.x_name | array[string] | 是 |  |
+| aoes[].actions[].action.oneOf[8] | object | 是 | 混合整数线性规划稀疏表示 |
+| aoes[].actions[].action.oneOf[8].Milp | object | 是 | 混合整数线性规划稀疏表示 |
+| aoes[].actions[].action.oneOf[8].Milp.a | object | 是 | Ax >=/<= b |
+| aoes[].actions[].action.oneOf[8].Milp.a.m | integer | 是 | 行数 |
+| aoes[].actions[].action.oneOf[8].Milp.a.n | integer | 是 | 列数 |
+| aoes[].actions[].action.oneOf[8].Milp.a.v | array[array[any]] | 是 |  |
+| aoes[].actions[].action.oneOf[8].Milp.b | array[Expr] | 是 |  |
+| aoes[].actions[].action.oneOf[8].Milp.b[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[8].Milp.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[8].Milp.binary_int_float | array[integer] | 是 | 整数变量在x中的位置 |
+| aoes[].actions[].action.oneOf[8].Milp.binary_int_float[] | integer | 是 | 整数变量在x中的位置；格式：int32 |
+| aoes[].actions[].action.oneOf[8].Milp.c | array[array[any]] | 是 | min/max c^T*x |
+| aoes[].actions[].action.oneOf[8].Milp.constraint_type | array[Operation] | 是 |  |
+| aoes[].actions[].action.oneOf[8].Milp.constraint_type[] | string | 是 | Mathematical operations.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[8].Milp.min_or_max | boolean | 是 | min: true, max: false |
+| aoes[].actions[].action.oneOf[8].Milp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| aoes[].actions[].action.oneOf[8].Milp.x_lower | array[array[any]] | 是 | 变量的下界约束：变量位置、约束表达式 |
+| aoes[].actions[].action.oneOf[8].Milp.x_name | array[string] | 是 | 变量名称 |
+| aoes[].actions[].action.oneOf[8].Milp.x_upper | array[array[any]] | 是 | 变量的上界约束：变量位置、约束表达式 |
+| aoes[].actions[].action.oneOf[9] | object | 是 | 混合整数线性规划稠密表示 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp | object | 是 | 混合整数线性规划稠密表示 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a | object | 是 | Ax >=/<= b |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.m | integer | 是 | 行数 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.n | integer | 是 | 列数 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v | array[Expr] | 是 | 值 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.a.v[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b | array[Expr] | 是 |  |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.b[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.binary_int_float | array[integer] | 是 | 整数变量在x中的位置 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.binary_int_float[] | integer | 是 | 整数变量在x中的位置；格式：int32 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c | array[Expr] | 是 | min/max c^T*x |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.c[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.constraint_type | array[Operation] | 是 |  |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.constraint_type[] | string | 是 | Mathematical operations.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.min_or_max | boolean | 是 | min: true, max: false |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.x_lower | array[array[any]] | 是 | 变量的下界约束：变量位置、约束表达式 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.x_name | array[string] | 是 | 变量名称 |
+| aoes[].actions[].action.oneOf[9].SimpleMilp.x_upper | array[array[any]] | 是 |  |
+| aoes[].actions[].action.oneOf[10] | object | 是 | 非整数线性规划 |
+| aoes[].actions[].action.oneOf[10].Nlp | object | 是 | 非整数线性规划 |
+| aoes[].actions[].action.oneOf[10].Nlp.g | array[Expr] | 是 | 等式约束式 g(x) == b |
+| aoes[].actions[].action.oneOf[10].Nlp.g[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[10].Nlp.g[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower | array[Expr] | 是 | 不等式约束式 g(x) <= b |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_lower[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper | array[Expr] | 是 | 不等式约束式 g(x) >= b |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[10].Nlp.g_upper[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[10].Nlp.min_or_max | boolean | 是 | min: true, max: false |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr | object | 是 | 目标函数表达式 min obj |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[10].Nlp.obj_expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[10].Nlp.parameters | object[string, string] | 是 | 求解器参数：参数名、参数值；额外属性：string |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init | array[Expr] | 是 | 变量初始值x0 |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_init[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower | array[Expr] | 是 | 整数变量在x中的位置 |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_lower[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_name | array[string] | 是 | 变量名称 |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper | array[Expr] | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[] | object | 是 | 表达式对象 |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn | array[Token] | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[12] | object | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].actions[].action.oneOf[10].Nlp.x_upper[].rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].actions[].aoe_id | integer | 是 | AOE id；格式：int64 |
+| aoes[].actions[].failure_mode | string | 是 | action失败时的处理方式；可选值：Default、Ignore、StopAll、StopFailed |
 | aoes[].actions[].name | string | 是 | 动作名称 |
-| aoes[].actions[].source_node | integer | 是 | 源节点 |
-| aoes[].actions[].target_node | integer | 是 | 目标节点 |
+| aoes[].actions[].source_node | integer | 是 | 源节点；格式：int64 |
+| aoes[].actions[].target_node | integer | 是 | 目标节点；格式：int64 |
 | aoes[].events | array[EventNode] | 是 | 节点列表 |
-| aoes[].events[] | object | 是 | 节点列表 |
-| aoes[].events[].aoe_id | integer | 是 | AOE id |
-| aoes[].events[].expr | object | 是 | 表达式对象 |
+| aoes[].events[] | object | 是 | 节点对象 |
+| aoes[].events[].aoe_id | integer | 是 | AOE id；格式：int64 |
+| aoes[].events[].expr | object | 是 | 事件是否发生判断的bool表达式 |
 | aoes[].events[].expr.rpn | array[Token] | 是 |  |
-| aoes[].events[].expr.rpn[] | object | 是 |  |
-| aoes[].events[].expr.rpn[].Binary | string | 是 | Mathematical operations. |
-| aoes[].events[].id | integer | 是 | 节点id |
+| aoes[].events[].expr.rpn[] | oneOf[object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func}] | 是 | Expression tokens.；可选值：LParen、RParen、BigLParen、BigRParen、RBracket、Comma；可选结构：object{Binary} | object{Unary} | string | object{Number} | object{Tensor} | object{Var} | object{Str} | object{Func} |
+| aoes[].events[].expr.rpn[].oneOf[1] | object | 是 | Binary operation. |
+| aoes[].events[].expr.rpn[].oneOf[1].Binary | string | 是 | Binary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].events[].expr.rpn[].oneOf[2] | object | 是 | Unary operation. |
+| aoes[].events[].expr.rpn[].oneOf[2].Unary | string | 是 | Unary operation.；可选值：Plus、Minus、Times、Div、Rem、Pow、Fact、Equal、Unequal、LessThan、GreatThan、LtOrEqual、GtOrEqual、And、Or、Not、BitAnd、BitOr、BitXor、BitShl、BitShr、BitAt、BitNot、DotTimes、DotDiv、LeftDiv、DotPow、Transpose |
+| aoes[].events[].expr.rpn[].oneOf[3] | string | 是 | Left parenthesis.   (；可选值：LParen |
+| aoes[].events[].expr.rpn[].oneOf[4] | string | 是 | Right parenthesis.  )；可选值：RParen |
+| aoes[].events[].expr.rpn[].oneOf[5] | string | 是 | Big Left parenthesis.  {；可选值：BigLParen |
+| aoes[].events[].expr.rpn[].oneOf[6] | string | 是 | Big Right parenthesis. }；可选值：BigRParen |
+| aoes[].events[].expr.rpn[].oneOf[7] | string | 是 | Right brackets. ]；可选值：RBracket |
+| aoes[].events[].expr.rpn[].oneOf[8] | string | 是 | Comma: function argument separator；可选值：Comma |
+| aoes[].events[].expr.rpn[].oneOf[9] | object | 是 | A number. |
+| aoes[].events[].expr.rpn[].oneOf[9].Number | number | 是 | A number.；格式：double |
+| aoes[].events[].expr.rpn[].oneOf[10] | object | 是 | A tensor. |
+| aoes[].events[].expr.rpn[].oneOf[10].Tensor | integer | 是 | A tensor.；允许空值 |
+| aoes[].events[].expr.rpn[].oneOf[11] | object | 是 | A variable. |
+| aoes[].events[].expr.rpn[].oneOf[11].Var | string | 是 | A variable. |
+| aoes[].events[].expr.rpn[].oneOf[12] | object | 是 |  |
+| aoes[].events[].expr.rpn[].oneOf[12].Str | string | 是 |  |
+| aoes[].events[].expr.rpn[].oneOf[13] | object | 是 | A function with name and number of arguments. |
+| aoes[].events[].expr.rpn[].oneOf[13].Func | array[object] | 是 | A function with name and number of arguments. |
+| aoes[].events[].id | integer | 是 | 节点id；格式：int64 |
 | aoes[].events[].name | string | 是 | 节点名 |
-| aoes[].events[].node_type | string | 是 | 节点类型 |
-| aoes[].events[].timeout | integer | 是 | 事件还未发生时等待超时时间 |
-| aoes[].id | integer | 是 | aoe id |
+| aoes[].events[].node_type | string | 是 | 节点类型；可选值：ConditionNode、SwitchNode、SwitchOfActionResult |
+| aoes[].events[].timeout | integer | 是 | 事件还未发生时等待超时时间；格式：int64 |
+| aoes[].id | integer | 是 | aoe id；格式：int64 |
 | aoes[].name | string | 是 | aoe名称 |
-| aoes[].trigger_type | object | 是 | 简单固定周期触发 |
-| aoes[].trigger_type.SimpleRepeat | object | 是 | 时间对象 |
-| aoes[].trigger_type.SimpleRepeat.nanos | integer | 是 | 剩余纳秒 |
-| aoes[].trigger_type.SimpleRepeat.secs | integer | 是 | 秒 |
+| aoes[].trigger_type | oneOf[object{SimpleRepeat} | object{TimeDrive} | string | object{EventRepeatMix} | object{EventTimeMix}] | 是 | 触发类型；可选值：EventDrive；可选结构：object{SimpleRepeat} | object{TimeDrive} | string | object{EventRepeatMix} | object{EventTimeMix} |
+| aoes[].trigger_type.oneOf[1] | object | 是 | 简单固定周期触发 |
+| aoes[].trigger_type.oneOf[1].SimpleRepeat | object | 是 | 简单固定周期触发 |
+| aoes[].trigger_type.oneOf[1].SimpleRepeat.nanos | integer | 是 | 剩余纳秒；格式：int32 |
+| aoes[].trigger_type.oneOf[1].SimpleRepeat.secs | integer | 是 | 秒；格式：int64 |
+| aoes[].trigger_type.oneOf[2] | object | 是 | cron表达式 |
+| aoes[].trigger_type.oneOf[2].TimeDrive | string | 是 | cron表达式 |
+| aoes[].trigger_type.oneOf[3] | string | 是 | 事件驱动，AOE开始节点条件满足即触发；可选值：EventDrive |
+| aoes[].trigger_type.oneOf[4] | object | 是 | 事件驱动 && 简单固定周期 联合 |
+| aoes[].trigger_type.oneOf[4].EventRepeatMix | object | 是 | 事件驱动 && 简单固定周期 联合 |
+| aoes[].trigger_type.oneOf[4].EventRepeatMix.nanos | integer | 是 | 剩余纳秒；格式：int32 |
+| aoes[].trigger_type.oneOf[4].EventRepeatMix.secs | integer | 是 | 秒；格式：int64 |
+| aoes[].trigger_type.oneOf[5] | object | 是 | 事件驱动 && cron表达式 联合 |
+| aoes[].trigger_type.oneOf[5].EventTimeMix | string | 是 | 事件驱动 && cron表达式 联合 |
 | aoes[].variables | array[array[any]] | 是 | 用户自定义的变量：变量名和表达式 |
 | commit_msg | string | 是 | 版本描述 |
-| version | integer | 是 | 版本号 |
+| version | integer | 是 | 版本号；格式：int32 |
 
-### 2. 查询当前应用的AOE
+
+### 查询当前应用的AOE
 
 - **方法**: `GET`
 - **路径**: `/pscpu/aoes/models`
-- **函数名**: `get_pscpu_aoes_models`
+- **工具名**: `get_pscpu_aoes_models`
 
-### 3. 查询当前应用的AOE版本号
+### 查询当前应用的AOE版本号
 
 - **方法**: `GET`
 - **路径**: `/pscpu/aoes/version`
-- **函数名**: `get_pscpu_aoes_version`
+- **工具名**: `get_pscpu_aoes_version`
 
-### 4. 查询配置信息
+### 查询配置信息
 
 - **方法**: `GET`
 - **路径**: `/pscpu/info`
-- **函数名**: `get_pscpu_info`
+- **工具名**: `get_pscpu_info`
 
-### 5. 更新当前应用的电气岛
+### 更新当前应用的电气岛
 
 - **方法**: `POST`
 - **路径**: `/pscpu/island`
-- **函数名**: `add_pscpu_island`
-
-**请求体**:
+- **工具名**: `add_pscpu_island`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | commit_msg | string | 是 | 版本描述 |
-| island | object | 是 | 电气岛，即集合 |
+| island | object | 是 | 电气岛 |
 | island.cns | array[CN] | 是 | 连接节点列表 |
-| island.cns[] | object | 是 | 连接节点列表 |
-| island.cns[].id | integer | 是 | 连接节点id |
+| island.cns[] | object | 是 | 连接节点 |
+| island.cns[].id | integer | 是 | 连接节点id；格式：int64 |
 | island.cns[].psr_id | string | 是 | 资源id |
 | island.cns[].terminals | array[integer] | 是 | 端子id数组 |
-| island.measures | object | 是 | 测点，设备id->测点列表 |
-| island.prop_groups | object | 是 | 属性分组，属性分组id->属性分组 |
-| island.resources | object | 是 | 资源，设备id->资源对象 |
+| island.cns[].terminals[] | integer | 是 | 端子id数组；格式：int64 |
+| island.measures | object[string, array[MeasureDef]] | 是 | 测点，设备id->测点列表；额外属性：array[MeasureDef] |
+| island.prop_groups | object[string, RsrPropGroup] | 是 | 属性分组，属性分组id->属性分组；额外属性：RsrPropGroup |
+| island.resources | object[string, NetworkRsr] | 是 | 资源，设备id->资源对象；额外属性：NetworkRsr |
 | prop_defs | array[PropDefine] | 是 | 属性定义数组 |
-| prop_defs[] | object | 是 | 属性定义数组 |
-| prop_defs[].data_type | string | 是 | 属性类型 |
-| prop_defs[].data_unit | string | 是 | 数据单位 |
+| prop_defs[] | object | 是 | 设备属性 |
+| prop_defs[].data_type | string | 是 | 属性类型；可选值：U8、U16、U32、U64、I8、I16、I32、I64、F32、F64、Str、Complex32、Complex64、TensorF32、TensorF64、TensorC32、TensorC64、Unknown |
+| prop_defs[].data_unit | string | 是 | 属性单位；可选值：OnOrOff、A、V、kV、W、kW、MW、Var、kVar、MVar、VA、kVA、MVA、H、mH、Ah、mAh、kWh、Celsius、feet、km、meter、mm2、degree、rad、UnitOne、Percent、bit、B、kB、MB、GB、TB、PB、Unknown |
 | prop_defs[].desc | string | 是 | 属性定义描述 |
-| prop_defs[].id | integer | 是 | 属性定义id |
+| prop_defs[].id | integer | 是 | 属性定义id；格式：int64 |
 | prop_defs[].name | string | 是 | 属性定义标识 |
 | rsr_defs | array[RsrDefine] | 是 | 设备定义数组 |
-| rsr_defs[] | object | 是 | 设备定义数组 |
+| rsr_defs[] | object | 是 | 设备定义 |
 | rsr_defs[].desc | string | 是 | 设备定义的描述 |
-| rsr_defs[].id | integer | 是 | 定义id |
+| rsr_defs[].id | integer | 是 | 定义id；格式：int64 |
 | rsr_defs[].name | string | 是 | 设备类别名称 |
 | rsr_defs[].prop_groups | array[PropGroupDefine] | 是 | 设备属性 |
-| rsr_defs[].prop_groups[] | object | 是 | 设备属性 |
+| rsr_defs[].prop_groups[] | object | 是 | 属性分组定义 |
 | rsr_defs[].prop_groups[].desc | string | 是 | 属性定义描述 |
 | rsr_defs[].prop_groups[].name | string | 是 | 属性定义标识 |
 | rsr_defs[].prop_groups[].prop_defines | array[integer] | 是 | 设备属性实际描述 |
-| rsr_defs[].rsr_type | string | 是 | 电力设备类型 |
-| rsr_defs[].terminal_num | integer | 是 | 端口数量 |
-| version | integer | 是 | 版本号 |
+| rsr_defs[].prop_groups[].prop_defines[] | integer | 是 | 设备属性实际描述；格式：int64 |
+| rsr_defs[].rsr_type | string | 是 | 设备所属类型；可选值：Switch、Busbar、ACline、DCline、Winding、SyncGenerator、ESS、PCS、Transformer、Load、ShuntCompensator、SerialCompensator、ShuntReactor、ShuntCapacitor、SeriesReactor、SeriesCapacitor、Breaker、Disconnector、GroundDisconnector、SVC、SVG、Feeder、PWBusbar、Cable、Regulator、Connector、Measurement、Company、SubIsland、LoadArea、Substation、PowerPlant、VoltageLevel、BaseVoltage、HvdcSys、HvdcPoleSys、DCPole、DCLineDot、TLineDot、Converter、TLine、ACLineDot、TNode、Convergenceline、SeriesPowerTransformer、SeriesTransformerWinding、Acfilter、Synccondenser、DCBreaker、DCDisconnector、Signal、Combined、Composite、Section、SectionType、Bus、Branch、UserDefine1、UserDefine2、UserDefine3、UserDefine4、UserDefine5、UserDefine6、UserDefine7、UserDefine8、UserDefine9、UserDefine10、Unknown |
+| rsr_defs[].terminal_num | integer | 是 | 端口数量；格式：int32 |
+| version | integer | 是 | 版本号；格式：int32 |
 
-### 6. 查询当前应用的电气岛
+
+### 查询当前应用的电气岛
 
 - **方法**: `GET`
 - **路径**: `/pscpu/island/models`
-- **函数名**: `get_pscpu_island_models`
+- **工具名**: `get_pscpu_island_models`
 
-### 7. 查询所有的测点路径（设备树）
+### 查询所有的测点路径（设备树）
 
 - **方法**: `GET`
 - **路径**: `/pscpu/island/paths`
-- **函数名**: `get_pscpu_island_paths`
+- **工具名**: `get_pscpu_island_paths`
 
-### 8. 查询测点树
+### 查询测点树
 
 - **方法**: `GET`
 - **路径**: `/pscpu/island/point_tree`
-- **函数名**: `get_pscpu_island_point_tree`
+- **工具名**: `get_pscpu_island_point_tree`
 
-### 9. 查询当前应用的电气岛版本号
+### 查询当前应用的电气岛版本号
 
 - **方法**: `GET`
 - **路径**: `/pscpu/island/version`
-- **函数名**: `get_pscpu_island_version`
+- **工具名**: `get_pscpu_island_version`
 
-### 10. 更新当前应用的测点
+### 更新当前应用的测点
 
 - **方法**: `POST`
 - **路径**: `/pscpu/points`
-- **函数名**: `add_pscpu_points`
-
-**请求体**:
+- **工具名**: `add_pscpu_points`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | beeid_to_points | array[array[any]] | 是 | beeId和测点列表对应的数组，tuple格式为(beeId:String, 测点列表:u64[]) |
 | commit_msg | string | 是 | 版本描述 |
 | points | array[Measurement] | 是 | 测点列表 |
-| points[] | object | 是 | 测点列表 |
+| points[] | object | 是 | 测点对象 |
 | points[].alarm_level1_expr | string | 是 | 告警级别1的表达式 |
 | points[].alarm_level2_expr | string | 是 | 告警级别2的表达式 |
 | points[].alias_id | string | 是 | 字符串id |
@@ -3347,2143 +7118,368 @@ JSON对象
 | points[].data_unit | string | 是 | 单位 |
 | points[].desc | string | 是 | Description |
 | points[].expression | string | 是 | 如果是计算点，这是表达式 |
-| points[].init_value | integer | 是 | 默认值存储在8个字节，需要根据is_discrete来转换成具体的值 |
+| points[].init_value | integer | 是 | 默认值存储在8个字节，需要根据is_discrete来转换成具体的值；格式：int64 |
 | points[].inv_trans_expr | string | 是 | 逆变换公式 |
 | points[].is_computing_point | boolean | 是 | 是否是计算点 |
 | points[].is_discrete | boolean | 是 | 是否是离散量 |
 | points[].is_realtime | boolean | 是 | 如是，则不判断是否"变化"，均上传 |
 | points[].is_soe | boolean | 是 | 是否是soe点 |
-| points[].lower_limit | number | 是 | 下限，用于坏数据辨识 |
-| points[].point_id | integer | 是 | 唯一的id |
+| points[].lower_limit | number | 是 | 下限，用于坏数据辨识；格式：double |
+| points[].point_id | integer | 是 | 唯一的id；格式：int64 |
 | points[].point_name | string | 是 | 测点名 |
 | points[].trans_expr | string | 是 | 变换公式 |
-| points[].upper_limit | number | 是 | 上限，用于坏数据辨识 |
+| points[].upper_limit | number | 是 | 上限，用于坏数据辨识；格式：double |
 | points[].zero_expr | string | 是 | 判断是否为0值的公式 |
 | source_name | array[array[any]] | 是 |  |
-| version | integer | 是 | 版本号 |
+| version | integer | 是 | 版本号；格式：int32 |
 
-### 11. 查询设备关联的测点
+
+### 查询设备关联的测点
 
 - **方法**: `GET`
 - **路径**: `/pscpu/points/by_dev/{dev_id}`
-- **函数名**: `get_pscpu_points_by_dev`
+- **工具名**: `get_pscpu_points_by_dev`
+- **参数**:
+  - `dev_id` (path, integer, 必填): 设备id；元信息：format=int64
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| dev_id | integer | 是 | 设备id |
-
-### 12. 查询当前应用的测点
+### 查询当前应用的测点
 
 - **方法**: `GET`
 - **路径**: `/pscpu/points/models`
-- **函数名**: `get_pscpu_points_models`
+- **工具名**: `get_pscpu_points_models`
+- **参数**:
+  - `id` (query, string, 可选): 元信息：nullable=true
+  - `name` (query, string, 可选): 元信息：nullable=true
+  - `is_soe` (query, boolean, 可选): 元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | string | 否 |  |
-| name | string | 否 |  |
-| is_soe | boolean | 否 |  |
-
-### 13. 查询量测值
+### 查询量测值
 
 - **方法**: `GET`
 - **路径**: `/pscpu/points/values/{src}`
-- **函数名**: `get_pscpu_points_values_by_src`
+- **工具名**: `get_pscpu_points_values_by_src`
+- **参数**:
+  - `id` (query, integer, 可选): 测点id（优先）；元信息：format=int64, nullable=true
+  - `ids` (query, string, 可选): 测点id列表，以,间隔；元信息：nullable=true
+  - `src` (path, integer, 必填): 元信息：format=int32
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| src | integer | 是 |  |
-
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 否 | 测点id（优先） |
-| ids | string | 否 | 测点id列表，以,间隔 |
-
-### 14. 查询当前应用的测点版本号
+### 查询当前应用的测点版本号
 
 - **方法**: `GET`
 - **路径**: `/pscpu/points/version`
-- **函数名**: `get_pscpu_points_version`
+- **工具名**: `get_pscpu_points_version`
 
-### 15. 重置pscpu
+### 重置pscpu
 
 - **方法**: `POST`
 - **路径**: `/pscpu/reset`
-- **函数名**: `add_pscpu_reset`
+- **工具名**: `add_pscpu_reset`
 
-### 16. 启动pscpu
+### 启动pscpu
 
 - **方法**: `POST`
 - **路径**: `/pscpu/start`
-- **函数名**: `add_pscpu_start`
+- **工具名**: `add_pscpu_start`
+- **请求体**:
 
-**请求体**:
+  - 无法解析请求体结构
 
-JSON对象
 
-### 17. 停止pscpu
+### 停止pscpu
 
 - **方法**: `POST`
 - **路径**: `/pscpu/stop`
-- **函数名**: `add_pscpu_stop`
+- **工具名**: `add_pscpu_stop`
 
-## Scripts 模块
+***
 
-共 9 个接口
+## SCRIPTS 模块
 
-### 1. 查询7z脚本文件
+### 查询7z脚本文件
 
 - **方法**: `GET`
 - **路径**: `/script_file/{script_id}`
-- **函数名**: `get_script_file_by_script`
+- **工具名**: `get_script_file_by_script`
+- **参数**:
+  - `script_id` (path, integer, 必填): 脚本id；元信息：format=int64
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| script_id | integer | 是 | 脚本id |
-
-### 2. 查询脚本md5
+### 查询脚本md5
 
 - **方法**: `GET`
 - **路径**: `/script_md5`
-- **函数名**: `get_script_md5`
+- **工具名**: `get_script_md5`
+- **参数**:
+  - `id` (query, integer, 可选): 测点id（优先）；元信息：format=int64, nullable=true
+  - `ids` (query, string, 可选): 测点id列表，以,间隔；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 否 | 测点id（优先） |
-| ids | string | 否 | 测点id列表，以,间隔 |
-
-### 3. 查询所有脚本结果
+### 查询所有脚本结果
 
 - **方法**: `GET`
 - **路径**: `/script_results`
-- **函数名**: `get_script_results`
+- **工具名**: `get_script_results`
 
-### 4. 新增脚本结果
+### 新增脚本结果
 
 - **方法**: `POST`
 - **路径**: `/script_results`
-- **函数名**: `add_script_results`
-
-**请求体**:
+- **工具名**: `add_script_results`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| make_time | integer | 是 |  |
-| model_id | integer | 是 |  |
-| script_id | integer | 是 |  |
-| target | string | 是 |  |
+| make_time | integer | 是 | 格式：int64 |
+| model_id | integer | 是 | 格式：int64 |
+| script_id | integer | 是 | 格式：int64 |
+| target | string | 是 | 可选值：Aoe、Dff |
 
-### 5. 查询指定id脚本结果
+
+### 查询指定id脚本结果
 
 - **方法**: `GET`
 - **路径**: `/script_results/{id}`
-- **函数名**: `get_script_results_by`
+- **工具名**: `get_script_results_by`
+- **参数**:
+  - `id` (path, integer, 必填): 脚本结果id；元信息：format=int64
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 脚本结果id |
-
-### 6. 保存脚本对应的wasm和js文件
+### 保存脚本对应的wasm和js文件
 
 - **方法**: `POST`
 - **路径**: `/script_wasm`
-- **函数名**: `add_script_wasm`
-
-**请求体**:
+- **工具名**: `add_script_wasm`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | js_file | array[integer] | 是 | js文件内容 |
+| js_file[] | integer | 是 | js文件内容；格式：int32 |
 | module_name | string | 是 | 模块名称 |
-| script_id | integer | 是 | 脚本id |
+| script_id | integer | 是 | 脚本id；格式：int64 |
 | wasm_file | array[integer] | 是 | wasm文件内容 |
+| wasm_file[] | integer | 是 | wasm文件内容；格式：int32 |
 
-### 7. 查询指定id脚本
+
+### 查询指定id脚本
 
 - **方法**: `GET`
 - **路径**: `/scripts`
-- **函数名**: `get_scripts`
+- **工具名**: `get_scripts`
+- **参数**:
+  - `id` (query, integer, 可选): 测点id（优先）；元信息：format=int64, nullable=true
+  - `ids` (query, string, 可选): 测点id列表，以,间隔；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 否 | 测点id（优先） |
-| ids | string | 否 | 测点id列表，以,间隔 |
-
-### 8. 新增脚本
+### 新增脚本
 
 - **方法**: `POST`
 - **路径**: `/scripts`
-- **函数名**: `add_scripts`
-
-**请求体**:
+- **工具名**: `add_scripts`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | desc | string | 是 | 脚本描述 |
-| id | integer | 是 | 脚本id |
+| id | integer | 是 | 脚本id；格式：int64 |
 | is_file_uploaded | boolean | 是 | 文件是否已上传 |
 | is_js | boolean | 是 | 是否是javascript文件 |
 | path | string | 是 | 脚本路径 |
-| target | string | 是 | 脚本目标 |
+| target | string | 是 | 脚本目标；可选值：Aoe、Dff |
 | wasm_module_name | string | 是 | wasm模块名称 |
-| wasm_update_time | integer | 是 | wasm上传时间 |
+| wasm_update_time | integer | 是 | wasm上传时间；格式：int64 |
 
-### 9. 删除指定id的脚本
+
+### 删除指定id的脚本
 
 - **方法**: `DELETE`
 - **路径**: `/scripts/{ids}`
-- **函数名**: `delete_scripts_by_s`
+- **工具名**: `delete_scripts_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 脚本id列表，以,间隔
 
-**路径参数**:
+***
 
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 脚本id列表，以,间隔 |
+## SYSTEM 模块
 
-## System 模块
-
-共 4 个接口
-
-### 1. 执行map映射操作
+### 执行map映射操作
 
 - **方法**: `POST`
 - **路径**: `/common_map`
-- **函数名**: `add_common_map`
-
-**请求体**:
+- **工具名**: `add_common_map`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| Query | array[integer] | 是 | 查询 |
+| oneOf[1] | object | 是 | 查询 |
+| oneOf[1].Query | array[integer] | 是 | 查询 |
+| oneOf[1].Query[] | integer | 是 | 查询；格式：int32 |
+| oneOf[2] | object | 是 | 增加 |
+| oneOf[2].Update | array[array[integer]] | 是 | 增加 |
+| oneOf[2].Update[] | array[integer] | 是 | 增加 |
+| oneOf[2].Update[][] | integer | 是 | 增加；格式：int32 |
+| oneOf[3] | object | 是 |  |
+| oneOf[3].Update2 | array[array[integer]] | 是 |  |
+| oneOf[3].Update2[] | array[integer] | 是 |  |
+| oneOf[3].Update2[][] | integer | 是 | 格式：int32 |
+| oneOf[4] | object | 是 | 删除 |
+| oneOf[4].Delete | array[integer] | 是 | 删除 |
+| oneOf[4].Delete[] | integer | 是 | 删除；格式：int32 |
 
-### 2. 查询Eig配置
+
+### 查询Eig配置
 
 - **方法**: `GET`
 - **路径**: `/config`
-- **函数名**: `get_config`
+- **工具名**: `get_config`
 
-### 3. 保存Eig配置
+### 保存Eig配置
 
 - **方法**: `POST`
 - **路径**: `/config`
-- **函数名**: `add_config`
-
-**请求体**:
+- **工具名**: `add_config`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| properties | object | 是 | 主要配置属性 |
-| properties2 | object | 是 | 次要配置属性 |
+| properties | object[string, string] | 是 | 主要配置属性；额外属性：string |
+| properties2 | object[string, string] | 是 | 次要配置属性；额外属性：string |
 
-### 4. 查看ping结果
+
+### 查看ping结果
 
 - **方法**: `GET`
 - **路径**: `/ping`
-- **函数名**: `get_ping`
+- **工具名**: `get_ping`
 
-## Tag_defines 模块
+***
 
-共 1 个接口
+## TAG_DEFINES 模块
 
-### 1. 查询指定分组的标签名称及id列表
+### 查询指定分组的标签名称及id列表
 
 - **方法**: `GET`
 - **路径**: `/tag_defines/{group}`
-- **函数名**: `get_tag_defines_by_group`
+- **工具名**: `get_tag_defines_by_group`
+- **参数**:
+  - `id` (path, integer, 必填): 分组id；元信息：format=int32
+  - `group` (path, integer, 必填): 元信息：format=int32
 
-**路径参数**:
+***
 
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 是 | 分组id |
-| group | integer | 是 |  |
+## TAGS 模块
 
-## Tags 模块
-
-共 2 个接口
-
-### 1. 更新指定分组下标签名和测点数组关系
+### 更新指定分组下标签名和测点数组关系
 
 - **方法**: `PUT`
 - **路径**: `/tags/{group}`
-- **函数名**: `update_tags_by_group`
+- **工具名**: `update_tags_by_group`
+- **参数**:
+  - `group` (path, integer, 必填): 分组id；元信息：format=int32
+- **请求体**:
 
-**路径参数**:
+  - 无法解析请求体结构
 
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| group | integer | 是 | 分组id |
 
-**请求体**:
-
-JSON对象
-
-### 2. 删除指定分组下标签id和测点的关系
+### 删除指定分组下标签id和测点的关系
 
 - **方法**: `DELETE`
 - **路径**: `/tags/{group}`
-- **函数名**: `delete_tags_by_group`
+- **工具名**: `delete_tags_by_group`
+- **参数**:
+  - `group` (path, integer, 必填): 分组id；元信息：format=int32
+- **请求体**:
 
-**路径参数**:
+  - 无法解析请求体结构
 
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| group | integer | 是 | 分组id |
 
-**请求体**:
+***
 
-JSON对象
+## TAGS_CBOR 模块
 
-## Tags_cbor 模块
-
-共 1 个接口
-
-### 1. 查询指定分组下标签id对应的测点数组
+### 查询指定分组下标签id对应的测点数组
 
 - **方法**: `POST`
 - **路径**: `/tags_cbor/{group}`
-- **函数名**: `add_tags_cbor_by_group`
+- **工具名**: `add_tags_cbor_by_group`
+- **参数**:
+  - `id` (path, integer, 必填): 分组id；元信息：format=int32
+  - `group` (path, integer, 必填): 元信息：format=int32
+- **请求体**:
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
+| 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| id | integer | 是 | 分组id |
-| group | integer | 是 |  |
+| [] | integer | 是 | 格式：int32 |
 
-**请求体**:
 
-JSON对象
+***
 
-## Webplugins 模块
+## WEBPLUGINS 模块
 
-共 7 个接口
-
-### 1. 保存插件对应的file
+### 保存插件对应的file
 
 - **方法**: `POST`
 - **路径**: `/webplugin_file`
-- **函数名**: `add_webplugin_file`
-
-**请求体**:
+- **工具名**: `add_webplugin_file`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| plugin_id | integer | 是 | 插件id |
+| plugin_id | integer | 是 | 插件id；格式：int64 |
 | sevenz_file | array[integer] | 是 | 内容 |
+| sevenz_file[] | integer | 是 | 内容；格式：int32 |
 
-### 2. 查询插件对应的压缩文件
+
+### 查询插件对应的压缩文件
 
 - **方法**: `GET`
 - **路径**: `/webplugin_file/{plugin_id}`
-- **函数名**: `get_webplugin_file_by_plugin`
+- **工具名**: `get_webplugin_file_by_plugin`
+- **参数**:
+  - `plugin_id` (path, integer, 必填): 插件id；元信息：format=int64
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| plugin_id | integer | 是 | 插件id |
-
-### 3. 查询插件md5
+### 查询插件md5
 
 - **方法**: `GET`
 - **路径**: `/webplugin_md5`
-- **函数名**: `get_webplugin_md5`
+- **工具名**: `get_webplugin_md5`
+- **参数**:
+  - `id` (query, integer, 可选): 测点id（优先）；元信息：format=int64, nullable=true
+  - `ids` (query, string, 可选): 测点id列表，以,间隔；元信息：nullable=true
 
-**查询参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| id | integer | 否 | 测点id（优先） |
-| ids | string | 否 | 测点id列表，以,间隔 |
-
-### 4. 查询所有界面插件
+### 查询所有界面插件
 
 - **方法**: `GET`
 - **路径**: `/webplugins`
-- **函数名**: `get_webplugins`
+- **工具名**: `get_webplugins`
 
-### 5. 新增插件
+### 新增插件
 
 - **方法**: `POST`
 - **路径**: `/webplugins`
-- **函数名**: `add_webplugins`
-
-**请求体**:
+- **工具名**: `add_webplugins`
+- **请求体**:
 
 | 字段名 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| id | integer | 是 | 插件id |
+| id | integer | 是 | 插件id；格式：int64 |
 | is_file_uploaded | boolean | 是 | 文件是否已经上传 |
 | is_monopoly | boolean | 是 | if is only one view |
 | model_name | string | 是 | wasm或js或html文件的名称 |
 | name | string | 是 | 在浏览模式下显示的名称 |
 | path | string | 是 | 文件树中的路径 |
 
-### 6. 删除指定id的插件
+
+### 删除指定id的插件
 
 - **方法**: `DELETE`
 - **路径**: `/webplugins/{ids}`
-- **函数名**: `delete_webplugins_by_s`
+- **工具名**: `delete_webplugins_by_s`
+- **参数**:
+  - `ids` (path, string, 必填): 插件id列表，以,间隔
 
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| ids | string | 是 | 插件id列表，以,间隔 |
-
-### 7. 查询指定id插件
+### 查询指定id插件
 
 - **方法**: `GET`
 - **路径**: `/webplugins/{plugin_id}`
-- **函数名**: `get_webplugins_by_plugin`
-
-**路径参数**:
-
-| 参数名 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| plugin_id | integer | 是 | 插件id |
-
-## 枚举类型定义
-
-共 24 个枚举类型
-
-### 1. ActionExeResult
-
-- **可选值**: NotRun, Success, Failed
-
-### 2. AlarmLevel
-
-- **可选值**: Common, Important, Emergency
-
-### 3. AlarmStatus
-
-- **可选值**: occur, disappear
-
-### 4. AlarmType
-
-- **可选值**: invalidPoints, invalidTransport, invalidAOE, alarmLevel1, alarmLevel2, badData, userDefine
-
-### 5. DataType
-
-- **描述**: 采集数据类型
-- **可选值**: Binary, OneByteIntSigned, OneByteIntSignedLower, OneByteIntSignedUpper, OneByteIntUnsigned, OneByteIntUnsignedLower, OneByteIntUnsignedUpper, TwoByteIntUnsigned, TwoByteIntUnsignedSwapped, TwoByteIntSigned, TwoByteIntSignedSwapped, TwoByteBcd, FourByteIntUnsigned, FourByteIntSigned, FourByteIntUnsignedSwapped, FourByteIntSignedSwapped, FourByteIntUnsignedSwappedSwapped, FourByteIntSignedSwappedSwapped, FourByteFloat, FourByteFloatSwapped, FourByteFloatSwappedSwapped, FourByteBcd, FourByteBcdSwapped, FourByteMod10k, FourByteMod10kSwapped, SixByteMod10k, SixByteMod10kSwapped, EightByteIntUnsigned, EightByteIntSigned, EightByteIntUnsignedSwapped, EightByteIntSignedSwapped, EightByteIntUnsignedSwappedSwapped, EightByteIntSignedSwappedSwapped, EightByteFloat, EightByteFloatSwapped, EightByteFloatSwappedSwapped, EightByteMod10kSwapped, EightByteMod10k
-
-### 6. DataUnit
-
-- **描述**: 数据单位
-- **可选值**: OnOrOff, A, V, kV, W, kW, MW, Var, kVar, MVar, VA, kVA, MVA, H, mH, Ah, mAh, kWh, Celsius, feet, km, meter, mm2, degree, rad, UnitOne, Percent, bit, B, kB, MB, GB, TB, PB, Unknown
-
-### 7. DfSaveMode
-
-- **可选值**: EveryTime, Once, Memory, Never
-
-### 8. EventEvalResult
-
-- **可选值**: Happen, NotHappen, Canceled, Error
-
-### 9. FailureMode
-
-- **描述**: 失败模式
-- **可选值**: Default, Ignore, StopAll, StopFailed
-
-### 10. FileOperation
-
-- **可选值**: UPDATE, DELETE, RENAME
-
-### 11. FileTreeOp
-
-- **描述**: 文件树的操作类型
-- **可选值**: Query, Add, Delete, Change, Apply, QueryApply
-
-### 12. MbProtocolType
-
-- **描述**: Modbus协议类型
-- **可选值**: ENCAP, XA, RTU
-
-### 13. MeasPhase
-
-- **描述**: 量测相位
-- **可选值**: Unknown, Total, A, B, C, A0, B0, C0, AB, BC, CA
-
-### 14. NodeType
-
-- **描述**: 节点类型
-- **可选值**: ConditionNode, SwitchNode, SwitchOfActionResult
-
-### 15. Operation
-
-- **描述**: Mathematical operations.
-- **可选值**: Plus, Minus, Times, Div, Rem, Pow, Fact, Equal, Unequal, LessThan, GreatThan, LtOrEqual, GtOrEqual, And, Or, Not, BitAnd, BitOr, BitXor, BitShl, BitShr, BitAt, BitNot, DotTimes, DotDiv, LeftDiv, DotPow, Transpose
-
-### 16. PlotType
-
-- **可选值**: Bar, BarPolar, Box, Candlestick, Contour, Carpet, Graph, Heatmap, Histogram, Histogram2d, Histogram2dContour, Indicator, IsoSurface, Mesh3d, Ohlc, Pie, Sankey, Scatter, Scatter3d, ScatterPolar, Sunburst, Surface, Table, Violin, EChart, Undefined
-
-### 17. PropType
-
-- **描述**: 属性类型
-- **可选值**: U8, U16, U32, U64, I8, I16, I32, I64, F32, F64, Str, Complex32, Complex64, TensorF32, TensorF64, TensorC32, TensorC64, Unknown
-
-### 18. PsRsrType
-
-- **描述**: 电力设备类型
-- **可选值**: Switch, Busbar, ACline, DCline, Winding, SyncGenerator, ESS, PCS, Transformer, Load, ShuntCompensator, SerialCompensator, ShuntReactor, ShuntCapacitor, SeriesReactor, SeriesCapacitor, Breaker, Disconnector, GroundDisconnector, SVC, SVG, Feeder, PWBusbar, Cable, Regulator, Connector, Measurement, Company, SubIsland, LoadArea, Substation, PowerPlant, VoltageLevel, BaseVoltage, HvdcSys, HvdcPoleSys, DCPole, DCLineDot, TLineDot, Converter, TLine, ACLineDot, TNode, Convergenceline, SeriesPowerTransformer, SeriesTransformerWinding, Acfilter, Synccondenser, DCBreaker, DCDisconnector, Signal, Combined, Composite, Section, SectionType, Bus, Branch, UserDefine1, UserDefine2, UserDefine3, UserDefine4, UserDefine5, UserDefine6, UserDefine7, UserDefine8, UserDefine9, UserDefine10, Unknown
-
-### 19. RegisterType
-
-- **描述**: 注册类型
-- **可选值**: COILS, DISCRETE, INPUT, HOLDING
-
-### 20. RequestType
-
-- **可选值**: Get, Post, Put, Delete, Test
-
-### 21. ScriptTarget
-
-- **可选值**: Aoe, Dff
-
-### 22. SerialParity
-
-- **描述**: 奇偶校验位
-- **可选值**: None, Odd, Even, Mark, Space
-
-### 23. SetPointStatus
-
-- **可选值**: YkCreated, YtCreated, YkSuccess, YtSuccess, YkFailTimeout, YtFailTimeout, YkFailTooBusy, YtFailTooBusy, YkFailProtocol, YtFailProtocol, YkFailBadData, YtFailBadData
-
-### 24. TimeUnit
-
-- **可选值**: Nanoseconds, Microseconds, Milliseconds
-
-## 对象类型定义
-
-共 114 个对象类型
-
-### 1. ActionEdge
-
-- **描述**: 边对象
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| action | EigAction | 动作定义 |
-| aoe_id | integer | AOE id |
-| failure_mode | FailureMode | action失败时的处理方式 |
-| name | string | 动作名称 |
-| source_node | integer | 源节点 |
-| target_node | integer | 目标节点 |
-
-### 2. AlarmConfig
-
-- **描述**: 告警通知配置
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| common | AlarmNoticeSetting | 普通 |
-| emergency | AlarmNoticeSetting | 紧急 |
-| important | AlarmNoticeSetting | 严重 |
-
-### 3. AlarmNoticeSetting
-
-- **描述**: 告警通知形式
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| popup_window | boolean | 桌面弹窗 |
-| sound_light | boolean | 声光 |
-| text_messages | boolean | 短信 |
-
-### 4. AoeControl
-
-- **描述**: AOE指令集
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| AoeActions | array | AOE指令列表 |
-
-### 5. AoeModel
-
-- **描述**: aoe模型
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| actions | array | 动作列表 |
-| events | array | 节点列表 |
-| id | integer | aoe id |
-| name | string | aoe名称 |
-| trigger_type | TriggerType | 触发类型 |
-| variables | array | 用户自定义的变量：变量名和表达式 |
-
-### 6. Authority
-
-- **描述**: 权限
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| desc | string | 权限描述 |
-| id | integer | 权限ID |
-| method | string | 请求方法 |
-| name | string | 权限名称 |
-| url | string | 权限可操作的url资源地址 |
-
-### 7. BiViewModel
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| config | any |  |
-| echart_js | ['string', 'null'] |  |
-| exprs | string |  |
-| flow_id | integer |  |
-| id | integer |  |
-| is_show | boolean |  |
-| layout | any |  |
-| name | string |  |
-| plot_template | string |  |
-| plot_type | PlotType |  |
-| refresh_interval | ['integer', 'null'] |  |
-| series_style | any |  |
-
-### 8. CN
-
-- **描述**: 连接节点
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| id | integer | 连接节点id |
-| psr_id | string | 资源id |
-| terminals | array | 端子id数组 |
-
-### 9. CommitNote
-
-- **描述**: 版本信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| note | string | 提交时的注释 |
-| tree_id | string | 对应的tree_id |
-| version | integer | 版本号 |
-
-### 10. Complex32
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| im | number |  |
-| re | number |  |
-
-### 11. Complex64
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| im | number |  |
-| re | number |  |
-
-### 12. DayPlan
-
-- **描述**: 计划对象
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| desc | string | 计划描述 |
-| id | integer | 计划id |
-| name | string | 计划名称 |
-| plan | array | 计划内容数组，tuple格式为(开始时间:u64, 结束时间:u64, 功率值:f64) |
-
-### 13. DfActionEdge
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| action | DfAction |  |
-| desc | string |  |
-| flow_id | integer |  |
-| name | string |  |
-| source_node | integer |  |
-| target_node | integer |  |
-
-### 14. DfNode
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| flow_id | integer |  |
-| id | integer |  |
-| name | string |  |
-| node_type | DfNodeType |  |
-
-### 15. DffBriefResult
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| end_time | integer |  |
-| flow_id | integer |  |
-| height | integer |  |
-| length | integer |  |
-| name | ['string', 'null'] |  |
-| series_dtypes | array |  |
-| series_names | array |  |
-| start_time | integer |  |
-
-### 16. DffModel
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| actions | array | 边 |
-| aoe_var | ['array', 'null'] | destination of aoe variable |
-| id | integer | dff id |
-| is_on | boolean | should schedule |
-| name | string | dff name |
-| nodes | array | 节点 |
-| save_mode | DfSaveMode | Data frame save mode |
-| trigger_type | DfTriggerType | Dataframe flow 启动的方式 |
-
-### 17. DffResult
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| end_time | integer |  |
-| flow_id | integer |  |
-| result | any |  |
-| start_time | integer |  |
-
-### 18. Dlt645ClientTp
-
-- **描述**: Dlt645客户端通道信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| connections | array | 通道连接信息 |
-| id | integer | 通道id |
-| name | string | 通道名称 |
-| para | Dlt645Para | 参数 |
-
-### 19. Dlt645Connection
-
-- **描述**: Dlt645通道连接信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| data_configure | array | register settings |
-| data_id_to_rd | object | key:寄存器地址,value:setting中vec<RegisterData>的位置 |
-| default_polling_period_in_milli | integer | 默认的轮询周期 |
-| name | string | 连接名称 |
-| point_id | integer | 通道状态对应的测点号 |
-| point_id_to_rd | object | key is point id, value is position of register data |
-| polling_period_to_data | object | 轮询周期不同的数据, key is period in milli, value is position. |
-| slave_id | integer |  |
-| timeout_in_milli | integer | 超时设置 |
-
-### 20. Duration
-
-- **描述**: 时间对象
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| nanos | integer | 剩余纳秒 |
-| secs | integer | 秒 |
-
-### 21. EcConnection
-
-- **描述**: EtherCAT通道连接信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| cycle_time_in_micro | integer |  |
-| data | array |  |
-| dc_sync | boolean | is DC sync |
-| index | integer |  |
-| module_name | string |  |
-| name | string |  |
-| point_id | integer |  |
-| point_to_pos | object |  |
-| watchdog_multi | ['integer', 'null'] | defaukt to 2498 |
-| watchdog_pdi | ['integer', 'null'] | 1/25M*(multi_watchdog+2)*pdi_watchdog |
-| watchdog_sm | ['integer', 'null'] | 1/25M*(multi_watchdog+2)*sm_watchdog, defaukt to 1000 |
-
-### 22. EcMasterTp
-
-- **描述**: EtherCAT通道信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| connections | array | 连接信息 |
-| eth | string |  |
-| id | integer | 通道id |
-| name | string | 通道名称 |
-
-### 23. EigConfig
-
-- **描述**: EIG 配置对象
-用于存储和管理 EIG 相关的配置信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| properties | object | 主要配置属性 |
-| properties2 | object | 次要配置属性 |
-
-### 24. EventNode
-
-- **描述**: 节点对象
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| aoe_id | integer | AOE id |
-| expr | Expr | 事件是否发生判断的bool表达式 |
-| id | integer | 节点id |
-| name | string | 节点名 |
-| node_type | NodeType | 节点类型 |
-| timeout | integer | 事件还未发生时等待超时时间 |
-
-### 25. Expr
-
-- **描述**: 表达式对象
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| rpn | array |  |
-
-### 26. FileTreeNote
-
-- **描述**: 文件树的上传结构
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| op | FileTreeOp |  |
-| op_paths | array |  |
-| path | ['string', 'null'] |  |
-| tree_id | string |  |
-| version | ['integer', 'null'] |  |
-
-### 27. HYDevice
-
-- **描述**: 华云台区智能融合终端模型
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| dev_uuid | ['string', 'null'] |  |
-| device_id | integer |  |
-| device_info | HYDeviceInfo |  |
-| need_register | boolean |  |
-| points_pos | array |  |
-| poll_period | integer |  |
-
-### 28. HYDeviceInfo
-
-- **描述**: 华云-台区智能融合终端模型
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| ProType | string | 协议类型 |
-| addr | string | 地址 |
-| desc | string | 描述 |
-| deviceType | string | 设备型号 |
-| isReport | string | 上报标志 0不需要上报，1需要上报 |
-| manuID | string | 厂商ID 1234 名 |
-| manuName | string | 厂商名称 |
-| model | string | 模型名称 |
-| nodeID | string | 节点ID |
-| port | string | RS485-1、RS485-2、RS485-3、RS485-4、PLC、UMW |
-| productID | string | 产品ID |
-
-### 29. HYMqttTransport
-
-- **描述**: 华云Mqtt通道信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| app_name | string | APP的名称，用于生成topic |
-| data_configure | array | 测点列表 |
-| device_configure | object | 设备key is 设备序号, value is (dev,设备的信息) |
-| id | integer | 通道id |
-| is_new | boolean | 版本，false是配电物联2020版本，true是2021版本，该参数会导致topic不同 |
-| is_poll | boolean |  |
-| model_to_pos | object | 模型列表key is model, value is 测点索引 |
-| mqtt_broker | array | 服务端的ip和por |
-| name | string | 通道名称 |
-| point_id | integer | 通道状态对应的测点号 |
-| point_id_to_pos | object | key is point id, value is information object address(data_configure的索引) |
-| poll_time | integer | 轮询周期，单位毫秒 |
-| read_topic | string | 读测点的主题 |
-| user_name | ['string', 'null'] | 用户名，可选 |
-| user_password | ['string', 'null'] | 用户密码，可选 |
-| write_topic | string | 写测点的主题 |
-
-### 30. HYPoint
-
-- **描述**: 华云-台区智能融合终端测点
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| device_id | integer | 测点归属的设备序号 |
-| not_realtime | boolean | 暂时无用 |
-| point_id | integer | 对应的测点Id |
-| point_info | HYPointInfo | 测点信息 |
-
-### 31. HYPointInfo
-
-- **描述**: 华云台区智能融合终端测点信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| deadzone | string |  |
-| isReport | string |  |
-| name | string |  |
-| ratio | string |  |
-| type | string |  |
-| unit | string |  |
-| userdefine | string | 名字不能改！！！ |
-
-### 32. Iec104ClientTp
-
-- **描述**: Iec104客户端通道信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| connection | Iec104Connection | 连接信息 |
-| id | integer | 通道id |
-| name | string | 通道名称 |
-| tcp_server | array | 服务端的ip和port |
-| yc_data_type | integer | 遥测点号的数据类型 |
-| yx_data_type | integer | 遥信点号的数据类型 |
-
-### 33. Iec104Connection
-
-- **描述**: Iec104通道连接信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| call_counter_time | ['integer', 'null'] | 点度量总召时间间隔 |
-| call_time | ['integer', 'null'] | 总召时间间隔 |
-| common_address | integer | 公共地址 |
-| common_address_field_length | integer | 公共地址字节个数 |
-| cot_field_length | integer | 传输原因字节个数 |
-| data_configure | array | register settings |
-| direct_yk | boolean | 遥控遥调是否为直控，默认为false |
-| direct_yt | boolean |  |
-| extension_config | array | 扩展配置 |
-| ioa_field_length | integer | 信息体地址字节个数 |
-| ioa_to_pos | object | key:Point地址,value:data_configure中的位置 |
-| is_client | boolean | 是否为客户端 |
-| is_control_with_time | boolean | 控制方向是否带时标 |
-| max_idle_time | integer | t3 |
-| max_time_no_ack_received | integer | t1 |
-| max_time_no_ack_sent | integer | t2 |
-| max_unconfirmed_apdus_received | integer | w，接收方收到w个I格式报文后发送确认 |
-| max_unconfirmed_apdus_sent | integer | k，发送方发送k条连续的未被确认的I格式报文，停止发送 |
-| name | string | 连接名称 |
-| originator_address | integer | 源发地址 |
-| point_id | integer | 通道状态对应的测点号 |
-| point_id_to_ioa | object | key is point id, value is information object address |
-
-### 34. Iec104Point
-
-- **描述**: Iec104测点信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| control_ioa | ['integer', 'null'] | 控制点地址，若进行配置控制点地址，则说明该点可写 |
-| ioa | integer | 协议地址 |
-| is_yx | boolean | 是否是遥信量 |
-| point_id | integer | 对应的测点Id |
-
-### 35. Iec104ServerTp
-
-- **描述**: Iec104服务端通道信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| connections | array | 连接信息 |
-| id | integer | 通道id |
-| name | string | 通道名称 |
-| tcp_server_port | integer | 服务的port |
-| yc_data_type | integer | 遥测点号的数据类型 |
-| yx_data_type | integer | 遥信点号的数据类型 |
-
-### 36. ImageDfFilter
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| color_type | string |  |
-| filter_type | string |  |
-| height | integer |  |
-| is_url | boolean |  |
-| url_or_path | string |  |
-| width | integer |  |
-
-### 37. Island
-
-- **描述**: 电气岛，即集合
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| cns | array | 连接节点列表 |
-| measures | object | 测点，设备id->测点列表 |
-| prop_groups | object | 属性分组，属性分组id->属性分组 |
-| resources | object | 资源，设备id->资源对象 |
-
-### 38. LccDevice
-
-- **描述**: Lcc设备信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| desc | string | lcc描述 |
-| ip | string | lcc ip |
-| is_ems | boolean | 是否是ems |
-| lcc_id | string | lcc id |
-| name | string | lcc名称 |
-
-### 39. MILP
-
-- **描述**: 混合整数线性规划求解器
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| a | Mat | Ax >=/<= b |
-| b | array |  |
-| binary_int_float | array | 整数变量在x中的位置 |
-| c | array | min/max c^T*x |
-| constraint_type | array |  |
-| min_or_max | boolean | min: true, max: false |
-| parameters | object | 求解器参数：参数名、参数值 |
-| x_lower | array | 变量的下界约束：变量位置、约束表达式 |
-| x_name | array | 变量名称 |
-| x_upper | array |  |
-
-### 40. Mat
-
-- **描述**: 由表达式组成的矩阵
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| m | integer | 行数 |
-| n | integer | 列数 |
-| v | array | 值 |
-
-### 41. MbConnection
-
-- **描述**: Modbus通道连接信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| coil_write_code | ['integer', 'null'] |  |
-| default_polling_period_in_milli | integer |  |
-| delay_between_requests | integer | 两条请求直接的间隔 |
-| holding_write_code | ['integer', 'null'] |  |
-| max_read_bit_count | integer |  |
-| max_read_register_count | integer |  |
-| max_write_bit_count | integer |  |
-| max_write_register_count | integer |  |
-| mb_data_configure | array | register settings |
-| name | string |  |
-| point_id | integer | 通道状态对应的测点号 |
-| point_id_to_rd | object | key is point id, value is position of register data |
-| polling_period_to_data | object | 轮询周期不同的数据, key is period in milli, value is position. |
-| protocol_type | MbProtocolType | 协议类型 |
-| register_addr_to_rd | object | key:寄存器地址,value:setting中vec<RegisterData>的位置 |
-| slave_id | integer |  |
-| timeout_in_milli | integer | 超时设置 |
-
-### 42. MeasureDef
-
-- **描述**: 测点定义
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| dev_id | integer |  |
-| id | integer |  |
-| phase | MeasPhase |  |
-| point_id | integer |  |
-| terminal_id | integer |  |
-
-### 43. MeasureValue
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| analog_value | number | 模拟量值 |
-| discrete_value | integer | 离散量值 |
-| is_discrete | boolean | 是否离散量 |
-| is_transformed | boolean | 是否已经变换 |
-| point_id | integer | 对应的测点 |
-| timestamp | integer | 时间戳 |
-| transformed_analog | number | 变换后的模拟量值 |
-| transformed_discrete | integer | 变换后的离散量值 |
-
-### 44. Measurement
-
-- **描述**: 测点对象
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| alarm_level1_expr | string | 告警级别1的表达式 |
-| alarm_level2_expr | string | 告警级别2的表达式 |
-| alias_id | string | 字符串id |
-| change_expr | string | 判断是否"变化"的公式，用于变化上传或储存 |
-| data_unit | string | 单位 |
-| desc | string | Description |
-| expression | string | 如果是计算点，这是表达式 |
-| init_value | integer | 默认值存储在8个字节，需要根据is_discrete来转换成具体的值 |
-| inv_trans_expr | string | 逆变换公式 |
-| is_computing_point | boolean | 是否是计算点 |
-| is_discrete | boolean | 是否是离散量 |
-| is_realtime | boolean | 如是，则不判断是否"变化"，均上传 |
-| is_soe | boolean | 是否是soe点 |
-| lower_limit | number | 下限，用于坏数据辨识 |
-| point_id | integer | 唯一的id |
-| point_name | string | 测点名 |
-| trans_expr | string | 变换公式 |
-| upper_limit | number | 上限，用于坏数据辨识 |
-| zero_expr | string | 判断是否为0值的公式 |
-
-### 45. MemConnection
-
-- **描述**: 内存通道连接信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| base_addr | integer |  |
-| data | array |  |
-| default_polling_period_in_milli | integer |  |
-| lock_method | MemLock |  |
-| mem_addr_to_pos | object | key:寄存器地址,value:setting中vec<MemData>的位置 |
-| name | string |  |
-| point_to_pos | object |  |
-| polling_period_to_data | object | 轮询周期不同的数据, key is period in milli, value is position. |
-| total_size | ['integer', 'null'] | 取决于计算机位数，如果溢出，应该报错。 |
-
-### 46. MemData
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| data_type | DataType | 数据类型 |
-| from | integer |  |
-| is_writable | boolean |  |
-| point_id | integer | 对应的测点Id |
-| polling_period_in_milli | integer |  |
-
-### 47. MemoryPosixTp
-
-- **描述**: Posix内存通道
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| connections | array | 连接信息 |
-| id | integer | 通道id |
-| is_transfer | boolean |  |
-| name | string | 通道名称 |
-| path | ['string', 'null'] |  |
-
-### 48. MemorySystemVTp
-
-- **描述**: SystemV内存通道
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| connection | MemConnection |  |
-| id | integer | 通道id |
-| identifier | integer |  |
-| is_transfer | boolean |  |
-| name | string | 通道名称 |
-| path | string |  |
-
-### 49. MemsScript
-
-- **描述**: 脚本
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| desc | string | 脚本描述 |
-| id | integer | 脚本id |
-| is_file_uploaded | boolean | 文件是否已上传 |
-| is_js | boolean | 是否是javascript文件 |
-| path | string | 脚本路径 |
-| target | ScriptTarget | 脚本目标 |
-| wasm_module_name | string | wasm模块名称 |
-| wasm_update_time | integer | wasm上传时间 |
-
-### 50. Menuitem
-
-- **描述**: 菜单
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| group | string | 分组 |
-| id | integer | 菜单ID |
-| name | string | 名称 |
-| url | string | 菜单对应的url地址 |
-
-### 51. ModbusRtuClientTp
-
-- **描述**: ModbusRtu客户端通道信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| connections | array | 通道连接信息 |
-| id | integer | 通道id |
-| name | string | 通道名称 |
-| para | SerialPara | 串口参数 |
-
-### 52. ModbusRtuServerTp
-
-- **描述**: ModbusRtu服务端通道信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| connections | array | 通道连接信息 |
-| id | integer | 通道id |
-| name | string | 通道名称 |
-| para | SerialPara | 串口参数 |
-
-### 53. ModbusTcpClientTp
-
-- **描述**: ModbusTcp客户端通道信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| connections | array | Modbus通道连接信息 |
-| id | integer | 通道id |
-| name | string | 通道名称 |
-| tcp_server | array | 服务端的ip和port |
-
-### 54. ModbusTcpServerTp
-
-- **描述**: ModbusTcp服务端通道信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| connections | array | 通道连接信息 |
-| id | integer | 通道id |
-| name | string | 通道名称 |
-| tcp_server_port | integer | 服务的port |
-
-### 55. MqttTransport
-
-- **描述**: Mqtt通道信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| array_filter | ['string', 'null'] | 总的提取器，有些情况测量数据作为一个数组放在json中 |
-| filter_keys | ['array', 'null'] | json格式过滤器 |
-| filter_values | ['array', 'null'] |  |
-| id | integer | 通道id |
-| is_json | boolean | 编码格式，默认是protobuf |
-| is_transfer | boolean | 是否转发通道 |
-| json_tags | ['object', 'null'] | json测点对应的数据标识, key是过滤器对应Array的json字符串，value是标识以及测点的索引 |
-| json_write_tag | ['object', 'null'] | json写测点模板 |
-| json_write_template | ['object', 'null'] | json写测点模板 |
-| keep_alive | ['integer', 'null'] | 心跳时间 |
-| mqtt_broker | array | 服务端的ip和por |
-| name | string | 通道名称 |
-| point_id | integer | 通道状态对应的测点号 |
-| point_ids | array | 通过mqtt读写的测点 |
-| read_topic | string | 读测点的主题 |
-| user_name | ['string', 'null'] | 用户名，可选 |
-| user_password | ['string', 'null'] | 用户密码，可选 |
-| write_topic | string | 写测点的主题 |
-
-### 56. NLP
-
-- **描述**: 非整数线性规划求解器
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| g | array | 等式约束式 g(x) == b |
-| g_lower | array | 不等式约束式 g(x) <= b |
-| g_upper | array | 不等式约束式 g(x) >= b |
-| min_or_max | boolean | min: true, max: false |
-| obj_expr | Expr | 目标函数表达式 min obj |
-| parameters | object | 求解器参数：参数名、参数值 |
-| x_init | array | 变量初始值x0 |
-| x_lower | array | 整数变量在x中的位置 |
-| x_name | array | 变量名称 |
-| x_upper | array |  |
-
-### 57. NetworkRsr
-
-- **描述**: 设备对象
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| container_id | ['integer', 'null'] |  |
-| define_id | integer | 设备定义id |
-| desc | string | 设备描述 |
-| id | integer | 设备id |
-| name | string | 设备名称 |
-| prop_group_ids | array | 设备属性分组id列表 |
-| terminals | array | 设备的端口 |
-
-### 58. NewtonSolver
-
-- **描述**: 非线性方程f(x)=b求解器
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| f | array |  |
-| parameters | object |  |
-| x_init | array |  |
-| x_init_cx | array |  |
-| x_name | array |  |
-
-### 59. NodeInfo
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| node_id | NodeIdentifier |  |
-| node_ns | integer |  |
-
-### 60. OpcuaClientTp
-
-- **描述**: Opcua客户端通道信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| certificate | ['array', 'null'] | certificate |
-| id | integer | 通道id |
-| is_writable | array |  |
-| name | string | 通道名称 |
-| node_ids | array | corresponding node ids in opc ua server |
-| point_id | integer | 通道状态对应的测点号 |
-| point_ids | array | 通过opcua读写的测点 |
-| poll_period | array |  |
-| private_key | ['array', 'null'] | private_key |
-| server | array | 服务端的ip和port |
-| sub_properties | object | subscribe properties |
-| user_name | ['string', 'null'] | 用户名，可选 |
-| user_password | ['string', 'null'] | 用户密码，可选 |
-
-### 61. OpcuaServerTp
-
-- **描述**: Opcua服务端通道信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| browse_name | array |  |
-| certificate | ['array', 'null'] | certificate |
-| id | integer | 通道id |
-| is_writable | array |  |
-| name | string | 通道名称 |
-| node_ids | array |  |
-| point_ids | array | register settings |
-| private_key | ['array', 'null'] | private_key |
-| server_port | integer | 服务端的ip和port |
-| users | ['array', 'null'] | 用户 |
-
-### 62. PbActionResult
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| end_time | ['integer', 'null'] |  |
-| fail_code | ['integer', 'null'] |  |
-| final_result | any |  |
-| source_id | ['integer', 'null'] |  |
-| start_time | ['integer', 'null'] |  |
-| target_id | ['integer', 'null'] |  |
-| var_values | array |  |
-| variables | array |  |
-| yk_points | array |  |
-| yk_values | array |  |
-| yt_points | array |  |
-| yt_values | array |  |
-
-### 63. PbAlarmDefine
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| desc | ['string', 'null'] |  |
-| id | ['integer', 'null'] |  |
-| level | any |  |
-| name | ['string', 'null'] |  |
-| owners | ['string', 'null'] |  |
-| rule | ['string', 'null'] |  |
-
-### 64. PbAlarmDefines
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| defines | array |  |
-
-### 65. PbAnalogValue
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| change_init | ['boolean', 'null'] |  |
-| measValue | ['number', 'null'] |  |
-| origValue | ['number', 'null'] |  |
-| pointId | ['integer', 'null'] |  |
-| source | ['integer', 'null'] |  |
-| timestamp | ['integer', 'null'] |  |
-
-### 66. PbAoeResult
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| action_results | array |  |
-| aoe_id | ['integer', 'null'] |  |
-| end_time | ['integer', 'null'] |  |
-| event_results | array |  |
-| start_time | ['integer', 'null'] |  |
-
-### 67. PbAoeResults
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| results | array |  |
-
-### 68. PbDiscreteValue
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| change_init | ['boolean', 'null'] |  |
-| measValue | ['integer', 'null'] |  |
-| origValue | ['integer', 'null'] |  |
-| pointId | ['integer', 'null'] |  |
-| source | ['integer', 'null'] |  |
-| timestamp | ['integer', 'null'] |  |
-
-### 69. PbEigAlarm
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| alarm_type | any |  |
-| content | ['string', 'null'] |  |
-| define_id | ['integer', 'null'] |  |
-| id | ['integer', 'null'] |  |
-| status | any |  |
-| timestamp | ['integer', 'null'] |  |
-
-### 70. PbEigAlarms
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| alarms | array |  |
-
-### 71. PbEigPingRes
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| desc | ['string', 'null'] |  |
-| id | ['string', 'null'] |  |
-| ip | ['string', 'null'] |  |
-| is_ems | ['boolean', 'null'] |  |
-| is_standby | ['boolean', 'null'] |  |
-| name | ['string', 'null'] |  |
-
-### 72. PbEventResult
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| end_time | ['integer', 'null'] |  |
-| final_result | any |  |
-| id | ['integer', 'null'] |  |
-| start_time | ['integer', 'null'] |  |
-
-### 73. PbFile
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| fileContent | ['array', 'null'] |  |
-| fileName | ['string', 'null'] |  |
-| is_zip | ['boolean', 'null'] |  |
-| op | any |  |
-
-### 74. PbPointValues
-
-- **描述**: 测点值对象
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| aValues | array |  |
-| dValues | array |  |
-
-### 75. PbRequest
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| content | ['string', 'null'] |  |
-| function | any |  |
-| header_keys | array |  |
-| header_values | array |  |
-| id | ['integer', 'null'] |  |
-| url | ['string', 'null'] |  |
-
-### 76. PbResponse
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| content | ['string', 'null'] |  |
-| is_ok | ['boolean', 'null'] |  |
-| is_zip | ['boolean', 'null'] |  |
-| request_id | ['integer', 'null'] |  |
-
-### 77. PbSetPointResult
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| command | ['integer', 'null'] |  |
-| create_time | ['integer', 'null'] |  |
-| finish_time | ['integer', 'null'] |  |
-| point_id | ['integer', 'null'] |  |
-| sender_id | ['integer', 'null'] |  |
-| status | any |  |
-
-### 78. PbSetPointResults
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| results | array |  |
-
-### 79. PdiData
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| data_type | DataType | 数据类型 |
-| from | integer |  |
-| is_writable | boolean | 是否可写 |
-| point_id | integer | 对应的测点Id |
-
-### 80. PlanTreeNode
-
-- **描述**: 计划树节点
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| desc | ['string', 'null'] | 描述 |
-| name | string | 名称 |
-| path | string | 路径 |
-| ref_id | ['integer', 'null'] |  |
-
-### 81. PointControl
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| analogs | array |  |
-| discretes | array |  |
-
-### 82. PointControl2
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| analogs | array |  |
-| discretes | array |  |
-
-### 83. PointControl3
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| commands | array |  |
-
-### 84. PointsToExp
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| expr | Expr | 表达式 |
-| ids | array | id列表 |
-
-### 85. PropDefine
-
-- **描述**: 设备属性
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| data_type | PropType | 属性类型 |
-| data_unit | DataUnit | 属性单位 |
-| desc | string | 属性定义描述 |
-| id | integer | 属性定义id |
-| name | string | 属性定义标识 |
-
-### 86. PropGroupDefine
-
-- **描述**: 属性分组定义
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| desc | string | 属性定义描述 |
-| name | string | 属性定义标识 |
-| prop_defines | array | 设备属性实际描述 |
-
-### 87. PscpuInfo
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| aoe_info | ['array', 'null'] |  |
-| is_start | boolean |  |
-| island_info | ['array', 'null'] |  |
-| point_info | ['array', 'null'] |  |
-
-### 88. RegisterData
-
-- **描述**: Dlt645注册信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| data_id | integer | 数据标识 |
-| point_ids | array | 对应的测点Id |
-| polling_period_in_milli | integer | 轮询周期，毫秒 |
-
-### 89. Role
-
-- **描述**: 角色
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| id | integer | 角色ID |
-| name | string | 角色名称 |
-| role2authority | array | 角色权限关联表，一个角色可以拥有多个权限 |
-| role2menu | array | 角色菜单关联表，一个角色可以拥有多个菜单 |
-
-### 90. RsrDefine
-
-- **描述**: 设备定义
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| desc | string | 设备定义的描述 |
-| id | integer | 定义id |
-| name | string | 设备类别名称 |
-| prop_groups | array | 设备属性 |
-| rsr_type | PsRsrType | 设备所属类型 |
-| terminal_num | integer | 端口数量 |
-
-### 91. RsrPropGroup
-
-- **描述**: 设备属性分组
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| defines | array | 设备属性定义列表 |
-| id | integer |  |
-| name | string | 分组名称，用于显示，以及匹配PropGroupDefine |
-| props | array | 设备属性实际描述 |
-| rsr_id | integer | resource id |
-
-### 92. ScriptResult
-
-- **描述**: 脚本结果
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| make_time | integer |  |
-| model_id | integer |  |
-| script_id | integer |  |
-| target | ScriptTarget |  |
-
-### 93. ScriptWasmFile
-
-- **描述**: 脚本Wasm文件
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| js_file | array | js文件内容 |
-| module_name | string | 模块名称 |
-| script_id | integer | 脚本id |
-| wasm_file | array | wasm文件内容 |
-
-### 94. SerialPara
-
-- **描述**: 串口通道参数
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| baud_rate | integer |  |
-| data_bits | integer |  |
-| delay_between_requests | integer |  |
-| file_path | string |  |
-| parity | SerialParity |  |
-| stop_bits | integer |  |
-
-### 95. SetFloatValue
-
-- **描述**: 浮点型指令数据
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| point_id | integer |  |
-| sender_id | integer |  |
-| timestamp | integer |  |
-| yt_command | number |  |
-
-### 96. SetFloatValue2
-
-- **描述**: 浮点型指令数据
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| point_alias | string |  |
-| sender_id | integer |  |
-| timestamp | integer |  |
-| yt_command | number |  |
-
-### 97. SetIntValue
-
-- **描述**: 整型指令数据
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| point_id | integer |  |
-| sender_id | integer |  |
-| timestamp | integer |  |
-| yk_command | integer |  |
-
-### 98. SetIntValue2
-
-- **描述**: 整型指令数据
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| point_alias | string |  |
-| sender_id | integer |  |
-| timestamp | integer |  |
-| yk_command | integer |  |
-
-### 99. SetPointValue
-
-- **描述**: 公式型指令数据
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| command | Expr |  |
-| point_id | integer |  |
-| sender_id | integer |  |
-| timestamp | integer |  |
-
-### 100. SetPoints
-
-- **描述**: 设点
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| analog_id | array |  |
-| analog_v | array |  |
-| discrete_id | array |  |
-| discrete_v | array |  |
-
-### 101. SetPoints2
-
-- **描述**: 设点2（包含张量）
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| analogs | array |  |
-| discretes | array |  |
-
-### 102. SparseMILP
-
-- **描述**: 混合整数线性规划求解器，矩阵用稀疏矩阵
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| a | SparseMat | Ax >=/<= b |
-| b | array |  |
-| binary_int_float | array | 整数变量在x中的位置 |
-| c | array | min/max c^T*x |
-| constraint_type | array |  |
-| min_or_max | boolean | min: true, max: false |
-| parameters | object | 求解器参数：参数名、参数值 |
-| x_lower | array | 变量的下界约束：变量位置、约束表达式 |
-| x_name | array | 变量名称 |
-| x_upper | array | 变量的上界约束：变量位置、约束表达式 |
-
-### 103. SparseMat
-
-- **描述**: 由表达式组成的稀疏矩阵
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| m | integer | 行数 |
-| n | integer | 列数 |
-| v | array |  |
-
-### 104. SparseSolver
-
-- **描述**: 稀疏线性方程组Ax=b求解器
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| a | SparseMat | A矩阵 |
-| b | array | b向量 |
-| parameters | object | 求解器参数：参数名、参数值 |
-| x_init | array | 变量初始值 |
-| x_name | array | 变量名称 |
-
-### 105. SysAoes
-
-- **描述**: 当前应用AOE信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| aoes | array | AOE列表 |
-| commit_msg | string | 版本描述 |
-| version | integer | 版本号 |
-
-### 106. SysIsland
-
-- **描述**: 当前应用的电气岛信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| commit_msg | string | 版本描述 |
-| island | Island | 电气岛 |
-| prop_defs | array | 属性定义数组 |
-| rsr_defs | array | 设备定义数组 |
-| version | integer | 版本号 |
-
-### 107. SysPoints
-
-- **描述**: 当前应用测点信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| beeid_to_points | array | beeId和测点列表对应的数组，tuple格式为(beeId:String, 测点列表:u64[]) |
-| commit_msg | string | 版本描述 |
-| points | array | 测点列表 |
-| source_name | array |  |
-| version | integer | 版本号 |
-
-### 108. Terminal
-
-- **描述**: 端口
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| device | integer | 设备id |
-| id | integer | 端口id |
-
-### 109. UploadForm
-
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| file | array |  |
-
-### 110. User
-
-- **描述**: 用户 - 全部信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| password | array | 加密后的用户密码 |
-| password_update_time | integer | 最近一次密码修改时间 |
-| pub_info | UserPub | 可查询的用户公开信息 |
-
-### 111. UserGroup
-
-- **描述**: 用户组
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| id | integer | 用户组ID |
-| name | string | 用户组名称 |
-| user_group2role | array | 用户组角色关联表，一个用户组可以拥有多个角色 |
-
-### 112. UserPub
-
-- **描述**: 用户 - 公开信息
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| desc | ['string', 'null'] | 描述 |
-| email | ['string', 'null'] | 用户的邮箱 |
-| expiration_time | ['integer', 'null'] | 过期时间 |
-| id | integer | 用户ID |
-| name | string | 用户名称 |
-| phone_number | ['string', 'null'] | 用户的手机号 |
-| special_role | array | 特别分配的角色 |
-| user_group | integer | 所属用户组的id（用户与用户组关联表，一个用户只能属于一个用户组） |
-
-### 113. WebPlugin
-
-- **描述**: Web插件
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| id | integer | 插件id |
-| is_file_uploaded | boolean | 文件是否已经上传 |
-| is_monopoly | boolean | if is only one view |
-| model_name | string | wasm或js或html文件的名称 |
-| name | string | 在浏览模式下显示的名称 |
-| path | string | 文件树中的路径 |
-
-### 114. WebPluginFile
-
-- **描述**: 插件文件内容
-
-**字段**:
-
-| 字段名 | 类型 | 说明 |
-| --- | --- | --- |
-| plugin_id | integer | 插件id |
-| sevenz_file | array | 内容 |
+- **工具名**: `get_webplugins_by_plugin`
+- **参数**:
+  - `plugin_id` (path, integer, 必填): 插件id；元信息：format=int64
+
+***
 
