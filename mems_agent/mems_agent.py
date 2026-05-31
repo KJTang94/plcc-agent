@@ -8,7 +8,7 @@ from typing import List, Dict, Any, Optional
 from langgraph.graph import StateGraph, END
 from openai import OpenAI
 from mems_tools import create_tools, ToolInfo
-from config import get_llm_config, get_mems_api_config, get_prop_defines_file_path, get_cns_file_path, get_device_define_file_path, get_device_file_path, get_measure_def_file_path, get_points_models_file_path, get_flows_models_file_path, get_aoes_models_file_path
+from config import get_llm_config, get_mems_api_config, get_prop_def_file_path, get_cns_file_path, get_rsr_def_file_path, get_resources_file_path, get_meas_def_file_path, get_points_models_file_path, get_flows_models_file_path, get_aoes_models_file_path
 from memory import ConversationHistory, AgentState, MemoryManager
 from prompts import build_agent_system_prompt, build_agent_user_message, build_summarize_system_prompt, build_summarize_user_message
 
