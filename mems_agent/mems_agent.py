@@ -23,7 +23,7 @@ class MemsAPI:
     
     def _request(self, method: str, path: str, params: dict = None, data: dict = None, files: dict = None) -> str:
         if not self.token:
-            self.login()
+            return json.dumps({"success": False, "message": "尚未登录，请先调用 login 工具获取访问令牌"}, ensure_ascii=False)
         headers = {'Access-Token': self.token}
         url = f'{self.base_url}{path}'
         
@@ -975,14 +975,9 @@ class MemsAgent:
         self.graph = self._build_graph()
         self.memory = MemoryManager()
     
-    def _call_llm(self, system_prompt: str, user_message: str = None, conversation_history: List[ConversationHistory] = None) -> str:
+    def _call_llm(self, system_prompt: str, user_message: str = None) -> str:
         try:
             messages = [{"role": "system", "content": system_prompt}]
-
-            if conversation_history:
-                for history in conversation_history:
-                    messages.append({"role": "user", "content": history["user_input"]})
-                    messages.append({"role": "assistant", "content": history["agent_response"]})
 
             if user_message:
                 messages.append({"role": "user", "content": user_message})
@@ -997,28 +992,26 @@ class MemsAgent:
             return json.dumps({"action": "summarize", "reason": "LLM调用失败: " + str(e)})
 
     def _build_conversation_history_str(self, state: AgentState) -> str:
-        if not state.get("conversation_history"):
+        history = state.get("conversation_history") or []
+        if not history:
             return ""
 
-        parts = ["\n对话历史:"]
-        for i, history in enumerate(state["conversation_history"]):
-            parts.append(f"\n轮次 {i+1}:")
-            parts.append(f"用户: {history['user_input']}")
-            if history.get("tool_results"):
+        recent_history = history[-2:]
+        parts = ["\n最近对话历史（仅保留最近2轮，历史只用于参考，不覆盖当前问题）："]
+        for i, history_item in enumerate(recent_history, start=1):
+            parts.append(f"\n轮次 {i}:")
+            parts.append(f"用户: {history_item['user_input']}")
+            if history_item.get("tool_results"):
                 tool_summary = "; ".join(
-                    f"{r['tool_name']}({json.dumps(r.get('args', {}), ensure_ascii=False)})" for r in history["tool_results"]
+                    f"{r['tool_name']}({json.dumps(r.get('args', {}), ensure_ascii=False)})" for r in history_item["tool_results"]
                 )
                 parts.append(f"工具调用: {tool_summary}")
-            parts.append(f"助手: {history['agent_response']}")
+            parts.append(f"助手: {history_item['agent_response']}")
         return "\n".join(parts)
 
     def _build_search_query(self, state: AgentState) -> str:
-        query = state["user_input"]
-        if state.get("conversation_history"):
-            recent = state["conversation_history"][-2:]
-            context_parts = [h["user_input"] for h in recent]
-            query = " ".join(context_parts) + " " + query
-        return query
+        return state["user_input"]
+
     
     def _get_tool_call_signature(self, tool_name: str, args: Dict[str, Any]) -> str:
         return f"{tool_name}:{json.dumps(args or {}, ensure_ascii=False, sort_keys=True)}"
@@ -1066,7 +1059,6 @@ class MemsAgent:
         tools_info = "\n".join(tools_info)
 
         conversation_history_str = self._build_conversation_history_str(state)
-        long_term_memory_text = self.memory.get_long_term_memory_text()
 
         search_query = self._build_search_query(state)
         relevant_docs = self.memory.search_docs(search_query, k=3)
@@ -1078,10 +1070,9 @@ class MemsAgent:
             user_input=state["user_input"],
             tool_results=str(state["tool_results"]),
             docs_content=docs_content,
-            long_term_memory=long_term_memory_text
         )
 
-        response = self._call_llm(system_prompt, user_message=user_message, conversation_history=state.get("conversation_history"))
+        response = self._call_llm(system_prompt, user_message=user_message)
         
         try:
             result = json.loads(response)
@@ -1089,6 +1080,8 @@ class MemsAgent:
             result = {"action": "summarize", "reason": "无法解析工具调用指令"}
         
         state["agent_info"] = json.dumps(result)
+
+
         return state
     
     def _tool_node(self, state: AgentState) -> AgentState:
@@ -1169,7 +1162,6 @@ class MemsAgent:
         docs_content = "\n\n相关文档内容：\n" + "\n\n---\n\n".join(relevant_docs)
 
         conversation_history_str = self._build_conversation_history_str(state)
-        long_term_memory_text = self.memory.get_long_term_memory_text()
 
         system_prompt = build_summarize_system_prompt()
         user_message = build_summarize_user_message(
@@ -1177,10 +1169,9 @@ class MemsAgent:
             tool_results="\n".join([json.dumps(r, ensure_ascii=False) for r in state["tool_results"]]),
             docs_content=docs_content,
             conversation_history_str=conversation_history_str,
-            long_term_memory=long_term_memory_text
         )
 
-        response = self._call_llm(system_prompt, user_message=user_message, conversation_history=state.get("conversation_history"))
+        response = self._call_llm(system_prompt, user_message=user_message)
         state["final_answer"] = response
         state["is_finished"] = True
         return state

@@ -4,7 +4,12 @@ AGENT_SYSTEM_PROMPT = """
 可用工具列表：
 {tools_info}
 
-请根据用户的请求、对话历史、历史工具调用结果以及相关文档内容，决定下一步操作：
+请根据用户的请求、对话历史、历史工具调用结果以及相关文档内容，决定下一步操作。
+
+优先级规则：
+- 当前用户问题始终优先于历史内容
+- 历史只用于消歧、补充上下文和延续同一任务
+- 如果历史与当前问题冲突，以当前问题为准
 
 输出格式要求（必须是有效的JSON格式）：
 1. 如果需要调用工具获取信息，请输出：
@@ -27,13 +32,12 @@ AGENT_SYSTEM_PROMPT = """
 - 输出必须是纯JSON格式，不要包含其他任何文本
 """
 
-AGENT_USER_MESSAGE = """{conversation_history_str}
-{long_term_memory}
+AGENT_USER_MESSAGE = """当前用户问题：{user_input}
+
+{conversation_history_str}
 历史工具调用结果：{tool_results}
 
-{docs_content}
-
-用户问题：{user_input}"""
+{docs_content}"""
 
 SUMMARIZE_SYSTEM_PROMPT = """
 你是一个MEMS系统的AI助手，请根据对话历史、工具调用结果和相关文档内容，用自然、友好的语言总结回答用户的问题。
@@ -51,27 +55,25 @@ SUMMARIZE_SYSTEM_PROMPT = """
 - 如果用户的问题是关于API文档的细节，直接从文档中提取信息回答
 """
 
-SUMMARIZE_USER_MESSAGE = """{conversation_history_str}
-{long_term_memory}
+SUMMARIZE_USER_MESSAGE = """当前用户问题：{user_input}
+
+{conversation_history_str}
 工具调用结果：
 {tool_results}
 
-{docs_content}
-
-用户问题：{user_input}"""
+{docs_content}"""
 
 
 def build_agent_system_prompt(tools_info: str) -> str:
     return AGENT_SYSTEM_PROMPT.format(tools_info=tools_info)
 
 
-def build_agent_user_message(conversation_history_str: str, user_input: str, tool_results: str, docs_content: str, long_term_memory: str = "") -> str:
+def build_agent_user_message(conversation_history_str: str, user_input: str, tool_results: str, docs_content: str) -> str:
     return AGENT_USER_MESSAGE.format(
         conversation_history_str=conversation_history_str,
         user_input=user_input,
         tool_results=tool_results,
         docs_content=docs_content,
-        long_term_memory=long_term_memory
     )
 
 
@@ -79,11 +81,10 @@ def build_summarize_system_prompt() -> str:
     return SUMMARIZE_SYSTEM_PROMPT
 
 
-def build_summarize_user_message(user_input: str, tool_results: str, docs_content: str, conversation_history_str: str = "", long_term_memory: str = "") -> str:
+def build_summarize_user_message(user_input: str, tool_results: str, docs_content: str, conversation_history_str: str = "") -> str:
     return SUMMARIZE_USER_MESSAGE.format(
         user_input=user_input,
         tool_results=tool_results,
         docs_content=docs_content,
         conversation_history_str=conversation_history_str,
-        long_term_memory=long_term_memory
     )
