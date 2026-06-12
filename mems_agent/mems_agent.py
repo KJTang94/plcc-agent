@@ -8,7 +8,7 @@ from typing import List, Dict, Any, Optional
 from langgraph.graph import StateGraph, END
 from openai import OpenAI
 from mems_tools import create_tools, ToolInfo
-from config import get_llm_config, get_mems_api_config, get_prop_defines_file_path, get_cns_file_path, get_device_define_file_path, get_device_file_path, get_measure_def_file_path, get_points_models_file_path, get_flows_models_file_path, get_aoes_models_file_path
+from config import get_llm_config, get_mems_api_config, get_prop_def_file_path, get_cns_file_path, get_rsr_def_file_path, get_resources_file_path, get_meas_def_file_path, get_points_models_file_path, get_flows_models_file_path, get_aoes_models_file_path
 from memory import ConversationHistory, AgentState, MemoryManager
 from prompts import build_agent_system_prompt, build_agent_user_message, build_summarize_system_prompt, build_summarize_user_message
 
@@ -58,7 +58,10 @@ class MemsAPI:
                     return json.dumps({"success": True, "data": response.text}, ensure_ascii=False)
             
             # 处理失败响应
-            return json.dumps({"success": False, "message": f"请求失败: {response.text}"}, ensure_ascii=False)
+            print(f"[ERROR] HTTP状态码: {response.status_code}")
+            print(f"[ERROR] 响应头: {dict(response.headers)}")
+            print(f"[ERROR] 响应内容: {response.text[:1000]}")
+            return json.dumps({"success": False, "message": f"请求失败 (状态码: {response.status_code}): {response.text}"}, ensure_ascii=False)
         except requests.exceptions.RequestException as e:
             # 只捕获网络相关异常
             return json.dumps({"success": False, "message": f"请求异常: {str(e)}"}, ensure_ascii=False)
@@ -165,37 +168,109 @@ class MemsAPI:
         如果未提供data参数，则从配置文件指定的Excel文件中读取数据，以PbFile格式上传。
         参数：data (dict, 可选) - AOE模型配置数据
         """
-        if data is None:
-            # 从Excel文件读取数据，构建PbFile格式
-            excel_path = get_aoes_models_file_path()
-            try:
-                import os
-                
-                # 检查文件是否存在
-                if not os.path.exists(excel_path):
-                    raise FileNotFoundError(f"AOE模型Excel文件不存在：{excel_path}")
-                
-                # 读取文件内容为字节数组
-                with open(excel_path, 'rb') as f:
-                    file_content = list(f.read())  # 转换为整数数组
-                
-                # 构建PbFile格式数据
-                data = {
-                    "fileContent": file_content,
-                    "fileName": os.path.basename(excel_path),
-                    "is_zip": False,
-                    "op": None
-                }
-                
-                print(f"[DEBUG] 准备上传AOE模型文件: {data['fileName']}, 大小: {len(file_content)} bytes")
-            except Exception as e:
-                return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
+        #if data is None:
+        # 从Excel文件读取数据，构建PbFile格式
+        excel_path = get_aoes_models_file_path()
+        try:
+            import os
+            
+            # 检查文件是否存在
+            if not os.path.exists(excel_path):
+                raise FileNotFoundError(f"AOE模型Excel文件不存在：{excel_path}")
+            
+            # 读取文件内容为字节数组
+            with open(excel_path, 'rb') as f:
+                file_content = list(f.read())  # 转换为整数数组
+            
+            # 构建PbFile格式数据
+            data = {
+                "fileContent": file_content,
+                "fileName": os.path.basename(excel_path),
+                "is_zip": False,
+                "op": None
+            }
+            
+            print(f"[DEBUG] 准备上传AOE模型文件: {data['fileName']}, 大小: {len(file_content)} bytes")
+        except Exception as e:
+            return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
         
         print(f"[DEBUG] 准备新增AOE模型数据: {data}")
         return self._request('POST', '/aoes/models_file', data=data)
 
     def add_aoes_models_file2(self, data: dict = None) -> str:
         return self._request('POST', f'/aoes/models_file2', data=data)
+
+    def add_multi_import_files(self, data: dict = None) -> str:
+        """
+        多文件导入所有模型（PbFiles格式）。
+        如果未提供data参数，则从配置文件指定的Excel文件中读取数据。
+        需要读取以下文件：
+        - 属性定义: prop_def_
+        - 模型定义: rsr_def_
+        - 量测定义: meas_def_
+        - 资源: resources_
+        - 拓扑: cns_
+        
+        PbFiles格式：{
+            "files": [
+                {
+                    "fileName": "prop_def_xxx.xlsx",
+                    "fileContent": [80, 75, 3, 4, ...],
+                    "is_zip": false,
+                    "op": null
+                },
+                ...
+            ]
+        }
+        
+        参数：data (dict, 可选) - 请求体数据
+        """
+        if data is None:
+            try:
+                import os
+                
+                # 定义文件映射（文件名前缀 -> 配置路径函数）
+                file_mappings = {
+                    'prop_def_': get_prop_def_file_path(),
+                    'rsr_def_': get_rsr_def_file_path(),
+                    'meas_def_': get_meas_def_file_path(),
+                    'resources_': get_resources_file_path(),
+                    'cns_': get_cns_file_path(),
+                }
+                
+                # 构建PbFiles格式的文件列表
+                files_list = []
+                for prefix, excel_path in file_mappings.items():
+                    if excel_path and os.path.exists(excel_path):
+                        with open(excel_path, 'rb') as f:
+                            file_content = list(f.read())  # 转换为整数数组
+                        
+                        # 使用前缀+原文件名
+                        original_name = os.path.basename(excel_path)
+                        file_name = f'{prefix}{original_name}'
+                        
+                        # 构建单个PbFile对象
+                        # op字段是必需的，可选值: UPDATE, DELETE, RENAME
+                        pb_file = {
+                            "fileName": file_name,
+                            "fileContent": file_content,
+                            "is_zip": False,
+                            "op": None
+                        }
+                        files_list.append(pb_file)
+                        
+                    else:
+                        print(f"[WARNING] 文件不存在或路径为空: {excel_path}")
+                
+                # 构建PbFiles格式数据
+                data = {
+                    "files": files_list
+                }
+            except Exception as e:
+                return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
+        
+        # 使用 _request 方法调用API
+        return self._request('POST', '/multi_import_files', data=data)
 
     def get_aoes_version(self) -> str:
         return self._request('GET', f'/aoes/version')
@@ -787,31 +862,31 @@ class MemsAPI:
         如果未提供data参数，则从配置文件指定的Excel文件中读取数据，以PbFile格式上传。
         参数：data (dict, 可选) - 测点模型配置数据
         """
-        if data is None:
-            # 从Excel文件读取数据，构建PbFile格式
-            excel_path = get_points_models_file_path()
-            try:
-                import os
-                
-                # 检查文件是否存在
-                if not os.path.exists(excel_path):
-                    raise FileNotFoundError(f"测点模型Excel文件不存在：{excel_path}")
-                
-                # 读取文件内容为字节数组
-                with open(excel_path, 'rb') as f:
-                    file_content = list(f.read())  # 转换为整数数组
-                
-                # 构建PbFile格式数据
-                data = {
-                    "fileContent": file_content,
-                    "fileName": os.path.basename(excel_path),
-                    "is_zip": False,
-                    "op": None
-                }
-                
-                print(f"[DEBUG] 准备上传测点模型文件: {data['fileName']}, 大小: {len(file_content)} bytes")
-            except Exception as e:
-                return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
+        #if data is None:
+        # 从Excel文件读取数据，构建PbFile格式
+        excel_path = get_points_models_file_path()
+        try:
+            import os
+            
+            # 检查文件是否存在
+            if not os.path.exists(excel_path):
+                raise FileNotFoundError(f"测点模型Excel文件不存在：{excel_path}")
+            
+            # 读取文件内容为字节数组
+            with open(excel_path, 'rb') as f:
+                file_content = list(f.read())  # 转换为整数数组
+            
+            # 构建PbFile格式数据
+            data = {
+                "fileContent": file_content,
+                "fileName": os.path.basename(excel_path),
+                "is_zip": False,
+                "op": None
+            }
+            
+            print(f"[DEBUG] 准备上传测点模型文件: {data['fileName']}, 大小: {len(file_content)} bytes")
+        except Exception as e:
+            return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
         
         print(f"[DEBUG] 准备新增测点模型数据: {data}")
         return self._request('POST', '/points/models_file', data=data)
@@ -1110,7 +1185,26 @@ class MemsAgent:
             tool = next((t for t in self.tools if t.name == tool_name), None)
             if tool:
                 if args:
-                    result = tool.func(**args)
+                    import inspect
+                    # 获取方法签名，区分路径参数和请求体参数
+                    sig = inspect.signature(tool.func)
+                    params = list(sig.parameters.keys())
+                    
+                    path_query_args = {}
+                    body_args = {}
+                    
+                    for key, value in args.items():
+                        if key in params:
+                            # 路径参数或查询参数，直接传递
+                            path_query_args[key] = value
+                        else:
+                            # 请求体字段，打包到 data 中
+                            body_args[key] = value
+                    
+                    if body_args:
+                        path_query_args["data"] = body_args
+                    
+                    result = tool.func(**path_query_args)
                 else:
                     result = tool.func()
                 

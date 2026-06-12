@@ -65,33 +65,33 @@ def get_llm_config() -> dict:
 def get_mems_api_config() -> dict:
     return load_config().get("mems_api", {})
 
-def get_prop_defines_file_path() -> str:
+def get_prop_def_file_path() -> str:
     """
     获取设备属性定义文件的路径，从配置文件中读取
     """
-    return load_config().get("excel_path", {}).get("prop_defines", "")
+    return load_config().get("excel_path", {}).get("prop_def", "")
 
 def get_cns_file_path() -> str:
     """
     获取拓扑配置Excel文件的路径，从配置文件中读取
     """
-    return load_config().get("excel_path", {}).get("device_cns", "")
+    return load_config().get("excel_path", {}).get("cns", "")
 
-def get_device_define_file_path() -> str:
+def get_rsr_def_file_path() -> str:
     """
     获取设备定义Excel文件的路径，从配置文件中读取
     """
-    return load_config().get("excel_path", {}).get("device_define", "")
+    return load_config().get("excel_path", {}).get("rsr_def", "")
 
-def get_device_file_path() -> str:
-    return load_config().get("excel_path", {}).get("device", "")
+def get_resources_file_path() -> str:
+    return load_config().get("excel_path", {}).get("resources", "")
 
 
-def get_measure_def_file_path() -> str:
+def get_meas_def_file_path() -> str:
     """
     获取设备测点配置Excel文件的路径，从配置文件中读取
     """
-    return load_config().get("excel_path", {}).get("measure_def", "measure_def.xlsx")
+    return load_config().get("excel_path", {}).get("meas_def", "")
 
 def get_points_models_file_path() -> str:
     """
