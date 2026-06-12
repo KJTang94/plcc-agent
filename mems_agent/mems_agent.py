@@ -194,7 +194,6 @@ class MemsAPI:
         except Exception as e:
             return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
         
-        print(f"[DEBUG] 准备新增AOE模型数据: {data}")
         return self._request('POST', '/aoes/models_file', data=data)
 
     def add_aoes_models_file2(self, data: dict = None) -> str:
@@ -570,8 +569,6 @@ class MemsAPI:
             except Exception as e:
                 return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
         
-        # 如果传入了data参数，使用普通请求方式（保持向后兼容）
-        print(f"[DEBUG] 准备新增报表数据: {data}")
         return self._request('POST', '/flows/models_file2', data=data)
 
     def get_flows_models_json(self, id: int = None, ids: str = None) -> str:
@@ -888,7 +885,6 @@ class MemsAPI:
         except Exception as e:
             return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
         
-        print(f"[DEBUG] 准备新增测点模型数据: {data}")
         return self._request('POST', '/points/models_file', data=data)
 
     def add_points_models_file2(self, data: dict = None) -> str:
