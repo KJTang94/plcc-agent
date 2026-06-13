@@ -169,6 +169,7 @@ class MemsAPI:
         如果未提供data参数，则从配置文件指定的Excel文件中读取数据，以PbFile格式上传。
         参数：data (dict, 可选) - AOE模型配置数据
         """
+<<<<<<< HEAD
         if data is None:
             # 未提供data时，从Excel文件读取数据，构建PbFile格式
             excel_path = get_aoes_models_file_path()
@@ -195,6 +196,34 @@ class MemsAPI:
             except Exception as e:
                 return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
 
+=======
+        #if data is None:
+        # 从Excel文件读取数据，构建PbFile格式
+        excel_path = get_aoes_models_file_path()
+        try:
+            import os
+            
+            # 检查文件是否存在
+            if not os.path.exists(excel_path):
+                raise FileNotFoundError(f"AOE模型Excel文件不存在：{excel_path}")
+            
+            # 读取文件内容为字节数组
+            with open(excel_path, 'rb') as f:
+                file_content = list(f.read())  # 转换为整数数组
+            
+            # 构建PbFile格式数据
+            data = {
+                "fileContent": file_content,
+                "fileName": os.path.basename(excel_path),
+                "is_zip": False,
+                "op": None
+            }
+            
+            print(f"[DEBUG] 准备上传AOE模型文件: {data['fileName']}, 大小: {len(file_content)} bytes")
+        except Exception as e:
+            return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
+        
+>>>>>>> 4c08f05d10d840a4241d68fd411cd150b68a4429
         return self._request('POST', '/aoes/models_file', data=data)
 
     def add_aoes_models_file2(self, data: dict = None) -> str:
@@ -570,8 +599,6 @@ class MemsAPI:
             except Exception as e:
                 return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
         
-        # 如果传入了data参数，使用普通请求方式（保持向后兼容）
-        print(f"[DEBUG] 准备新增报表数据: {data}")
         return self._request('POST', '/flows/models_file2', data=data)
 
     def get_flows_models_json(self, id: int = None, ids: str = None) -> str:
@@ -888,7 +915,6 @@ class MemsAPI:
         except Exception as e:
             return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
         
-        print(f"[DEBUG] 准备新增测点模型数据: {data}")
         return self._request('POST', '/points/models_file', data=data)
 
     def add_points_models_file2(self, data: dict = None) -> str:
@@ -960,8 +986,8 @@ class MemsAPI:
     def add_pscpu_reset(self) -> str:
         return self._request('POST', f'/pscpu/reset')
 
-    def add_pscpu_start(self, data: dict = None) -> str:
-        return self._request('POST', f'/pscpu/start', data=data)
+    def add_pscpu_start(self) -> str:
+        return self._request('POST', f'/pscpu/start')
 
     def add_pscpu_stop(self) -> str:
         return self._request('POST', f'/pscpu/stop')
@@ -1051,8 +1077,16 @@ class MemsAgent:
         self.max_tool_result_chars = 1500
         self.tools = create_tools(self.mems_api)
         self.memory = MemoryManager()
+<<<<<<< HEAD
         self.memory.build_tool_index(self.tools)
         self.graph = self._build_graph()
+=======
+        
+        # 启动时默认调用 login 方法进行认证
+        print("[INFO] 正在进行登录认证...")
+        login_result = self.mems_api.login()
+        print(f"[INFO] 登录结果: {login_result[:100]}{'...' if len(login_result) > 100 else ''}")
+>>>>>>> 4c08f05d10d840a4241d68fd411cd150b68a4429
     
     def _call_llm(self, system_prompt: str, user_message: str = None) -> str:
         try:

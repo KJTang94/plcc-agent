@@ -487,7 +487,7 @@
         "tags": [
           "eig_db::alarm"
         ],
-        "summary": "上传告警定义（文件形式）",
+        "summary": "上传告警定义（单文件形式）",
         "operationId": "post_alarm_defines_file",
         "parameters": [
           {
@@ -1182,7 +1182,7 @@
         "tags": [
           "crate::base"
         ],
-        "summary": "保存AOE（文件形式）",
+        "summary": "保存AOE（单文件形式）",
         "operationId": "post_aoes_file",
         "parameters": [
           {
@@ -11374,7 +11374,7 @@
         "tags": [
           "crate::base"
         ],
-        "summary": "保存测点（文件形式）",
+        "summary": "保存测点（单文件形式）",
         "operationId": "post_points_file",
         "parameters": [
           {
@@ -14361,7 +14361,7 @@
           },
           "tree_id": {
             "type": "string",
-            "description": "对应的tree_id"
+            "description": "对应的tree_id，内容与tree_id的对应关系为：AOE->memsAoeSettingTreeId; 测点->{lcc_id}_point_version; 设备->{lcc_id}_dev_version; SVG->{lcc_id}_svg_version"
           },
           "version": {
             "type": "integer",
