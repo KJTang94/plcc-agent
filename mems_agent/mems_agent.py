@@ -1045,6 +1045,11 @@ class MemsAgent:
         self.tools = create_tools(self.mems_api)
         self.graph = self._build_graph()
         self.memory = MemoryManager()
+        
+        # 启动时默认调用 login 方法进行认证
+        print("[INFO] 正在进行登录认证...")
+        login_result = self.mems_api.login()
+        print(f"[INFO] 登录结果: {login_result[:100]}{'...' if len(login_result) > 100 else ''}")
     
     def _call_llm(self, system_prompt: str, user_message: str = None) -> str:
         try:
