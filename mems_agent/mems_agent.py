@@ -3,6 +3,7 @@ import requests
 import hmac
 import hashlib
 import base64
+import re
 import time
 from typing import List, Dict, Any, Optional
 from langgraph.graph import StateGraph, END
@@ -168,33 +169,32 @@ class MemsAPI:
         如果未提供data参数，则从配置文件指定的Excel文件中读取数据，以PbFile格式上传。
         参数：data (dict, 可选) - AOE模型配置数据
         """
-        #if data is None:
-        # 从Excel文件读取数据，构建PbFile格式
-        excel_path = get_aoes_models_file_path()
-        try:
-            import os
-            
-            # 检查文件是否存在
-            if not os.path.exists(excel_path):
-                raise FileNotFoundError(f"AOE模型Excel文件不存在：{excel_path}")
-            
-            # 读取文件内容为字节数组
-            with open(excel_path, 'rb') as f:
-                file_content = list(f.read())  # 转换为整数数组
-            
-            # 构建PbFile格式数据
-            data = {
-                "fileContent": file_content,
-                "fileName": os.path.basename(excel_path),
-                "is_zip": False,
-                "op": None
-            }
-            
-            print(f"[DEBUG] 准备上传AOE模型文件: {data['fileName']}, 大小: {len(file_content)} bytes")
-        except Exception as e:
-            return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
-        
-        print(f"[DEBUG] 准备新增AOE模型数据: {data}")
+        if data is None:
+            # 未提供data时，从Excel文件读取数据，构建PbFile格式
+            excel_path = get_aoes_models_file_path()
+            try:
+                import os
+
+                # 检查文件是否存在
+                if not os.path.exists(excel_path):
+                    raise FileNotFoundError(f"AOE模型Excel文件不存在：{excel_path}")
+
+                # 读取文件内容为字节数组
+                with open(excel_path, 'rb') as f:
+                    file_content = list(f.read())  # 转换为整数数组
+
+                # 构建PbFile格式数据
+                data = {
+                    "fileContent": file_content,
+                    "fileName": os.path.basename(excel_path),
+                    "is_zip": False,
+                    "op": None
+                }
+
+                print(f"[DEBUG] 准备上传AOE模型文件: {data['fileName']}, 大小: {len(file_content)} bytes")
+            except Exception as e:
+                return json.dumps({"success": False, "message": str(e)}, ensure_ascii=False)
+
         return self._request('POST', '/aoes/models_file', data=data)
 
     def add_aoes_models_file2(self, data: dict = None) -> str:
@@ -1046,9 +1046,13 @@ class MemsAgent:
         self.model = llm_config.get("model", "gpt-4o-mini")
         self.max_tool_steps = 8
         self.max_same_call_repeats = 2
+        self.max_tools_in_prompt = 25
+        self.max_tool_results_in_prompt = 4
+        self.max_tool_result_chars = 1500
         self.tools = create_tools(self.mems_api)
-        self.graph = self._build_graph()
         self.memory = MemoryManager()
+        self.memory.build_tool_index(self.tools)
+        self.graph = self._build_graph()
     
     def _call_llm(self, system_prompt: str, user_message: str = None) -> str:
         try:
@@ -1085,7 +1089,15 @@ class MemsAgent:
         return "\n".join(parts)
 
     def _build_search_query(self, state: AgentState) -> str:
-        return state["user_input"]
+        """构建检索查询：以当前问题为主，追加最近一轮用户输入作为上下文，
+        以便对指代型追问（如"那它的详情呢"）也能召回相关工具与文档。"""
+        user_input = state["user_input"]
+        history = state.get("conversation_history") or []
+        if history:
+            last_user_input = history[-1].get("user_input", "")
+            if last_user_input:
+                return f"{user_input}\n{last_user_input}"
+        return user_input
 
     
     def _get_tool_call_signature(self, tool_name: str, args: Dict[str, Any]) -> str:
@@ -1121,9 +1133,77 @@ class MemsAgent:
         
         return workflow.compile()
     
+    def _select_relevant_tools(self, state: AgentState) -> List[ToolInfo]:
+        """按用户问题检索相关工具子集，始终保留 login 与本轮已调用过的工具。
+        索引不可用或工具总数较少时回退为全量工具。"""
+        if len(self.tools) <= self.max_tools_in_prompt:
+            return self.tools
+
+        relevant_names = set(self.memory.search_tools(self._build_search_query(state), k=self.max_tools_in_prompt))
+        if not relevant_names:
+            return self.tools
+
+        relevant_names.add("login")
+        for result in state.get("tool_results", []):
+            relevant_names.add(result.get("tool_name"))
+
+        return [tool for tool in self.tools if tool.name in relevant_names]
+
+    def _format_tool_results(self, tool_results: List[Dict[str, Any]], max_results: int = None) -> str:
+        """仅保留最近若干条工具结果并对单条做字符截断，避免 prompt 无限膨胀。
+        max_results 为 None 时使用默认上限；汇总场景可传更大值以保留更多结果。"""
+        if not tool_results:
+            return "[]"
+
+        limit = max_results if max_results is not None else self.max_tool_results_in_prompt
+        recent = tool_results[-limit:]
+        omitted = len(tool_results) - len(recent)
+        lines = []
+        if omitted > 0:
+            lines.append(f"（已省略较早的 {omitted} 条工具调用结果）")
+        for result in recent:
+            result_str = str(result.get("result", ""))
+            if len(result_str) > self.max_tool_result_chars:
+                result_str = result_str[:self.max_tool_result_chars] + "...(已截断)"
+            lines.append(json.dumps({
+                "tool_name": result.get("tool_name"),
+                "args": result.get("args", {}),
+                "result": result_str,
+            }, ensure_ascii=False))
+        return "\n".join(lines)
+
+    def _parse_agent_response(self, response: str) -> Dict[str, Any]:
+        """解析LLM输出的JSON指令，对常见的非纯JSON输出做兜底提取。"""
+        if not response:
+            return {"action": "summarize", "reason": "LLM返回为空"}
+
+        try:
+            return json.loads(response)
+        except json.JSONDecodeError:
+            pass
+
+        # 兜底1：去除 ```json ... ``` 代码块包裹
+        fenced = re.search(r"```(?:json)?\s*(.*?)\s*```", response, re.DOTALL)
+        if fenced:
+            try:
+                return json.loads(fenced.group(1))
+            except json.JSONDecodeError:
+                pass
+
+        # 兜底2：提取首个 { 到末个 } 之间的内容
+        start = response.find("{")
+        end = response.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            try:
+                return json.loads(response[start:end + 1])
+            except json.JSONDecodeError:
+                pass
+
+        return {"action": "summarize", "reason": "无法解析工具调用指令"}
+
     def _agent_node(self, state: AgentState) -> AgentState:
         tools_info = []
-        for tool in self.tools:
+        for tool in self._select_relevant_tools(state):
             tool_desc = f"- {tool.name}: {tool.description}"
             if tool.parameters:
                 params_desc = "\n  参数："
@@ -1143,17 +1223,13 @@ class MemsAgent:
         user_message = build_agent_user_message(
             conversation_history_str=conversation_history_str,
             user_input=state["user_input"],
-            tool_results=str(state["tool_results"]),
+            tool_results=self._format_tool_results(state["tool_results"]),
             docs_content=docs_content,
         )
 
         response = self._call_llm(system_prompt, user_message=user_message)
-        
-        try:
-            result = json.loads(response)
-        except:
-            result = {"action": "summarize", "reason": "无法解析工具调用指令"}
-        
+
+        result = self._parse_agent_response(response)
         state["agent_info"] = json.dumps(result)
 
 
@@ -1260,7 +1336,7 @@ class MemsAgent:
         system_prompt = build_summarize_system_prompt()
         user_message = build_summarize_user_message(
             user_input=state["user_input"],
-            tool_results="\n".join([json.dumps(r, ensure_ascii=False) for r in state["tool_results"]]),
+            tool_results=self._format_tool_results(state["tool_results"], max_results=self.max_tool_steps),
             docs_content=docs_content,
             conversation_history_str=conversation_history_str,
         )

@@ -23,3 +23,6 @@ apidoc_mems/
 
 # Config (contains secrets)
 config.json
+
+# FAISS 索引缓存
+.faiss_cache/

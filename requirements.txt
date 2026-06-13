@@ -1,0 +1,14 @@
+# LLM 与 Agent 编排
+openai>=1.0.0
+langgraph>=0.2.0
+
+# LangChain 生态（RAG / 向量检索 / 文档切分）
+langchain-core>=0.3.0
+langchain-openai>=0.2.0
+langchain-community>=0.3.0
+langchain-text-splitters>=0.3.0
+faiss-cpu>=1.8.0
+
+# HTTP 请求与数据校验
+requests>=2.31.0
+pydantic>=2.0.0
