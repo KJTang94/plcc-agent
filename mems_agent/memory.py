@@ -25,8 +25,6 @@ class AgentState(TypedDict):
     tool_results: List[Dict[str, Any]]
     is_finished: bool
     final_answer: str
-    token: Optional[str]
-    base_url: str
     conversation_history: List[ConversationHistory]
     max_steps: int
 

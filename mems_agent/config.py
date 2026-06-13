@@ -37,7 +37,6 @@ def load_config(force_reload: bool = False) -> dict:
     if not _CONFIG_FILE.exists():
         raise FileNotFoundError(
             f"配置文件未找到: {_CONFIG_FILE}\n"
-            f"请复制 config.example.json 为 config.json 并填入实际配置值"
         )
 
     with open(_CONFIG_FILE, "r", encoding="utf-8") as f:
