@@ -26,29 +26,44 @@ class MemsAPI:
         self.password = password or mems_config.get("password", "")
         self.secret_key = (secret_key or mems_config.get("secret_key", "")).encode("utf-8")
     
-    def _request(self, method: str, path: str, params: dict = None, data: dict = None, files: dict = None) -> str:
-        if not self.token:
-            return json.dumps({"success": False, "message": "尚未登录，请先调用 login 工具获取访问令牌"}, ensure_ascii=False)
+    def _send(self, method: str, url: str, params: dict = None, data: dict = None, files: dict = None):
         headers = {'Access-Token': self.token}
+        if method == 'GET':
+            return requests.get(url, headers=headers, params=params, timeout=10)
+        elif method == 'POST':
+            if files:
+                # 文件上传方式（multipart/form-data）
+                return requests.post(url, headers=headers, files=files, timeout=30)
+            # JSON方式
+            return requests.post(url, headers=headers, json=data, timeout=10)
+        elif method == 'PUT':
+            return requests.put(url, headers=headers, json=data, timeout=10)
+        elif method == 'DELETE':
+            return requests.delete(url, headers=headers, params=params, timeout=10)
+        return None
+
+    def _request(self, method: str, path: str, params: dict = None, data: dict = None, files: dict = None) -> str:
+        # token 为空时尝试自动登录，凭据已在配置中无需向用户索要
+        if not self.token:
+            login_result = json.loads(self.login())
+            if not login_result.get("success"):
+                return json.dumps({"success": False, "message": "尚未登录且自动登录失败：" + login_result.get("message", "")}, ensure_ascii=False)
+
         url = f'{self.base_url}{path}'
-        
+
         try:
-            if method == 'GET':
-                response = requests.get(url, headers=headers, params=params, timeout=10)
-            elif method == 'POST':
-                if files:
-                    # 文件上传方式（multipart/form-data）
-                    response = requests.post(url, headers=headers, files=files, timeout=30)
-                else:
-                    # JSON方式
-                    response = requests.post(url, headers=headers, json=data, timeout=10)
-            elif method == 'PUT':
-                response = requests.put(url, headers=headers, json=data, timeout=10)
-            elif method == 'DELETE':
-                response = requests.delete(url, headers=headers, params=params, timeout=10)
-            else:
+            response = self._send(method, url, params=params, data=data, files=files)
+            if response is None:
                 return json.dumps({"success": False, "message": "不支持的HTTP方法"}, ensure_ascii=False)
-            
+
+            # token 失效（401/403）时自动重登并重试一次
+            if response.status_code in (401, 403):
+                login_result = json.loads(self.login())
+                if login_result.get("success"):
+                    response = self._send(method, url, params=params, data=data, files=files)
+                    if response is None:
+                        return json.dumps({"success": False, "message": "不支持的HTTP方法"}, ensure_ascii=False)
+
             # 处理成功响应（200状态码）
             if response.status_code == 200:
                 # 检查响应体是否为空
