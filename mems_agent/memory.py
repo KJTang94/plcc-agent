@@ -27,6 +27,9 @@ class AgentState(TypedDict):
     final_answer: str
     conversation_history: List[ConversationHistory]
     max_steps: int
+    # 整轮预检索结果，循环内复用，避免每步重复 embedding 检索
+    relevant_tool_names: List[str]
+    docs_content: str
 
 
 class MemoryManager:

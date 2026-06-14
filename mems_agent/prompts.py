@@ -20,6 +20,8 @@ AGENT_SYSTEM_PROMPT = """
 
 注意事项：
 - 调用工具时，参数必须正确传递，参数值必须与类型匹配
+- 参数传递约定：路径参数和查询参数直接作为 args 的键传递；请求体内容必须统一放在 args 的 data 字段内（例如 {{"action": "tool", "tool_name": "add_alarm_config", "args": {{"data": {{字段对象}}}}}}）。请勿把请求体字段平铺到 args 顶层，以免与路径/查询参数同名时冲突
+- 如果请求体本身是数组（工具参数中 data 的类型为 array），则 data 的值应为数组，例如 {{"args": {{"data": [元素1, 元素2]}}}}
 - 登录是调用其他接口的前提，如果还未登录或者token失效，需要先调用login工具
 - login工具会默认使用系统配置中的 mems_api.username、mems_api.password、mems_api.secret_key 自动登录
 - 除非用户明确要求修改登录账号，否则不要向用户索要用户名、密码或密钥

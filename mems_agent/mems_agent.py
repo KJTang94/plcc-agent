@@ -110,12 +110,12 @@ class MemsAgent:
         return workflow.compile()
     
     def _select_relevant_tools(self, state: AgentState) -> List[ToolInfo]:
-        """按用户问题检索相关工具子集，始终保留 login 与本轮已调用过的工具。
+        """复用整轮预检索得到的工具子集，始终保留 login 与本轮已调用过的工具。
         索引不可用或工具总数较少时回退为全量工具。"""
         if len(self.tools) <= self.max_tools_in_prompt:
             return self.tools
 
-        relevant_names = set(self.memory.search_tools(self._build_search_query(state), k=self.max_tools_in_prompt))
+        relevant_names = set(state.get("relevant_tool_names") or [])
         if not relevant_names:
             return self.tools
 
@@ -191,9 +191,7 @@ class MemsAgent:
 
         conversation_history_str = self._build_conversation_history_str(state)
 
-        search_query = self._build_search_query(state)
-        relevant_docs = self.memory.search_docs(search_query, k=3)
-        docs_content = "\n\n相关文档内容：\n" + "\n\n---\n\n".join(relevant_docs)
+        docs_content = state.get("docs_content", "")
 
         system_prompt = build_agent_system_prompt(tools_info=tools_info)
         user_message = build_agent_user_message(
@@ -238,24 +236,34 @@ class MemsAgent:
             if tool:
                 if args:
                     import inspect
-                    # 获取方法签名，区分路径参数和请求体参数
+                    # 获取方法签名，区分路径/查询参数和请求体参数
                     sig = inspect.signature(tool.func)
-                    params = list(sig.parameters.keys())
-                    
+                    params = set(sig.parameters.keys())
+                    accepts_body = "data" in params
+
                     path_query_args = {}
                     body_args = {}
-                    
+
                     for key, value in args.items():
-                        if key in params:
+                        if key == "data" and accepts_body:
+                            # 模型按约定显式给出的请求体，直接作为 data 传递
+                            path_query_args["data"] = value
+                        elif key in params:
                             # 路径参数或查询参数，直接传递
                             path_query_args[key] = value
-                        else:
-                            # 请求体字段，打包到 data 中
+                        elif accepts_body:
+                            # 兼容请求体字段被平铺到顶层的情况，打包进 data
                             body_args[key] = value
-                    
+                        # 工具不接受请求体且参数名未知时忽略该参数
+
                     if body_args:
-                        path_query_args["data"] = body_args
-                    
+                        # 与显式 data 合并；显式 data 优先
+                        if isinstance(path_query_args.get("data"), dict):
+                            merged = {**body_args, **path_query_args["data"]}
+                            path_query_args["data"] = merged
+                        elif "data" not in path_query_args:
+                            path_query_args["data"] = body_args
+
                     result = tool.func(**path_query_args)
                 else:
                     result = tool.func()
@@ -303,9 +311,7 @@ class MemsAgent:
         except:
             pass
 
-        search_query = self._build_search_query(state)
-        relevant_docs = self.memory.search_docs(search_query, k=3)
-        docs_content = "\n\n相关文档内容：\n" + "\n\n---\n\n".join(relevant_docs)
+        docs_content = state.get("docs_content", "")
 
         conversation_history_str = self._build_conversation_history_str(state)
 
@@ -348,8 +354,16 @@ class MemsAgent:
             "is_finished": False,
             "final_answer": "",
             "conversation_history": self.memory.get_conversation_history_copy(),
-            "max_steps": self.max_tool_steps
+            "max_steps": self.max_tool_steps,
+            "relevant_tool_names": [],
+            "docs_content": "",
         }
+
+        # 整轮只做一次 embedding 检索，结果缓存进 state 供循环内各节点复用
+        search_query = self._build_search_query(initial_state)
+        initial_state["relevant_tool_names"] = self.memory.search_tools(search_query, k=self.max_tools_in_prompt)
+        relevant_docs = self.memory.search_docs(search_query, k=3)
+        initial_state["docs_content"] = "\n\n相关文档内容：\n" + "\n\n---\n\n".join(relevant_docs)
 
         result = self.graph.invoke(initial_state)
 
