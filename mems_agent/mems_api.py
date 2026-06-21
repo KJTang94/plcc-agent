@@ -987,8 +987,8 @@ class MemsAPI:
     def add_pscpu_reset(self) -> str:
         return self._request('POST', f'/pscpu/reset')
 
-    def add_pscpu_start(self) -> str:
-        return self._request('POST', f'/pscpu/start')
+    def add_pscpu_start(self, data: dict = None) -> str:
+        return self._request('POST', f'/pscpu/start', data=data)
 
     def add_pscpu_stop(self) -> str:
         return self._request('POST', f'/pscpu/stop')
