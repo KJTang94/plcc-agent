@@ -19,11 +19,15 @@ class MemsAgent:
             api_key=api_key or llm_config.get("api_key"),
             base_url=llm_config.get("base_url", "https://yunwu.ai/v1")
         )
-        self.model = llm_config.get("model", "gpt-4o-mini")
+        self.model = llm_config.get("model", "gpt-4o")
         self.max_tool_steps = 15
-        self.max_same_call_repeats = 2
+        self.max_same_call_repeats = 1
         self.max_tools_in_prompt = 25
+<<<<<<< HEAD
         self.max_tool_results_in_prompt = 10
+=======
+        self.max_tool_results_in_prompt = 2
+>>>>>>> e5e8286043746f52a0c16d8dff71f42a5953a8e7
         self.max_tool_result_chars = 1500
         # summarize 完成度校验最多强制返工的次数，避免子任务无法推进时死循环
         self.max_completion_retries = 2
