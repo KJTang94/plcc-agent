@@ -30,6 +30,12 @@ class AgentState(TypedDict):
     # 整轮预检索结果，循环内复用，避免每步重复 embedding 检索
     relevant_tool_names: List[str]
     docs_content: str
+    # 由规划节点拆解出的子任务清单；每项为子任务的中文描述字符串
+    subtasks: List[str]
+    # summarize 完成度校验触发强制返工的次数，达到上限后允许结束以避免死循环
+    completion_retries: int
+    # 完成度校验给出的未完成子任务，回传给 agent 节点以引导继续推进
+    completion_feedback: List[str]
 
 
 class MemoryManager:

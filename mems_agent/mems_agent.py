@@ -8,7 +8,7 @@ from mems_api import MemsAPI
 from mems_tools import create_tools, ToolInfo
 from config import get_llm_config
 from memory import AgentState, MemoryManager
-from prompts import build_agent_system_prompt, build_agent_user_message, build_summarize_system_prompt, build_summarize_user_message
+from prompts import build_agent_system_prompt, build_agent_user_message, build_summarize_system_prompt, build_summarize_user_message, build_plan_system_prompt, build_plan_user_message
 
 
 class MemsAgent:
@@ -23,8 +23,12 @@ class MemsAgent:
         self.max_tool_steps = 15
         self.max_same_call_repeats = 2
         self.max_tools_in_prompt = 25
-        self.max_tool_results_in_prompt = 4
+        self.max_tool_results_in_prompt = 10
         self.max_tool_result_chars = 1500
+        # summarize 完成度校验最多强制返工的次数，避免子任务无法推进时死循环
+        self.max_completion_retries = 2
+        # 每个子任务单独检索的工具数量，最终与其他子任务结果合并去重
+        self.tools_per_subtask = 8
         self.tools = create_tools(self.mems_api)
         self.memory = MemoryManager()
         self.memory.build_tool_index(self.tools)
@@ -89,26 +93,61 @@ class MemsAgent:
 
     def _build_graph(self) -> StateGraph:
         workflow = StateGraph(AgentState)
-        
+
+        workflow.add_node("plan", self._plan_node)
         workflow.add_node("agent", self._agent_node)
         workflow.add_node("tool", self._tool_node)
         workflow.add_node("summarize", self._summarize_node)
-        
-        workflow.set_entry_point("agent")
+
+        workflow.set_entry_point("plan")
+        workflow.add_edge("plan", "agent")
         workflow.add_edge("tool", "agent")
         workflow.add_edge("summarize", END)
-        
+
         workflow.add_conditional_edges(
             "agent",
             self._decide_next_step,
             {
                 "tool": "tool",
+                "agent": "agent",
                 "summarize": "summarize"
             }
         )
-        
+
         return workflow.compile()
-    
+
+    def _plan_node(self, state: AgentState) -> AgentState:
+        system_prompt = build_plan_system_prompt()
+        user_message = build_plan_user_message(user_input=state["user_input"])
+        response = self._call_llm(system_prompt, user_message=user_message)
+        try:
+            plan = json.loads(response)
+            subtasks = plan.get("subtasks", []) if isinstance(plan, dict) else []
+        except json.JSONDecodeError:
+            subtasks = []
+        # 兜底：规划失败时退化为单一子任务，保持后续逻辑一致
+        if not subtasks:
+            subtasks = [state["user_input"]]
+        state["subtasks"] = subtasks
+
+        # 按子任务分别检索工具并与整轮检索结果合并去重，避免跨模块多指令时
+        # 单次检索召回不全导致某些子任务所需工具未进入候选集（问题4）
+        if len(subtasks) > 1:
+            merged = list(state.get("relevant_tool_names") or [])
+            seen = set(merged)
+            for task in subtasks:
+                for name in self.memory.search_tools(task, k=self.tools_per_subtask):
+                    if name not in seen:
+                        seen.add(name)
+                        merged.append(name)
+            state["relevant_tool_names"] = merged
+        return state
+
+    def _format_subtasks(self, subtasks: List[str]) -> str:
+        if not subtasks:
+            return ""
+        return "\n".join(f"{i}. {task}" for i, task in enumerate(subtasks, start=1))
+
     def _select_relevant_tools(self, state: AgentState) -> List[ToolInfo]:
         """复用整轮预检索得到的工具子集，始终保留 login 与本轮已调用过的工具。
         索引不可用或工具总数较少时回退为全量工具。"""
@@ -193,12 +232,21 @@ class MemsAgent:
 
         docs_content = state.get("docs_content", "")
 
+        subtasks = state.get("subtasks") or []
+        subtasks_str = ""
+        if subtasks:
+            subtasks_str = "子任务清单（必须全部完成，未完成项需继续推进）：\n" + self._format_subtasks(subtasks) + "\n"
+            feedback = state.get("completion_feedback") or []
+            if feedback:
+                subtasks_str += "\n以下子任务经校验仍未完成，请优先继续推进，不要输出 summarize：\n" + self._format_subtasks(feedback) + "\n"
+
         system_prompt = build_agent_system_prompt(tools_info=tools_info)
         user_message = build_agent_user_message(
             conversation_history_str=conversation_history_str,
             user_input=state["user_input"],
             tool_results=self._format_tool_results(state["tool_results"]),
             docs_content=docs_content,
+            subtasks_str=subtasks_str,
         )
 
         response = self._call_llm(system_prompt, user_message=user_message)
@@ -328,6 +376,29 @@ class MemsAgent:
         state["is_finished"] = True
         return state
     
+    def _check_subtasks_completion(self, state: AgentState) -> List[str]:
+        """基于已执行的工具调用结果，判断哪些子任务仍未完成，返回未完成子任务描述列表。
+        无子任务或仅1项时不做校验（视为无遗漏风险）。"""
+        subtasks = state.get("subtasks") or []
+        if len(subtasks) <= 1:
+            return []
+
+        check_system = (
+            "你是任务完成度审查员。根据子任务清单和已执行的工具调用结果，"
+            "判断每个子任务是否已经被执行/完成。"
+            "纯文档类、无需工具的子任务若信息已具备则视为已完成。"
+            '只输出JSON：{"unfinished": [未完成子任务的原文描述, ...]}，全部完成则 unfinished 为空数组。'
+        )
+        check_user = (
+            "子任务清单：\n" + self._format_subtasks(subtasks) +
+            "\n\n已执行的工具调用结果：\n" + self._format_tool_results(state["tool_results"], max_results=self.max_tool_steps)
+        )
+        response = self._call_llm(check_system, user_message=check_user)
+        parsed = self._parse_agent_response(response)
+        unfinished = parsed.get("unfinished", []) if isinstance(parsed, dict) else []
+        # 仅保留确实存在于清单中的项，避免模型臆造
+        return [task for task in subtasks if task in unfinished]
+
     def _decide_next_step(self, state: AgentState) -> str:
         if len(state.get("tool_results", [])) >= state.get("max_steps", self.max_tool_steps):
             state["agent_info"] = json.dumps({"action": "summarize", "reason": "达到最大工具调用次数限制"}, ensure_ascii=False)
@@ -342,7 +413,24 @@ class MemsAgent:
                 if self._count_same_tool_call(state, tool_name, args) >= self.max_same_call_repeats:
                     state["agent_info"] = json.dumps({"action": "summarize", "reason": "重复工具调用次数过多"}, ensure_ascii=False)
                     return "summarize"
-            return action if action in ("tool", "summarize") else "summarize"
+                # 已开始推进，清除上一轮的未完成反馈，避免在后续 prompt 中残留
+                state["completion_feedback"] = []
+                return "tool"
+
+            if action == "summarize":
+                # summarize 前校验子任务完成度，存在遗漏则强制返工（问题2）
+                if state.get("completion_retries", 0) < self.max_completion_retries:
+                    unfinished = self._check_subtasks_completion(state)
+                    if unfinished:
+                        state["completion_retries"] = state.get("completion_retries", 0) + 1
+                        state["completion_feedback"] = unfinished
+                        print(f"[完成度校验] 检测到未完成子任务，强制返工: {unfinished}")
+                        # 回到 agent 节点继续推进未完成项，而非直接进入 tool
+                        return "agent"
+                state["completion_feedback"] = []
+                return "summarize"
+
+            return "summarize"
         except:
             return "summarize"
     
@@ -357,6 +445,9 @@ class MemsAgent:
             "max_steps": self.max_tool_steps,
             "relevant_tool_names": [],
             "docs_content": "",
+            "subtasks": [],
+            "completion_retries": 0,
+            "completion_feedback": [],
         }
 
         # 整轮只做一次 embedding 检索，结果缓存进 state 供循环内各节点复用
