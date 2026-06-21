@@ -244,7 +244,9 @@ class MemsAPI:
         
         参数：data (dict, 可选) - 请求体数据
         """
-        # if data is None:
+        # 用户已显式提供请求体则直接使用；未提供时回退到 config_files 默认文件
+        if data is not None:
+            return self._request('POST', '/multi_import_files', data=data)
         try:
             import os
             

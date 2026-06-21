@@ -1,8 +1,24 @@
 from __future__ import annotations
 
+import inspect
 from typing import Any
 
 from openapi_shared import ToolInfo, OpenAPITooling, load_openapi_spec
+
+
+def _inspect_method_body(func: Any) -> tuple[bool, bool]:
+    """检查实际方法签名，返回 (是否接受 data 请求体, data 是否可选)。
+    用于校正 OpenAPI 描述与方法真实行为的不一致：
+    部分上传类方法虽在 spec 中声明必填二进制请求体，但实现里 data 可选，
+    未提供时会自动从配置文件读取，无需 LLM 构造文件内容。"""
+    try:
+        sig = inspect.signature(func)
+    except (TypeError, ValueError):
+        return True, False
+    data_param = sig.parameters.get("data")
+    if data_param is None:
+        return False, False
+    return True, data_param.default is not inspect.Parameter.empty
 
 
 def create_tools(mems_api: Any) -> list[ToolInfo]:
@@ -22,16 +38,34 @@ def create_tools(mems_api: Any) -> list[ToolInfo]:
         if not hasattr(mems_api, name):
             missing_methods.append(name)
             continue
+        func = getattr(mems_api, name)
         params = tooling.extract_params(operation)
         path_params = [parameter for parameter in params if parameter.location == "path"]
         query_params = [parameter for parameter in params if parameter.location == "query"]
         body_schema = tooling.resolver.extract_body_schema(operation) if tooling.has_body(operation) else None
+
+        # 用实际方法签名校正请求体描述，消除 spec 与实现的不一致
+        accepts_body, body_optional = _inspect_method_body(func)
+        description = tooling.build_description(operation, path_params, query_params, body_schema, method, path)
+        tool_parameters = tooling.build_tool_parameters(operation, path_params, query_params, body_schema)
+
+        if body_schema is not None and not accepts_body:
+            # spec 声明了请求体但方法不接受 data：去掉 data 参数，明确告知无需请求体
+            tool_parameters = [param for param in tool_parameters if param.get("name") != "data"]
+            description += "。【调用说明】此接口无需提供请求体，直接调用即可（不要传 data 参数）。"
+        elif body_schema is not None and body_optional:
+            # 方法 data 可选：未提供时自动从配置文件读取，避免 LLM 因无法构造文件内容而拒绝执行
+            for param in tool_parameters:
+                if param.get("name") == "data":
+                    param["required"] = False
+            description += "。【调用说明】data 为可选请求体；若未提供，系统会自动从配置文件读取所需文件内容并构造请求体，因此即使用户未提供文件也可直接调用（无需向用户索要文件）。"
+
         tools.append(
             ToolInfo(
                 name=name,
-                description=tooling.build_description(operation, path_params, query_params, body_schema, method, path),
-                func=getattr(mems_api, name),
-                parameters=tooling.build_tool_parameters(operation, path_params, query_params, body_schema),
+                description=description,
+                func=func,
+                parameters=tool_parameters,
             )
         )
 

@@ -32,6 +32,8 @@ class AgentState(TypedDict):
     docs_content: str
     # 由规划节点拆解出的子任务清单；每项为子任务的中文描述字符串
     subtasks: List[str]
+    # P0-2: 子任务状态追踪，键为子任务描述，值为状态（pending/in_progress/completed/failed）
+    subtask_status: Dict[str, str]
     # summarize 完成度校验触发强制返工的次数，达到上限后允许结束以避免死循环
     completion_retries: int
     # 完成度校验给出的未完成子任务，回传给 agent 节点以引导继续推进

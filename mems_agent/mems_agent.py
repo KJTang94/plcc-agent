@@ -19,20 +19,16 @@ class MemsAgent:
             api_key=api_key or llm_config.get("api_key"),
             base_url=llm_config.get("base_url", "https://yunwu.ai/v1")
         )
-        self.model = llm_config.get("model", "gpt-4o")
+        self.model = llm_config.get("model", "gpt-5.4")
         self.max_tool_steps = 15
         self.max_same_call_repeats = 1
         self.max_tools_in_prompt = 25
-<<<<<<< HEAD
-        self.max_tool_results_in_prompt = 10
-=======
-        self.max_tool_results_in_prompt = 2
->>>>>>> e5e8286043746f52a0c16d8dff71f42a5953a8e7
-        self.max_tool_result_chars = 1500
+        self.max_tool_results_in_prompt = 30  # P0-1: 从10提升至30，避免早期结果被省略
+        self.max_tool_result_chars = 4000  # P0-1: 从1500提升至4000，减少关键数据截断
         # summarize 完成度校验最多强制返工的次数，避免子任务无法推进时死循环
         self.max_completion_retries = 2
         # 每个子任务单独检索的工具数量，最终与其他子任务结果合并去重
-        self.tools_per_subtask = 8
+        self.tools_per_subtask = 12  # P0-3: 从8提升至12，提高跨模块任务召回率
         self.tools = create_tools(self.mems_api)
         self.memory = MemoryManager()
         self.memory.build_tool_index(self.tools)
@@ -134,23 +130,72 @@ class MemsAgent:
             subtasks = [state["user_input"]]
         state["subtasks"] = subtasks
 
-        # 按子任务分别检索工具并与整轮检索结果合并去重，避免跨模块多指令时
-        # 单次检索召回不全导致某些子任务所需工具未进入候选集（问题4）
+        # P0-2: 初始化子任务状态追踪
+        state["subtask_status"] = {task: "pending" for task in subtasks}
+
+        # P0-3: 按子任务分别检索工具并与整轮检索结果合并去重
+        # 关键改进：先对整体用户输入做一次检索，确保基础工具不遗漏
+        merged = list(state.get("relevant_tool_names") or [])
+        seen = set(merged)
+        
+        # 先检索整体输入（覆盖通用工具）
+        for name in self.memory.search_tools(state["user_input"], k=self.tools_per_subtask):
+            if name not in seen:
+                seen.add(name)
+                merged.append(name)
+        
+        # 再对每个子任务单独检索（覆盖专项工具）
         if len(subtasks) > 1:
-            merged = list(state.get("relevant_tool_names") or [])
-            seen = set(merged)
             for task in subtasks:
                 for name in self.memory.search_tools(task, k=self.tools_per_subtask):
                     if name not in seen:
                         seen.add(name)
                         merged.append(name)
-            state["relevant_tool_names"] = merged
+
+        # P0-3: 关键字兜底匹配 - 向量检索对短中文 query 召回英文工具名不稳定，
+        # 这里把工具名按下划线拆词，只要任一词出现在用户输入/子任务中就强制纳入，
+        # 确保 add_pscpu_reset 这类被明确点名的工具不会因检索波动而漏召回。
+        full_text = (state["user_input"] + " " + " ".join(subtasks)).lower()
+        keyword_hits = []
+        for tool in self.tools:
+            if tool.name in seen:
+                continue
+            tokens = [t for t in tool.name.lower().split("_") if len(t) >= 3 and t not in ("add", "get", "del", "set", "list", "the", "all", "api")]
+            if any(token in full_text for token in tokens):
+                seen.add(tool.name)
+                merged.append(tool.name)
+                keyword_hits.append(tool.name)
+
+        state["relevant_tool_names"] = merged
+        # print(f"[工具检索] 为 {len(subtasks)} 个子任务检索到 {len(merged)} 个工具（总工具数 {len(self.tools)}）")
+        # print(f"[工具检索] 子任务清单: {subtasks}")
+        # if keyword_hits:
+        #     print(f"[工具检索] 关键字兜底补充的工具: {keyword_hits}")
+        # print(f"[工具检索] 检索到的工具列表（共{len(merged)}个）:")
+        # for i, name in enumerate(merged, start=1):
+        #     print(f"  {i}. {name}")
         return state
 
-    def _format_subtasks(self, subtasks: List[str]) -> str:
+    def _format_subtasks(self, subtasks: List[str], subtask_status: Dict[str, str] = None) -> str:
+        """P0-2: 格式化子任务清单，包含状态标记"""
         if not subtasks:
             return ""
-        return "\n".join(f"{i}. {task}" for i, task in enumerate(subtasks, start=1))
+        if not subtask_status:
+            return "\n".join(f"{i}. {task}" for i, task in enumerate(subtasks, start=1))
+        
+        # 带状态标记的格式
+        lines = []
+        status_icons = {
+            "pending": "⏳ 待执行",
+            "in_progress": "🔄 进行中",
+            "completed": "✅ 已完成",
+            "failed": "❌ 失败"
+        }
+        for i, task in enumerate(subtasks, start=1):
+            status = subtask_status.get(task, "pending")
+            icon = status_icons.get(status, "⏳ 待执行")
+            lines.append(f"{i}. [{icon}] {task}")
+        return "\n".join(lines)
 
     def _select_relevant_tools(self, state: AgentState) -> List[ToolInfo]:
         """复用整轮预检索得到的工具子集，始终保留 login 与本轮已调用过的工具。
@@ -237,12 +282,14 @@ class MemsAgent:
         docs_content = state.get("docs_content", "")
 
         subtasks = state.get("subtasks") or []
+        subtask_status = state.get("subtask_status") or {}
         subtasks_str = ""
         if subtasks:
-            subtasks_str = "子任务清单（必须全部完成，未完成项需继续推进）：\n" + self._format_subtasks(subtasks) + "\n"
+            # P0-2: 展示带状态标记的子任务清单
+            subtasks_str = "子任务清单（必须全部完成，未完成项需继续推进）：\n" + self._format_subtasks(subtasks, subtask_status) + "\n"
             feedback = state.get("completion_feedback") or []
             if feedback:
-                subtasks_str += "\n以下子任务经校验仍未完成，请优先继续推进，不要输出 summarize：\n" + self._format_subtasks(feedback) + "\n"
+                subtasks_str += "\n⚠️ 以下子任务经校验仍未完成，请优先继续推进，不要输出 summarize：\n" + self._format_subtasks(feedback, subtask_status) + "\n"
 
         system_prompt = build_agent_system_prompt(tools_info=tools_info)
         user_message = build_agent_user_message(
@@ -271,18 +318,38 @@ class MemsAgent:
             print(f"[工具调用] 工具名称: {tool_name}")
             print(f"[工具调用] 输入参数: {json.dumps(args, ensure_ascii=False)}")
 
+            # P0-3: 改进重复调用检测逻辑 - 区分"失败重试"和"恶意循环"
             same_call_count = self._count_same_tool_call(state, tool_name, args)
             if same_call_count >= self.max_same_call_repeats:
-                loop_msg = json.dumps({"success": False, "message": f"检测到重复调用工具 {tool_name} 且参数相同，已自动停止继续调用以避免死循环"}, ensure_ascii=False)
-                print(f"[工具调用] 输出结果: {loop_msg}")
-                state["tool_results"].append({
-                    "tool_name": tool_name,
-                    "args": args,
-                    "result": loop_msg,
-                    "timestamp": time.time()
-                })
-                state["agent_info"] = json.dumps({"action": "summarize", "reason": "重复工具调用触发保护"}, ensure_ascii=False)
-                return state
+                # 检查上一次调用是否失败，失败则允许重试
+                last_result = None
+                for result in reversed(state.get("tool_results", [])):
+                    if result.get("tool_name") == tool_name:
+                        last_result = result.get("result", "")
+                        break
+                
+                is_last_failed = False
+                if last_result:
+                    try:
+                        parsed = json.loads(last_result)
+                        is_last_failed = not parsed.get("success", True)
+                    except:
+                        pass
+                
+                if not is_last_failed:
+                    loop_msg = json.dumps({"success": False, "message": f"检测到重复调用工具 {tool_name} 且参数相同（已调用{same_call_count}次），已自动停止继续调用以避免死循环"}, ensure_ascii=False)
+                    print(f"[工具调用] 输出结果: {loop_msg}")
+                    state["tool_results"].append({
+                        "tool_name": tool_name,
+                        "args": args,
+                        "result": loop_msg,
+                        "timestamp": time.time()
+                    })
+                    state["agent_info"] = json.dumps({"action": "summarize", "reason": "重复工具调用触发保护"}, ensure_ascii=False)
+                    return state
+                else:
+                    print(f"[工具调用] 检测到重复调用，但上次失败，允许重试")
+
             
             tool = next((t for t in self.tools if t.name == tool_name), None)
             if tool:
@@ -328,6 +395,9 @@ class MemsAgent:
                     "result": result,
                     "timestamp": time.time()
                 })
+                
+                # P0-2: 更新子任务状态（根据工具调用结果推断）
+                self._update_subtask_status_after_tool(state, tool_name, result)
             else:
                 error_msg = json.dumps({"success": False, "message": "工具 " + str(tool_name) + " 不存在"}, ensure_ascii=False)
                 print(f"[工具调用] 输出结果: {error_msg}")
@@ -401,7 +471,53 @@ class MemsAgent:
         parsed = self._parse_agent_response(response)
         unfinished = parsed.get("unfinished", []) if isinstance(parsed, dict) else []
         # 仅保留确实存在于清单中的项，避免模型臆造
-        return [task for task in subtasks if task in unfinished]
+        unfinished = [task for task in subtasks if task in unfinished]
+        # P0-2: 同步更新子任务状态，未在未完成列表且非失败的视为已完成
+        status = state.get("subtask_status") or {}
+        for task in subtasks:
+            if task not in unfinished and status.get(task) != "failed":
+                status[task] = "completed"
+        state["subtask_status"] = status
+        return unfinished
+
+    def _update_subtask_status_after_tool(self, state: AgentState, tool_name: str, result: str) -> None:
+        """P0-2: 工具调用后由 LLM 推断当前推进的子任务并更新其状态。
+        失败结果标记 failed，成功标记 completed，避免靠关键字硬匹配带来的误判。"""
+        subtasks = state.get("subtasks") or []
+        if len(subtasks) <= 1:
+            return
+
+        # 判断本次工具调用是否成功
+        is_success = True
+        try:
+            parsed = json.loads(result)
+            is_success = parsed.get("success", True)
+        except Exception:
+            pass
+
+        status = state.get("subtask_status") or {}
+        pending = [t for t in subtasks if status.get(t) != "completed"]
+        if not pending:
+            return
+
+        # 用 LLM 将本次工具调用归属到某个待办子任务
+        match_system = (
+            "你是任务匹配器。给定子任务清单和刚刚执行的一次工具调用，"
+            "判断这次工具调用对应清单中的哪一个子任务（返回其完整原文描述）。"
+            '只输出JSON：{"matched": "对应的子任务原文描述，无法匹配则为空字符串"}'
+        )
+        match_user = (
+            "待办子任务：\n" + self._format_subtasks(pending) +
+            f"\n\n刚执行的工具调用：{tool_name}\n调用结果：{str(result)[:self.max_tool_result_chars]}"
+        )
+        response = self._call_llm(match_system, user_message=match_user)
+        parsed = self._parse_agent_response(response)
+        matched = parsed.get("matched", "") if isinstance(parsed, dict) else ""
+
+        if matched in subtasks:
+            status[matched] = "completed" if is_success else "failed"
+            print(f"[子任务状态] '{matched}' -> {status[matched]}")
+        state["subtask_status"] = status
 
     def _decide_next_step(self, state: AgentState) -> str:
         if len(state.get("tool_results", [])) >= state.get("max_steps", self.max_tool_steps):
@@ -414,9 +530,23 @@ class MemsAgent:
             if action == "tool":
                 tool_name = agent_info.get("tool_name")
                 args = agent_info.get("args", {})
+                # P0-3: 仅当达到重复上限且上次调用成功时才强制 summarize，
+                # 上次失败的调用允许重试（与 _tool_node 中逻辑保持一致）
                 if self._count_same_tool_call(state, tool_name, args) >= self.max_same_call_repeats:
-                    state["agent_info"] = json.dumps({"action": "summarize", "reason": "重复工具调用次数过多"}, ensure_ascii=False)
-                    return "summarize"
+                    last_result = None
+                    for result in reversed(state.get("tool_results", [])):
+                        if result.get("tool_name") == tool_name:
+                            last_result = result.get("result", "")
+                            break
+                    last_failed = False
+                    if last_result:
+                        try:
+                            last_failed = not json.loads(last_result).get("success", True)
+                        except Exception:
+                            pass
+                    if not last_failed:
+                        state["agent_info"] = json.dumps({"action": "summarize", "reason": "重复工具调用次数过多"}, ensure_ascii=False)
+                        return "summarize"
                 # 已开始推进，清除上一轮的未完成反馈，避免在后续 prompt 中残留
                 state["completion_feedback"] = []
                 return "tool"
@@ -450,6 +580,7 @@ class MemsAgent:
             "relevant_tool_names": [],
             "docs_content": "",
             "subtasks": [],
+            "subtask_status": {},
             "completion_retries": 0,
             "completion_feedback": [],
         }
