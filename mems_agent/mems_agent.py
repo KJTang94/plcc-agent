@@ -23,8 +23,8 @@ class MemsAgent:
         self.max_tool_steps = 15
         self.max_same_call_repeats = 2
         self.max_tools_in_prompt = 25
-        self.max_tool_results_in_prompt = 10
-        self.max_tool_result_chars = 1500
+        self.max_tool_results_in_prompt = 20
+        self.max_tool_result_chars = 5000
         # summarize 完成度校验最多强制返工的次数，避免子任务无法推进时死循环
         self.max_completion_retries = 2
         # 每个子任务单独检索的工具数量，最终与其他子任务结果合并去重
