@@ -21,7 +21,7 @@ class MemsAgent:
         )
         self.model = llm_config.get("model", "gpt-5.4")
         self.max_tool_steps = 15
-        self.max_same_call_repeats = 1
+        self.max_same_call_repeats = 2
         self.max_tools_in_prompt = 25
         self.max_tool_results_in_prompt = 20
         self.max_tool_result_chars = 5000
