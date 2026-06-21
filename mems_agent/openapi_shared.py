@@ -611,6 +611,8 @@ class OpenAPITooling:
         path_params: list[OpenAPIParameter],
         query_params: list[OpenAPIParameter],
         body_schema: Optional[OpenAPISchema],
+        method: str = "",
+        path: str = "",
     ) -> str:
         description_parts: list[str] = []
         for parameter in path_params + query_params:
@@ -633,6 +635,10 @@ class OpenAPITooling:
             description_parts.append(body_desc)
 
         description = operation.summary
+        # 前置 HTTP 方法与路径，提升相似中文描述之间的可区分度（同时用于工具索引与模型选择）
+        if method and path:
+            prefix = f"[{method} {path}]"
+            description = f"{prefix} {description}" if description else prefix
         if description_parts:
             description += "。参数：" + ", ".join(description_parts)
         return description

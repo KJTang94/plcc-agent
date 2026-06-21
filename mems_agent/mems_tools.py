@@ -18,7 +18,7 @@ def create_tools(mems_api: Any) -> list[ToolInfo]:
     ]
 
     missing_methods: list[str] = []
-    for _, _, name, operation in tooling.iter_named_operations():
+    for method, path, name, operation in tooling.iter_named_operations():
         if not hasattr(mems_api, name):
             missing_methods.append(name)
             continue
@@ -29,7 +29,7 @@ def create_tools(mems_api: Any) -> list[ToolInfo]:
         tools.append(
             ToolInfo(
                 name=name,
-                description=tooling.build_description(operation, path_params, query_params, body_schema),
+                description=tooling.build_description(operation, path_params, query_params, body_schema, method, path),
                 func=getattr(mems_api, name),
                 parameters=tooling.build_tool_parameters(operation, path_params, query_params, body_schema),
             )
