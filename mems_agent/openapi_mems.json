@@ -3901,47 +3901,6 @@
             "api_key": []
           }
         ]
-      },
-      "post": {
-        "tags": [
-          "crate::network"
-        ],
-        "summary": "根据版本号apply电气岛",
-        "operationId": "set_sys_island_by_version",
-        "parameters": [
-          {
-            "name": "access-token",
-            "in": "header",
-            "description": "token",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "版本id",
-          "content": {
-            "text/plain": {
-              "schema": {
-                "type": "integer",
-                "format": "int32",
-                "minimum": 0
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        },
-        "security": [
-          {
-            "api_key": []
-          }
-        ]
       }
     },
     "/api/v1/devices/measure_defs": {
@@ -6995,7 +6954,7 @@
         "tags": [
           "eig_db::svgdb"
         ],
-        "summary": "应用一个svg版本",
+        "summary": "选择一个svg版本应用到系统",
         "operationId": "post_apply_version",
         "parameters": [
           {
@@ -10521,7 +10480,7 @@
         "tags": [
           "crate::network"
         ],
-        "summary": "导入所有模型字节数组",
+        "summary": "导入所有设备模型文件（字节数组形式）",
         "operationId": "multi_import_bytes",
         "parameters": [
           {
@@ -10565,7 +10524,7 @@
         "tags": [
           "crate::network"
         ],
-        "summary": "导入所有模型（多文件形式）",
+        "summary": "导入所有设备模型文件（多文件形式）",
         "operationId": "multi_import_files",
         "parameters": [
           {
@@ -11806,7 +11765,7 @@
         "tags": [
           "crate::pscpu"
         ],
-        "summary": "更新当前应用的AOE",
+        "summary": "将传入的AOE应用到系统",
         "operationId": "set_aoes",
         "parameters": [
           {
@@ -11916,6 +11875,47 @@
             "api_key": []
           }
         ]
+      },
+      "post": {
+        "tags": [
+          "crate::pscpu"
+        ],
+        "summary": "将对应版本号的AOE应用到系统",
+        "operationId": "set_aoes_by_version",
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "版本id",
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
       }
     },
     "/api/v1/pscpu/info": {
@@ -11960,7 +11960,7 @@
         "tags": [
           "crate::pscpu"
         ],
-        "summary": "更新当前应用的电气岛",
+        "summary": "将传入的电气岛应用到系统",
         "operationId": "set_island",
         "parameters": [
           {
@@ -12167,6 +12167,47 @@
             "api_key": []
           }
         ]
+      },
+      "post": {
+        "tags": [
+          "crate::pscpu"
+        ],
+        "summary": "将对应版本号的电气岛应用到系统",
+        "operationId": "set_island_by_version",
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "版本id",
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
       }
     },
     "/api/v1/pscpu/points": {
@@ -12174,7 +12215,7 @@
         "tags": [
           "crate::pscpu"
         ],
-        "summary": "更新当前应用的测点",
+        "summary": "将传入的测点应用到系统",
         "operationId": "set_points",
         "parameters": [
           {
@@ -12447,6 +12488,47 @@
                 }
               }
             }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "crate::pscpu"
+        ],
+        "summary": "将对应版本号的测点应用到系统",
+        "operationId": "set_points_by_version",
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "版本id",
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         },
         "security": [
@@ -14070,7 +14152,7 @@
         "oneOf": [
           {
             "type": "object",
-            "description": "开始AOE",
+            "description": "开始AOE，参数：aoe_id",
             "required": [
               "StartAoe"
             ],
@@ -14078,14 +14160,14 @@
               "StartAoe": {
                 "type": "integer",
                 "format": "int64",
-                "description": "开始AOE",
+                "description": "开始AOE，参数：aoe_id",
                 "minimum": 0
               }
             }
           },
           {
             "type": "object",
-            "description": "停止AOE",
+            "description": "停止AOE，参数：aoe_id",
             "required": [
               "StopAoe"
             ],
@@ -14093,7 +14175,7 @@
               "StopAoe": {
                 "type": "integer",
                 "format": "int64",
-                "description": "停止AOE",
+                "description": "停止AOE，参数：aoe_id",
                 "minimum": 0
               }
             }
@@ -14113,7 +14195,7 @@
           },
           {
             "type": "object",
-            "description": "更新AOE（字节数组）",
+            "description": "更新AOE（字节数组），参数：aoe_csv文件字节数组",
             "required": [
               "UpdateAoeCsv"
             ],
@@ -14125,7 +14207,7 @@
                   "format": "int32",
                   "minimum": 0
                 },
-                "description": "更新AOE（字节数组）"
+                "description": "更新AOE（字节数组），参数：aoe_csv文件字节数组"
               }
             }
           }
@@ -15874,21 +15956,21 @@
         "oneOf": [
           {
             "type": "string",
-            "description": "开始",
+            "description": "打开报表引擎",
             "enum": [
               "Start"
             ]
           },
           {
             "type": "string",
-            "description": "停止",
+            "description": "停止报表引擎",
             "enum": [
               "Stop"
             ]
           },
           {
             "type": "object",
-            "description": "开始某个报表",
+            "description": "开始某个报表，参数：报表id",
             "required": [
               "StartFlow"
             ],
@@ -15896,14 +15978,14 @@
               "StartFlow": {
                 "type": "integer",
                 "format": "int64",
-                "description": "开始某个报表",
+                "description": "开始某个报表，参数：报表id",
                 "minimum": 0
               }
             }
           },
           {
             "type": "object",
-            "description": "开始某些报表",
+            "description": "开始某些报表，参数：报表id列表",
             "required": [
               "StartFlows"
             ],
@@ -15915,13 +15997,13 @@
                   "format": "int64",
                   "minimum": 0
                 },
-                "description": "开始某些报表"
+                "description": "开始某些报表，参数：报表id列表"
               }
             }
           },
           {
             "type": "object",
-            "description": "停止某个报表",
+            "description": "停止某个报表：报表id",
             "required": [
               "StopFlow"
             ],
@@ -15929,14 +16011,14 @@
               "StopFlow": {
                 "type": "integer",
                 "format": "int64",
-                "description": "停止某个报表",
+                "description": "停止某个报表：报表id",
                 "minimum": 0
               }
             }
           },
           {
             "type": "object",
-            "description": "停止某些报表",
+            "description": "停止某些报表，参数：报表id列表",
             "required": [
               "StopFlows"
             ],
@@ -15948,7 +16030,7 @@
                   "format": "int64",
                   "minimum": 0
                 },
-                "description": "停止某些报表"
+                "description": "停止某些报表，参数：报表id列表"
               }
             }
           },

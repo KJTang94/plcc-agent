@@ -19,11 +19,11 @@ class MemsAgent:
             api_key=api_key or llm_config.get("api_key"),
             base_url=llm_config.get("base_url", "https://yunwu.ai/v1")
         )
-        self.model = llm_config.get("model", "gpt-4o-mini")
+        self.model = llm_config.get("model", "gpt-4o")
         self.max_tool_steps = 15
-        self.max_same_call_repeats = 2
+        self.max_same_call_repeats = 1
         self.max_tools_in_prompt = 25
-        self.max_tool_results_in_prompt = 4
+        self.max_tool_results_in_prompt = 2
         self.max_tool_result_chars = 1500
         self.tools = create_tools(self.mems_api)
         self.memory = MemoryManager()
