@@ -6,8 +6,10 @@ _CONFIG_DIR = Path(__file__).parent
 _CONFIG_FILE = _CONFIG_DIR / "config.json"
 _CONFIG_FILES_DIR = _CONFIG_DIR / "config_files"
 
-# excel_path 各键对应的默认文件名：config.json 未配置或路径无效时，
-# 自动回退到 config_files 目录下的同名文件
+# 新增：独立的文件路径配置文件
+_EXCEL_PATHS_FILE = _CONFIG_DIR / "excel_paths.json"
+
+# 默认文件名映射
 _DEFAULT_FILE_NAMES = {
     "prop_def": "prop_def_test.xlsx",
     "cns": "cns_test.xlsx",
@@ -70,6 +72,20 @@ def load_config(force_reload: bool = False) -> dict:
     _config_cache = config
     return config
 
+def load_excel_paths() -> dict:
+    """
+    实时读取 excel_paths.json 配置文件（不缓存）。
+    这样可以在程序运行期间修改配置文件并立即生效。
+    """
+    if not _EXCEL_PATHS_FILE.exists():
+        return {}
+
+    try:
+        with open(_EXCEL_PATHS_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"警告：读取 excel_paths.json 失败: {e}")
+        return {}
 
 def get_llm_config() -> dict:
     return load_config().get("llm", {})
@@ -80,18 +96,22 @@ def get_mems_api_config() -> dict:
 
 
 def _resolve_excel_path(key: str) -> str:
-    """解析 excel_path 中某个键对应的文件路径。
-    优先使用 config.json 中配置且真实存在的路径；
+    """
+    解析 excel_path 中某个键对应的文件路径。
+    优先使用 excel_paths.json 中配置且真实存在的路径；
     若未配置或路径无效，则回退到 config_files 目录下的约定默认文件。
-    两者都不可用时返回空字符串。"""
-    try:
-        configured = load_config().get("excel_path", {}).get(key, "")
-    except FileNotFoundError:
-        # config.json 不存在时不阻断文件解析，直接走 config_files 回退
-        configured = ""
+    两者都不可用时返回空字符串。
+    
+    注意：此函数每次调用都会重新读取配置文件，支持运行时修改。
+    """
+    # 实时读取 excel_paths.json（不使用缓存）
+    excel_paths = load_excel_paths()
+    configured = excel_paths.get(key, "")
+    
     if configured and os.path.isfile(configured):
         return configured
 
+    # 回退到默认文件
     default_name = _DEFAULT_FILE_NAMES.get(key)
     if default_name:
         fallback = _CONFIG_FILES_DIR / default_name

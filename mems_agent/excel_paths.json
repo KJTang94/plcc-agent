@@ -1,0 +1,10 @@
+{
+  "prop_def": "C:\\Users\\92409\\IdeaProjects\\plcc-agent\\mems_agent\\config_files\\prop_def_test.xlsx",
+  "cns": "C:\\Users\\92409\\IdeaProjects\\plcc-agent\\mems_agent\\config_files\\cns_test.xlsx",
+  "rsr_def": "C:\\Users\\92409\\IdeaProjects\\plcc-agent\\mems_agent\\config_files\\rsr_def_test.xlsx",
+  "resources": "C:\\Users\\92409\\IdeaProjects\\plcc-agent\\mems_agent\\config_files\\resources_test.xlsx",
+  "meas_def": "C:\\Users\\92409\\IdeaProjects\\plcc-agent\\mems_agent\\config_files\\meas_def_test.xlsx",
+  "points": "C:\\Users\\92409\\IdeaProjects\\plcc-agent\\mems_agent\\config_files\\point.xlsx",
+  "flows_models": "C:\\Users\\92409\\IdeaProjects\\plcc-agent\\mems_agent\\config_files\\se_local_config.xlsx",
+  "aoe_model": "C:\\Users\\92409\\IdeaProjects\\plcc-agent\\mems_agent\\config_files\\aoe.xlsx"
+}
