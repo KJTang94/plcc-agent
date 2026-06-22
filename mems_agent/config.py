@@ -98,19 +98,29 @@ def get_mems_api_config() -> dict:
 def _resolve_excel_path(key: str) -> str:
     """
     解析 excel_path 中某个键对应的文件路径。
+    支持三种路径格式：
+    1. 绝对路径：直接使用
+    2. 相对路径（以 ./ 或 ../ 开头）：相对于配置文件所在目录
+    3. 文件名（不含路径分隔符）：在 config_files 目录下查找
+    
     优先使用 excel_paths.json 中配置且真实存在的路径；
     若未配置或路径无效，则回退到 config_files 目录下的约定默认文件。
-    两者都不可用时返回空字符串。
-    
-    注意：此函数每次调用都会重新读取配置文件，支持运行时修改。
     """
-    # 实时读取 excel_paths.json（不使用缓存）
     excel_paths = load_excel_paths()
     configured = excel_paths.get(key, "")
     
-    if configured and os.path.isfile(configured):
-        return configured
-
+    if configured:
+        # 检查是否为绝对路径
+        if os.path.isabs(configured):
+            if os.path.isfile(configured):
+                return configured
+        else:
+            # 相对路径：相对于配置文件所在目录
+            config_dir = str(_CONFIG_DIR)
+            resolved_path = os.path.normpath(os.path.join(config_dir, configured))
+            if os.path.isfile(resolved_path):
+                return resolved_path
+    
     # 回退到默认文件
     default_name = _DEFAULT_FILE_NAMES.get(key)
     if default_name:
