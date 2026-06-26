@@ -50,6 +50,29 @@ class MemsAgent:
         except Exception as e:
             return json.dumps({"action": "summarize", "reason": "LLM调用失败: " + str(e)})
 
+    def _call_llm_with_tools(self, system_prompt: str, user_message: str, tools_schema: List[Dict[str, Any]], tool_choice: str = "auto"):
+        """带原生 function calling 的 LLM 调用。返回 OpenAI message 对象，
+        其中可能包含 tool_calls（需要调用工具）或 content（最终文本回答）。
+        tool_choice="required" 时强制模型必须发起工具调用，用于还有未完成子任务、
+        但模型倾向于跳过工具直接输出文本（甚至幻觉出不存在工具名）的场景。
+        调用失败时返回 None，由上层退化为 summarize。"""
+        try:
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message},
+            ]
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                tools=tools_schema,
+                tool_choice=tool_choice,
+                temperature=0,
+            )
+            return response.choices[0].message
+        except Exception as e:
+            print(f"[LLM] function calling 调用失败: {e}")
+            return None
+
     def _build_conversation_history_str(self, state: AgentState) -> str:
         history = state.get("conversation_history") or []
         if not history:
@@ -213,6 +236,77 @@ class MemsAgent:
 
         return [tool for tool in self.tools if tool.name in relevant_names]
 
+    def _json_schema_type(self, raw_type: str) -> Dict[str, Any]:
+        """把 ToolInfo 参数里人类可读的类型字符串（如 integer / array[X] /
+        oneOf[...] / object[string, X]）映射为合法的 JSON Schema 类型片段。
+        复杂结构统一降级为宽松类型，详细结构信息已在 description 中保留。"""
+        t = (raw_type or "").strip().lower()
+        if t.startswith("array"):
+            return {"type": "array", "items": {}}
+        if t.startswith("object"):
+            return {"type": "object"}
+        if t.startswith("oneof") or t.startswith("anyof"):
+            # 多态结构无法用单一基础类型表达，放开类型约束
+            return {}
+        if t in ("integer", "int"):
+            return {"type": "integer"}
+        if t in ("number", "float", "double"):
+            return {"type": "number"}
+        if t in ("boolean", "bool"):
+            return {"type": "boolean"}
+        if t in ("string", "str"):
+            return {"type": "string"}
+        # any / 未知类型：不约束
+        return {}
+
+    def _build_param_description(self, param: Dict[str, Any]) -> str:
+        """把参数的类型/枚举/默认值等补充信息拼进 description，
+        弥补降级后 JSON Schema 类型丢失的结构细节。"""
+        parts = []
+        if param.get("description"):
+            parts.append(param["description"])
+        raw_type = param.get("type")
+        if raw_type:
+            parts.append(f"类型：{raw_type}")
+        if param.get("enum"):
+            parts.append("可选值：" + "、".join(str(e) for e in param["enum"]))
+        if param.get("one_of_types"):
+            parts.append("可选结构：" + " | ".join(param["one_of_types"]))
+        if param.get("default") is not None:
+            parts.append(f"默认值：{param['default']}")
+        return "；".join(parts)
+
+    def _tools_to_openai_schema(self, tools: List[ToolInfo]) -> List[Dict[str, Any]]:
+        """将 ToolInfo 列表转换为 OpenAI function calling 所需的 tools schema。"""
+        schema = []
+        for tool in tools:
+            properties = {}
+            required = []
+            for param in tool.parameters or []:
+                name = param.get("name")
+                if not name:
+                    continue
+                prop = self._json_schema_type(param.get("type"))
+                desc = self._build_param_description(param)
+                if desc:
+                    prop["description"] = desc
+                properties[name] = prop
+                if param.get("required"):
+                    required.append(name)
+            schema.append({
+                "type": "function",
+                "function": {
+                    "name": tool.name,
+                    "description": tool.description,
+                    "parameters": {
+                        "type": "object",
+                        "properties": properties,
+                        "required": required,
+                    },
+                },
+            })
+        return schema
+
     def _format_tool_results(self, tool_results: List[Dict[str, Any]], max_results: int = None) -> str:
         """仅保留最近若干条工具结果并对单条做字符截断，避免 prompt 无限膨胀。
         max_results 为 None 时使用默认上限；汇总场景可传更大值以保留更多结果。"""
@@ -266,16 +360,8 @@ class MemsAgent:
         return {"action": "summarize", "reason": "无法解析工具调用指令"}
 
     def _agent_node(self, state: AgentState) -> AgentState:
-        tools_info = []
-        for tool in self._select_relevant_tools(state):
-            tool_desc = f"- {tool.name}: {tool.description}"
-            if tool.parameters:
-                params_desc = "\n  参数："
-                for param in tool.parameters:
-                    params_desc += f"\n    - {param['name']} ({param['type']}) {'[必填]' if param['required'] else ''}: {param['description']}"
-                tool_desc += params_desc
-            tools_info.append(tool_desc)
-        tools_info = "\n".join(tools_info)
+        relevant_tools = self._select_relevant_tools(state)
+        tools_schema = self._tools_to_openai_schema(relevant_tools)
 
         conversation_history_str = self._build_conversation_history_str(state)
 
@@ -289,9 +375,9 @@ class MemsAgent:
             subtasks_str = "子任务清单（必须全部完成，未完成项需继续推进）：\n" + self._format_subtasks(subtasks, subtask_status) + "\n"
             feedback = state.get("completion_feedback") or []
             if feedback:
-                subtasks_str += "\n⚠️ 以下子任务经校验仍未完成，请优先继续推进，不要输出 summarize：\n" + self._format_subtasks(feedback, subtask_status) + "\n"
+                subtasks_str += "\n⚠️ 以下子任务经校验仍未完成，请优先继续推进，不要结束：\n" + self._format_subtasks(feedback, subtask_status) + "\n"
 
-        system_prompt = build_agent_system_prompt(tools_info=tools_info)
+        system_prompt = build_agent_system_prompt()
         user_message = build_agent_user_message(
             conversation_history_str=conversation_history_str,
             user_input=state["user_input"],
@@ -300,11 +386,42 @@ class MemsAgent:
             subtasks_str=subtasks_str,
         )
 
-        response = self._call_llm(system_prompt, user_message=user_message)
+        # 仍有未完成子任务时强制模型必须发起工具调用（required），
+        # 避免该模型在工具多、任务长时跳过工具直接吐文本甚至幻觉出不存在的工具名。
+        # 仅在多子任务（状态追踪真正生效）且存在未完成项时强制；单子任务/纯文档问题
+        # 用 auto，让模型自行决定调用工具或直接用文本回答，避免无谓的死循环。
+        has_pending = len(subtasks) > 1 and any(
+            subtask_status.get(task) not in ("completed", "failed") for task in subtasks
+        )
+        tool_choice = "required" if has_pending else "auto"
 
-        result = self._parse_agent_response(response)
-        state["agent_info"] = json.dumps(result)
+        message = self._call_llm_with_tools(system_prompt, user_message, tools_schema, tool_choice=tool_choice)
 
+        # function calling 不可用时退化为 summarize，保持流程可结束
+        if message is None:
+            state["agent_info"] = json.dumps(
+                {"action": "summarize", "reason": "LLM调用失败"}, ensure_ascii=False
+            )
+            return state
+
+        tool_calls = getattr(message, "tool_calls", None)
+        if tool_calls:
+            # 每次只推进一个工具调用，沿用内部 {"action":"tool",...} 格式
+            call = tool_calls[0]
+            tool_name = call.function.name
+            try:
+                args = json.loads(call.function.arguments or "{}")
+            except json.JSONDecodeError:
+                args = {}
+            state["agent_info"] = json.dumps(
+                {"action": "tool", "tool_name": tool_name, "args": args}, ensure_ascii=False
+            )
+        else:
+            # 没有工具调用 => 模型给出最终文本回答
+            answer = (message.content or "").strip()
+            state["agent_info"] = json.dumps(
+                {"action": "summarize", "answer": answer}, ensure_ascii=False
+            )
 
         return state
     
