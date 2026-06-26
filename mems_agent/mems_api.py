@@ -162,7 +162,18 @@ class MemsAPI:
         return self._request('GET', f'/alarms/unconfirmed')
 
     def get_aoe_results(self, id: str = None, start: int = None, end: int = None, date: str = None, source: int = None, last_only: bool = None, with_init: bool = None, reverse_order: bool = None) -> str:
-        return self._request('GET', f'/aoe_results', params={"id": id, "start": start, "end": end, "date": date, "source": source, "last_only": last_only, "with_init": with_init, "reverse_order": reverse_order})
+        params = {
+            "id": id,
+            "start": start,
+            "end": end,
+            "date": date,
+            "source": source,
+            "last_only": str(last_only).lower() if last_only is not None else None,
+            "with_init": str(with_init).lower() if with_init is not None else None,
+            "reverse_order": str(reverse_order).lower() if reverse_order is not None else None
+        }
+        params = {k: v for k, v in params.items() if v is not None}
+        return self._request('GET', f'/aoe_results', params=params)
 
     def get_aoes_models(self) -> str:
         return self._request('GET', f'/aoes/models')
@@ -245,8 +256,8 @@ class MemsAPI:
         参数：data (dict, 可选) - 请求体数据
         """
         # 用户已显式提供请求体则直接使用；未提供时回退到 config_files 默认文件
-        if data is not None:
-            return self._request('POST', '/multi_import_files', data=data)
+        # if data is not None:
+        #     return self._request('POST', '/multi_import_files', data=data)
         try:
             import os
             
@@ -534,7 +545,14 @@ class MemsAPI:
         return self._request('POST', f'/file_tree_version', data=data)
 
     def get_flows_brief_results(self, id: str = None, start: int = None, end: int = None, date: str = None, source: int = None, last_only: bool = None, with_init: bool = None, reverse_order: bool = None) -> str:
-        return self._request('GET', f'/flows/brief_results', params={"id": id, "start": start, "end": end, "date": date, "source": source, "last_only": last_only, "with_init": with_init, "reverse_order": reverse_order})
+        params = {
+            "id": id, "start": start, "end": end, "date": date, "source": source,
+            "last_only": str(last_only).lower() if last_only is not None else None,
+            "with_init": str(with_init).lower() if with_init is not None else None,
+            "reverse_order": str(reverse_order).lower() if reverse_order is not None else None
+        }
+        params = {k: v for k, v in params.items() if v is not None}
+        return self._request('GET', f'/flows/brief_results', params=params)
 
     def add_flows_controls(self, data: dict = None) -> str:
         return self._request('POST', f'/flows/controls', data=data)
@@ -606,7 +624,14 @@ class MemsAPI:
         return self._request('GET', f'/flows/result_keys', params={"id": id, "ids": ids})
 
     def get_flows_results(self, id: str = None, start: int = None, end: int = None, date: str = None, source: int = None, last_only: bool = None, with_init: bool = None, reverse_order: bool = None) -> str:
-        return self._request('GET', f'/flows/results', params={"id": id, "start": start, "end": end, "date": date, "source": source, "last_only": last_only, "with_init": with_init, "reverse_order": reverse_order})
+        params = {
+            "id": id, "start": start, "end": end, "date": date, "source": source,
+            "last_only": str(last_only).lower() if last_only is not None else None,
+            "with_init": str(with_init).lower() if with_init is not None else None,
+            "reverse_order": str(reverse_order).lower() if reverse_order is not None else None
+        }
+        params = {k: v for k, v in params.items() if v is not None}
+        return self._request('GET', f'/flows/results', params=params)
 
     def delete_flows_results(self, data: dict = None) -> str:
         return self._request('DELETE', f'/flows/results', data=data)
@@ -621,10 +646,24 @@ class MemsAPI:
         return self._request('GET', f'/flows/results/{id}/{key}/{view}', data=data)
 
     def get_flows_results_json(self, id: str = None, start: int = None, end: int = None, date: str = None, source: int = None, last_only: bool = None, with_init: bool = None, reverse_order: bool = None) -> str:
-        return self._request('GET', f'/flows/results_json', params={"id": id, "start": start, "end": end, "date": date, "source": source, "last_only": last_only, "with_init": with_init, "reverse_order": reverse_order})
+        params = {
+            "id": id, "start": start, "end": end, "date": date, "source": source,
+            "last_only": str(last_only).lower() if last_only is not None else None,
+            "with_init": str(with_init).lower() if with_init is not None else None,
+            "reverse_order": str(reverse_order).lower() if reverse_order is not None else None
+        }
+        params = {k: v for k, v in params.items() if v is not None}
+        return self._request('GET', f'/flows/results_json', params=params)
 
     def get_flows_results_json_rows(self, id: str = None, start: int = None, end: int = None, date: str = None, source: int = None, last_only: bool = None, with_init: bool = None, reverse_order: bool = None) -> str:
-        return self._request('GET', f'/flows/results_json_rows', params={"id": id, "start": start, "end": end, "date": date, "source": source, "last_only": last_only, "with_init": with_init, "reverse_order": reverse_order})
+        params = {
+            "id": id, "start": start, "end": end, "date": date, "source": source,
+            "last_only": str(last_only).lower() if last_only is not None else None,
+            "with_init": str(with_init).lower() if with_init is not None else None,
+            "reverse_order": str(reverse_order).lower() if reverse_order is not None else None
+        }
+        params = {k: v for k, v in params.items() if v is not None}
+        return self._request('GET', f'/flows/results_json_rows', params=params)
 
     def get_flows_running(self) -> str:
         return self._request('GET', f'/flows/running')

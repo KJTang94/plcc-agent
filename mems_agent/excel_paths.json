@@ -1,0 +1,10 @@
+{
+  "prop_def": "./config_files/prop_def_test.xlsx",
+  "cns": "./config_files/cns_test.xlsx",
+  "rsr_def": "./config_files/rsr_def_test.xlsx",
+  "resources": "./config_files/resources_test.xlsx",
+  "meas_def": "./config_files/meas_def_test.xlsx",
+  "points": "./config_files/point.xlsx",
+  "flows_models": "./config_files/se_local_config.xlsx",
+  "aoe_model": "./config_files/aoe.xlsx"
+}
