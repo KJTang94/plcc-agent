@@ -6,6 +6,7 @@ from langgraph.graph import StateGraph, END
 from openai import OpenAI
 from mems_api import MemsAPI
 from mems_tools import create_tools, ToolInfo
+from openapi_shared import OpenAPITooling, load_openapi_spec
 from config import get_llm_config
 from memory import AgentState, MemoryManager
 from prompts import build_agent_system_prompt, build_agent_user_message, build_summarize_system_prompt, build_summarize_user_message, build_plan_system_prompt, build_plan_user_message
@@ -30,9 +31,21 @@ class MemsAgent:
         # 每个子任务单独检索的工具数量，最终与其他子任务结果合并去重
         self.tools_per_subtask = 12  # P0-3: 从8提升至12，提高跨模块任务召回率
         self.tools = create_tools(self.mems_api)
+        self.tool_http_meta = self._build_tool_http_meta()
         self.memory = MemoryManager(session_id=session_id)
         self.memory.build_tool_index(self.tools)
         self.graph = self._build_graph()
+        self.continue_graph = self._build_continue_graph()
+
+    def _build_tool_http_meta(self) -> Dict[str, Dict[str, str]]:
+        try:
+            tooling = OpenAPITooling(load_openapi_spec())
+            return {
+                name: {"method": method, "path": path}
+                for method, path, name, _operation in tooling.iter_named_operations()
+            }
+        except Exception:
+            return {}
     
     def _call_llm(self, system_prompt: str, user_message: str = None) -> str:
         try:
@@ -100,6 +113,129 @@ class MemsAgent:
         return self.memory.build_search_query(state["user_input"])
 
 
+    def _add_trace_event(self, state: AgentState, event_type: str, payload: Dict[str, Any]) -> None:
+        events = state.setdefault("trace_events", [])
+        events.append({
+            "type": event_type,
+            "timestamp": time.time(),
+            **payload,
+        })
+
+    def _format_attachments_for_prompt(self, attachments: List[Dict[str, Any]]) -> str:
+        if not attachments:
+            return ""
+        lines = ["\n用户本轮上传的本地附件，可作为支持 file_path/file_paths 参数的 API 输入："]
+        for index, item in enumerate(attachments, start=1):
+            size = item.get("size", 0)
+            lines.append(f"{index}. {item.get('name')} | path={item.get('path')} | size={size} bytes")
+        lines.append("如果需要调用文件导入/上传类 API，单文件使用 file_path，多个文件使用 file_paths，并传入上述 path。")
+        return "\n".join(lines)
+
+    def _build_confirmation_payload(self, state: AgentState, tool_name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+        tool = next((item for item in self.tools if item.name == tool_name), None)
+        meta = self.tool_http_meta.get(tool_name, {})
+        normalized_args = self._normalize_tool_args(state, tool_name, args)
+        attachments = state.get("attachments", []) or []
+        user_text = state.get("user_input", "")
+        fields = []
+        parameter_names = set()
+
+        if tool:
+            for param in tool.parameters or []:
+                name = param.get("name")
+                if not name:
+                    continue
+                parameter_names.add(name)
+                value = normalized_args.get(name)
+                if value is None and name == "file_path" and len(attachments) == 1:
+                    value = attachments[0].get("path")
+                if value is None and name == "file_paths" and attachments:
+                    value = [item.get("path") for item in attachments if item.get("path")]
+                source = self._infer_arg_source(name, value, normalized_args, attachments, user_text)
+                field_type = "file" if name in ("file_path", "file_paths") else param.get("type", "string")
+                fields.append({
+                    "name": name,
+                    "label": name,
+                    "type": field_type,
+                    "required": bool(param.get("required")),
+                    "value": value,
+                    "description": param.get("description", ""),
+                    "source": source,
+                    "needs_confirmation": source in ("default", "generated"),
+                    "multiple": name == "file_paths",
+                })
+
+        for name, value in normalized_args.items():
+            if name in parameter_names:
+                continue
+            source = self._infer_arg_source(name, value, normalized_args, attachments, user_text)
+            fields.append({
+                "name": name,
+                "label": name,
+                "type": "object" if isinstance(value, (dict, list)) else type(value).__name__,
+                "required": False,
+                "value": value,
+                "description": "",
+                "source": source,
+                "needs_confirmation": source in ("default", "generated"),
+                "multiple": False,
+            })
+
+        step_index, step_task = self._current_pending_step(state)
+        return {
+            "tool_name": tool_name,
+            "method": meta.get("method", "API"),
+            "path": meta.get("path", ""),
+            "args": normalized_args,
+            "fields": fields,
+            "attachments": attachments,
+            "requires_confirmation": any(field.get("needs_confirmation") for field in fields),
+            "step_index": step_index,
+            "step_total": len(state.get("subtasks") or []),
+            "step_task": step_task,
+        }
+
+    def _value_is_explicit_in_text(self, name: str, value: Any, user_text: str) -> bool:
+        text = (user_text or "").lower()
+        if not text:
+            return False
+        if name.lower() in text:
+            return True
+        if value is None:
+            return False
+        values = value if isinstance(value, list) else [value]
+        for item in values:
+            if item is None:
+                continue
+            item_text = str(item).strip().lower()
+            if item_text and item_text in text:
+                return True
+        return False
+
+    def _infer_arg_source(self, name: str, value: Any, args: Dict[str, Any], attachments: List[Dict[str, Any]], user_text: str) -> str:
+        if name in ("file_path", "file_paths") and attachments and value:
+            return "explicit"
+        if name not in args:
+            return "default"
+        if self._value_is_explicit_in_text(name, value, user_text):
+            return "explicit"
+        return "generated"
+
+    def _current_pending_step(self, state: AgentState) -> tuple[int, str]:
+        subtasks = state.get("subtasks") or []
+        status = state.get("subtask_status") or {}
+        for index, task in enumerate(subtasks, start=1):
+            if status.get(task) not in ("completed", "failed"):
+                return index, task
+        return (len(subtasks) or 1), (subtasks[-1] if subtasks else state.get("user_input", ""))
+
+    def _tool_meta_payload(self, tool_name: str) -> Dict[str, str]:
+        meta = self.tool_http_meta.get(tool_name, {})
+        return {
+            "method": meta.get("method", "API"),
+            "path": meta.get("path", ""),
+        }
+
     def _get_tool_call_signature(self, tool_name: str, args: Dict[str, Any]) -> str:
         return f"{tool_name}:{json.dumps(args or {}, ensure_ascii=False, sort_keys=True)}"
 
@@ -156,6 +292,25 @@ class MemsAgent:
 
         return workflow.compile()
 
+    def _build_continue_graph(self) -> StateGraph:
+        workflow = StateGraph(AgentState)
+        workflow.add_node("tool", self._tool_node)
+        workflow.add_node("agent", self._agent_node)
+        workflow.add_node("summarize", self._summarize_node)
+        workflow.set_entry_point("tool")
+        workflow.add_edge("tool", "agent")
+        workflow.add_edge("summarize", END)
+        workflow.add_conditional_edges(
+            "agent",
+            self._decide_next_step,
+            {
+                "tool": "tool",
+                "agent": "agent",
+                "summarize": "summarize"
+            }
+        )
+        return workflow.compile()
+
     def _plan_node(self, state: AgentState) -> AgentState:
         system_prompt = build_plan_system_prompt()
         user_message = build_plan_user_message(
@@ -172,6 +327,11 @@ class MemsAgent:
         if not subtasks:
             subtasks = [state["user_input"]]
         state["subtasks"] = subtasks
+        self._add_trace_event(state, "planning", {
+            "subtasks": subtasks,
+            "requires_api": bool(subtasks),
+            "raw_user_input": state["user_input"],
+        })
 
         # P0-2: 初始化子任务状态追踪
         state["subtask_status"] = {task: "pending" for task in subtasks}
@@ -436,12 +596,32 @@ class MemsAgent:
             state["agent_info"] = json.dumps(
                 {"action": "tool", "tool_name": tool_name, "args": args}, ensure_ascii=False
             )
+            self._add_trace_event(state, "tool_selected", {
+                "tool_name": tool_name,
+                "args": args,
+            })
+            if state.get("require_confirmation"):
+                confirmation = self._build_confirmation_payload(state, tool_name, args)
+                if confirmation.get("requires_confirmation"):
+                    state["pending_confirmation"] = confirmation
+                    self._add_trace_event(state, "confirmation_required", state["pending_confirmation"])
+                    state["agent_info"] = json.dumps(
+                        {"action": "confirm", "tool_name": tool_name, "args": args}, ensure_ascii=False
+                    )
+                else:
+                    self._add_trace_event(state, "confirmation_skipped", {
+                        "tool_name": tool_name,
+                        "reason": "all parameters are explicit or no editable parameters",
+                    })
         else:
             # 没有工具调用 => 模型给出最终文本回答
             answer = (message.content or "").strip()
             state["agent_info"] = json.dumps(
                 {"action": "summarize", "answer": answer}, ensure_ascii=False
             )
+            self._add_trace_event(state, "no_api_needed", {
+                "answer_preview": answer[:500],
+            })
 
         return state
     
@@ -450,6 +630,7 @@ class MemsAgent:
             agent_info = json.loads(state["agent_info"])
             tool_name = agent_info.get("tool_name")
             args = self._normalize_tool_args(state, tool_name, agent_info.get("args", {}))
+            started_at = time.time()
             
             print(f"[工具调用] ──────────────────────────────")
             print(f"[工具调用] 工具名称: {tool_name}")
@@ -476,6 +657,15 @@ class MemsAgent:
                 if not is_last_failed:
                     loop_msg = json.dumps({"success": False, "message": f"检测到重复调用工具 {tool_name} 且参数相同（已调用{same_call_count}次），已自动停止继续调用以避免死循环"}, ensure_ascii=False)
                     print(f"[工具调用] 输出结果: {loop_msg}")
+                    self._add_trace_event(state, "tool_result", {
+                        "tool_name": tool_name,
+                        **self._tool_meta_payload(tool_name),
+                        "args": args,
+                        "result": loop_msg,
+                        "parsed_result": json.loads(loop_msg),
+                        "success": False,
+                        "duration_ms": int((time.time() - started_at) * 1000),
+                    })
                     state["tool_results"].append({
                         "tool_name": tool_name,
                         "args": args,
@@ -526,6 +716,21 @@ class MemsAgent:
                 
                 print(f"[工具调用] 输出结果: {result[:200]}{'...' if len(result) > 200 else ''}")
                 print(f"[工具调用] 工具 {tool_name} 调用成功")
+                try:
+                    parsed_result = json.loads(result)
+                    success = parsed_result.get("success", True)
+                except Exception:
+                    parsed_result = None
+                    success = True
+                self._add_trace_event(state, "tool_result", {
+                    "tool_name": tool_name,
+                    **self._tool_meta_payload(tool_name),
+                    "args": args,
+                    "result": result,
+                    "parsed_result": parsed_result,
+                    "success": success,
+                    "duration_ms": int((time.time() - started_at) * 1000),
+                })
                 state["tool_results"].append({
                     "tool_name": tool_name,
                     "args": args,
@@ -539,6 +744,15 @@ class MemsAgent:
                 error_msg = json.dumps({"success": False, "message": "工具 " + str(tool_name) + " 不存在"}, ensure_ascii=False)
                 print(f"[工具调用] 输出结果: {error_msg}")
                 print(f"[工具调用] 工具 {tool_name} 不存在")
+                self._add_trace_event(state, "tool_result", {
+                    "tool_name": tool_name,
+                    **self._tool_meta_payload(tool_name),
+                    "args": args,
+                    "result": error_msg,
+                    "parsed_result": json.loads(error_msg),
+                    "success": False,
+                    "duration_ms": int((time.time() - started_at) * 1000),
+                })
                 state["tool_results"].append({
                     "tool_name": tool_name,
                     "args": args,
@@ -550,6 +764,15 @@ class MemsAgent:
             error_msg = json.dumps({"success": False, "message": "工具调用失败: " + str(e)}, ensure_ascii=False)
             print(f"[工具调用] 输出结果: {error_msg}")
             print(f"[工具调用] 工具调用失败: {str(e)}")
+            self._add_trace_event(state, "tool_result", {
+                "tool_name": locals().get("tool_name", "unknown"),
+                **self._tool_meta_payload(locals().get("tool_name", "unknown")),
+                "args": locals().get("args", {}),
+                "result": error_msg,
+                "parsed_result": json.loads(error_msg),
+                "success": False,
+                "duration_ms": int((time.time() - locals().get("started_at", time.time())) * 1000),
+            })
             state["tool_results"].append({
                 "tool_name": "unknown",
                 "args": {},
@@ -563,6 +786,10 @@ class MemsAgent:
     def _summarize_node(self, state: AgentState) -> AgentState:
         try:
             agent_info = json.loads(state["agent_info"])
+            if agent_info.get("action") == "confirm":
+                state["final_answer"] = ""
+                state["is_finished"] = False
+                return state
             if agent_info.get("answer"):
                 state["final_answer"] = agent_info["answer"]
                 state["is_finished"] = True
@@ -673,6 +900,8 @@ class MemsAgent:
         try:
             agent_info = json.loads(state["agent_info"])
             action = agent_info.get("action", "summarize")
+            if action == "confirm":
+                return "summarize"
             if action == "tool":
                 tool_name = agent_info.get("tool_name")
                 args = agent_info.get("args", {})
@@ -714,9 +943,11 @@ class MemsAgent:
         except:
             return "summarize"
     
-    def run(self, user_input: str) -> str:
+    def _build_initial_state(self, user_input: str, attachments: List[Dict[str, Any]], require_confirmation: bool = False) -> AgentState:
+        attachments = attachments or []
+        effective_input = user_input + self._format_attachments_for_prompt(attachments)
         initial_state = {
-            "user_input": user_input,
+            "user_input": effective_input,
             "agent_info": "",
             "tool_results": [],
             "is_finished": False,
@@ -727,31 +958,83 @@ class MemsAgent:
             "docs_content": "",
             "memory_context": "",
             "search_query": "",
+            "attachments": attachments,
+            "trace_events": [],
+            "require_confirmation": require_confirmation,
+            "pending_confirmation": {},
             "subtasks": [],
             "subtask_status": {},
             "completion_retries": 0,
             "completion_feedback": [],
         }
 
-        # 整轮只做一次 embedding 检索，结果缓存进 state 供循环内各节点复用
         search_query = self._build_search_query(initial_state)
         initial_state["search_query"] = search_query
         initial_state["memory_context"] = self.memory.build_context(search_query, k_history=4)
         initial_state["relevant_tool_names"] = self.memory.search_tools(search_query, k=self.max_tools_in_prompt)
         relevant_docs = self.memory.search_docs(search_query, k=3)
-        initial_state["docs_content"] = "\n\n相关文档内容：\n" + "\n\n---\n\n".join(relevant_docs)
+        initial_state["docs_content"] = "\n\nRelevant API docs:\n" + "\n\n---\n\n".join(relevant_docs)
+        return initial_state
 
-        result = self.graph.invoke(initial_state)
-
-        if result.get("final_answer"):
+    def _payload_from_result(self, result: AgentState, attachments: List[Dict[str, Any]], effective_input: str, include_state: bool = False) -> Dict[str, Any]:
+        pending_confirmation = result.get("pending_confirmation") or {}
+        if result.get("final_answer") and not pending_confirmation:
             self.memory.add_conversation(
-                user_input=user_input,
+                user_input=effective_input,
                 agent_response=result["final_answer"],
                 tool_results=result["tool_results"],
                 timestamp=time.time()
             )
+            self._add_trace_event(result, "final_answer", {"answer": result.get("final_answer", "")})
 
-        return result["final_answer"]
+        payload = {
+            "answer": result.get("final_answer", ""),
+            "status": "awaiting_confirmation" if pending_confirmation else "complete",
+            "pending_confirmation": pending_confirmation,
+            "subtasks": result.get("subtasks", []),
+            "subtask_status": result.get("subtask_status", {}),
+            "tool_results": result.get("tool_results", []),
+            "trace_events": result.get("trace_events", []),
+            "attachments": attachments,
+            "search_query": result.get("search_query", ""),
+        }
+        if include_state:
+            payload["_state"] = result
+            payload["_effective_input"] = effective_input
+        return payload
+
+    def run_until_confirmation(self, user_input: str, attachments: List[Dict[str, Any]] = None) -> Dict[str, Any]:
+        attachments = attachments or []
+        effective_input = user_input + self._format_attachments_for_prompt(attachments)
+        initial_state = self._build_initial_state(user_input, attachments, require_confirmation=True)
+        result = self.graph.invoke(initial_state)
+        return self._payload_from_result(result, attachments, effective_input, include_state=True)
+
+    def continue_after_confirmation(self, state: AgentState, confirmed_args: Dict[str, Any], effective_input: str = "") -> Dict[str, Any]:
+        pending = state.get("pending_confirmation") or {}
+        tool_name = pending.get("tool_name")
+        state["pending_confirmation"] = {}
+        state["agent_info"] = json.dumps(
+            {"action": "tool", "tool_name": tool_name, "args": confirmed_args or {}}, ensure_ascii=False
+        )
+        self._add_trace_event(state, "confirmation_accepted", {
+            "tool_name": tool_name,
+            "args": confirmed_args or {},
+        })
+        state["require_confirmation"] = True
+        result = self.continue_graph.invoke(state)
+        attachments = result.get("attachments", [])
+        return self._payload_from_result(result, attachments, effective_input or result.get("user_input", ""), include_state=True)
+
+    def run_with_trace(self, user_input: str, attachments: List[Dict[str, Any]] = None) -> Dict[str, Any]:
+        attachments = attachments or []
+        effective_input = user_input + self._format_attachments_for_prompt(attachments)
+        initial_state = self._build_initial_state(user_input, attachments, require_confirmation=False)
+        result = self.graph.invoke(initial_state)
+        return self._payload_from_result(result, attachments, effective_input, include_state=False)
+
+    def run(self, user_input: str) -> str:
+        return self.run_with_trace(user_input).get("answer", "")
 
     def reset_conversation(self):
         self.memory.reset_conversation()

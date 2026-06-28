@@ -41,6 +41,10 @@ class AgentState(TypedDict):
     docs_content: str
     memory_context: str
     search_query: str
+    attachments: List[Dict[str, Any]]
+    trace_events: List[Dict[str, Any]]
+    require_confirmation: bool
+    pending_confirmation: Dict[str, Any]
     subtasks: List[str]
     subtask_status: Dict[str, str]
     completion_retries: int

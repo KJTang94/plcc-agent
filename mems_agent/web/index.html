@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MEMS Agent Console</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="rail">
+        <div class="brand">
+          <div class="brand-mark">M</div>
+          <div>
+            <div class="brand-title">MEMS Agent</div>
+            <div class="brand-subtitle">API Operations Console</div>
+          </div>
+        </div>
+
+        <section class="session-panel">
+          <label for="sessionId">Session</label>
+          <div class="session-row">
+            <input id="sessionId" type="text" spellcheck="false" />
+            <button id="resetBtn" class="icon-button" title="重置当前会话" aria-label="重置当前会话">
+              <span>↻</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="status-panel">
+          <div class="status-item">
+            <span class="dot online"></span>
+            <span id="healthText">Checking</span>
+          </div>
+          <div class="status-item">
+            <span class="dot neutral"></span>
+            <span id="stepCount">0 API calls</span>
+          </div>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <section class="conversation">
+          <header class="pane-header">
+            <div>
+              <h1>对话</h1>
+              <p>发送任务、追问结果，或上传本地文件作为 API 参数。</p>
+            </div>
+          </header>
+
+          <div id="messages" class="messages" aria-live="polite"></div>
+
+          <form id="chatForm" class="composer">
+            <div id="attachmentList" class="attachment-list"></div>
+            <div class="composer-row">
+              <label class="attach-button" title="上传附件">
+                <input id="fileInput" type="file" multiple />
+                <span>＋</span>
+              </label>
+              <textarea id="messageInput" rows="1" placeholder="例如：导入这些测点模型文件，并告诉我每个 API 调用结果"></textarea>
+              <button id="sendBtn" type="submit" class="send-button">发送</button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="trace-pane">
+          <header class="pane-header compact">
+            <div>
+              <h2>执行过程</h2>
+              <p>Planning 与 API 调用输入输出</p>
+            </div>
+          </header>
+
+          <div class="tabs">
+            <button class="tab active" data-tab="plan">Plan</button>
+            <button class="tab" data-tab="api">API</button>
+            <button class="tab" data-tab="raw">Raw</button>
+          </div>
+
+          <section id="planPanel" class="trace-section"></section>
+          <section id="apiPanel" class="trace-section hidden"></section>
+          <section id="rawPanel" class="trace-section hidden">
+            <pre id="rawJson" class="raw-json">{}</pre>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <div class="modal-panel">
+        <header class="modal-header">
+          <div>
+            <h2 id="confirmTitle">确认 API 调用参数</h2>
+            <p id="confirmSubtitle">请检查字段，必要时修改后再执行。</p>
+          </div>
+          <button id="confirmCloseBtn" class="icon-button" aria-label="关闭">×</button>
+        </header>
+        <form id="confirmForm" class="confirm-form">
+          <div id="confirmFields" class="confirm-fields"></div>
+          <footer class="modal-actions">
+            <button id="confirmCancelBtn" type="button" class="secondary-button">取消</button>
+            <button type="submit" class="send-button">确认并执行</button>
+          </footer>
+        </form>
+      </div>
+    </div>
+
+    <template id="emptyTraceTemplate">
+      <div class="empty-state">
+        <div class="empty-icon">◇</div>
+        <div>还没有执行记录</div>
+        <span>发送一条消息后，这里会展示规划步骤和 API 调用细节。</span>
+      </div>
+    </template>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

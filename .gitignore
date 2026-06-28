@@ -26,3 +26,7 @@ config.json
 
 # FAISS 索引缓存
 .faiss_cache/
+
+# Runtime data
+mems_agent/.memory/
+mems_agent/uploads/
