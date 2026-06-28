@@ -12,7 +12,7 @@ from prompts import build_agent_system_prompt, build_agent_user_message, build_s
 
 
 class MemsAgent:
-    def __init__(self, api_key: str = None, base_url: str = None):
+    def __init__(self, api_key: str = None, base_url: str = None, session_id: str = "default"):
         llm_config = get_llm_config()
         self.mems_api = MemsAPI(base_url=base_url)
         self.client = OpenAI(
@@ -30,7 +30,7 @@ class MemsAgent:
         # 每个子任务单独检索的工具数量，最终与其他子任务结果合并去重
         self.tools_per_subtask = 12  # P0-3: 从8提升至12，提高跨模块任务召回率
         self.tools = create_tools(self.mems_api)
-        self.memory = MemoryManager()
+        self.memory = MemoryManager(session_id=session_id)
         self.memory.build_tool_index(self.tools)
         self.graph = self._build_graph()
     
@@ -75,34 +75,31 @@ class MemsAgent:
 
     def _build_conversation_history_str(self, state: AgentState) -> str:
         history = state.get("conversation_history") or []
-        if not history:
+        memory_context = state.get("memory_context", "")
+        if not history and not memory_context:
             return ""
+        if memory_context:
+            return memory_context
 
-        recent_history = history[-2:]
-        parts = ["\n最近对话历史（仅保留最近2轮，历史只用于参考，不覆盖当前问题）："]
+        recent_history = history[-4:]
+        parts = []
+        if recent_history:
+            parts.append("\nRecent conversation history. Use it only to resolve references; current request has priority.")
         for i, history_item in enumerate(recent_history, start=1):
-            parts.append(f"\n轮次 {i}:")
-            parts.append(f"用户: {history_item['user_input']}")
+            parts.append(f"\nTurn {i}:")
+            parts.append(f"User: {history_item['user_input']}")
             if history_item.get("tool_results"):
                 tool_summary = "; ".join(
                     f"{r['tool_name']}({json.dumps(r.get('args', {}), ensure_ascii=False)})" for r in history_item["tool_results"]
                 )
-                parts.append(f"工具调用: {tool_summary}")
-            parts.append(f"助手: {history_item['agent_response']}")
+                parts.append(f"Tool calls: {tool_summary}")
+            parts.append(f"Assistant: {history_item['agent_response']}")
         return "\n".join(parts)
 
     def _build_search_query(self, state: AgentState) -> str:
-        """构建检索查询：以当前问题为主，追加最近一轮用户输入作为上下文，
-        以便对指代型追问（如"那它的详情呢"）也能召回相关工具与文档。"""
-        user_input = state["user_input"]
-        history = state.get("conversation_history") or []
-        if history:
-            last_user_input = history[-1].get("user_input", "")
-            if last_user_input:
-                return f"{user_input}\n{last_user_input}"
-        return user_input
+        return self.memory.build_search_query(state["user_input"])
 
-    
+
     def _get_tool_call_signature(self, tool_name: str, args: Dict[str, Any]) -> str:
         return f"{tool_name}:{json.dumps(args or {}, ensure_ascii=False, sort_keys=True)}"
 
@@ -161,7 +158,10 @@ class MemsAgent:
 
     def _plan_node(self, state: AgentState) -> AgentState:
         system_prompt = build_plan_system_prompt()
-        user_message = build_plan_user_message(user_input=state["user_input"])
+        user_message = build_plan_user_message(
+            user_input=state["user_input"],
+            conversation_history_str=self._build_conversation_history_str(state),
+        )
         response = self._call_llm(system_prompt, user_message=user_message)
         try:
             plan = json.loads(response)
@@ -725,6 +725,8 @@ class MemsAgent:
             "max_steps": self.max_tool_steps,
             "relevant_tool_names": [],
             "docs_content": "",
+            "memory_context": "",
+            "search_query": "",
             "subtasks": [],
             "subtask_status": {},
             "completion_retries": 0,
@@ -733,6 +735,8 @@ class MemsAgent:
 
         # 整轮只做一次 embedding 检索，结果缓存进 state 供循环内各节点复用
         search_query = self._build_search_query(initial_state)
+        initial_state["search_query"] = search_query
+        initial_state["memory_context"] = self.memory.build_context(search_query, k_history=4)
         initial_state["relevant_tool_names"] = self.memory.search_tools(search_query, k=self.max_tools_in_prompt)
         relevant_docs = self.memory.search_docs(search_query, k=3)
         initial_state["docs_content"] = "\n\n相关文档内容：\n" + "\n\n---\n\n".join(relevant_docs)

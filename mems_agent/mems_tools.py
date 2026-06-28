@@ -60,6 +60,33 @@ def create_tools(mems_api: Any) -> list[ToolInfo]:
                     param["required"] = False
             description += "。【调用说明】data 为可选请求体；若未提供，系统会自动从配置文件读取所需文件内容并构造请求体，因此即使用户未提供文件也可直接调用（无需向用户索要文件）。"
 
+        existing_param_names = {param.get("name") for param in tool_parameters}
+        try:
+            sig = inspect.signature(func)
+            for param_name, sig_param in sig.parameters.items():
+                if param_name in existing_param_names or param_name in ("self", "data"):
+                    continue
+                if sig_param.default is inspect.Parameter.empty:
+                    continue
+                if param_name == "file_path":
+                    tool_parameters.append({
+                        "name": "file_path",
+                        "type": "string",
+                        "required": False,
+                        "description": "用户指定的本地文件路径；未提供时使用配置文件中的默认文件路径。"
+                    })
+                    description += "。【文件说明】用户若指定单个本地文件路径，请通过 file_path 传入；未指定则使用默认配置文件。"
+                elif param_name == "file_paths":
+                    tool_parameters.append({
+                        "name": "file_paths",
+                        "type": "array[string]",
+                        "required": False,
+                        "description": "用户指定的本地文件路径列表，也可由多个路径组成；未提供时使用配置文件中的默认文件路径。"
+                    })
+                    description += "。【文件说明】用户若指定多个本地文件路径，请通过 file_paths 传入；未指定则使用默认配置文件。"
+        except (TypeError, ValueError):
+            pass
+
         tools.append(
             ToolInfo(
                 name=name,
