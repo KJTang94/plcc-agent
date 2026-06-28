@@ -26,7 +26,7 @@ class MemsAPI:
         self.password = password or mems_config.get("password", "")
         self.secret_key = (secret_key or mems_config.get("secret_key", "")).encode("utf-8")
     
-    def _send(self, method: str, url: str, params: dict = None, data: dict = None, files: dict = None):
+    def _send(self, method: str, url: str, params: dict = None, data: dict = None, files: dict = None, raw_data: bytes = None):
         headers = {'Access-Token': self.token}
         if method == 'GET':
             return requests.get(url, headers=headers, params=params, timeout=10)
@@ -34,6 +34,10 @@ class MemsAPI:
             if files:
                 # 文件上传方式（multipart/form-data）
                 return requests.post(url, headers=headers, files=files, timeout=30)
+            elif raw_data is not None:
+                # 字节数据方式（直接发送，不序列化）
+                headers['Content-Type'] = 'application/json'
+                return requests.post(url, headers=headers, data=raw_data, timeout=10)
             # JSON方式
             return requests.post(url, headers=headers, json=data, timeout=10)
         elif method == 'PUT':
@@ -42,7 +46,7 @@ class MemsAPI:
             return requests.delete(url, headers=headers, params=params, timeout=10)
         return None
 
-    def _request(self, method: str, path: str, params: dict = None, data: dict = None, files: dict = None) -> str:
+    def _request(self, method: str, path: str, params: dict = None, data: dict = None, files: dict = None, raw_data: bytes = None) -> str:
         # token 为空时尝试自动登录，凭据已在配置中无需向用户索要
         if not self.token:
             login_result = json.loads(self.login())
@@ -52,7 +56,7 @@ class MemsAPI:
         url = f'{self.base_url}{path}'
 
         try:
-            response = self._send(method, url, params=params, data=data, files=files)
+            response = self._send(method, url, params=params, data=data, files=files, raw_data=raw_data)
             if response is None:
                 return json.dumps({"success": False, "message": "不支持的HTTP方法"}, ensure_ascii=False)
 
@@ -60,7 +64,7 @@ class MemsAPI:
             if response.status_code in (401, 403):
                 login_result = json.loads(self.login())
                 if login_result.get("success"):
-                    response = self._send(method, url, params=params, data=data, files=files)
+                    response = self._send(method, url, params=params, data=data, files=files, raw_data=raw_data)
                     if response is None:
                         return json.dumps({"success": False, "message": "不支持的HTTP方法"}, ensure_ascii=False)
 
@@ -1026,8 +1030,18 @@ class MemsAPI:
     def add_pscpu_reset(self) -> str:
         return self._request('POST', f'/pscpu/reset')
 
-    def add_pscpu_start(self, data: dict = None) -> str:
-        return self._request('POST', f'/pscpu/start', data=data)
+    def add_pscpu_start(self, aoe_ids: list = None, dff_ids: list = None) -> str:
+        """启动 pscpu"""
+        aoe_ids = aoe_ids or []
+        dff_ids = dff_ids or []
+        
+        # 构造元组并序列化为 JSON 字节
+        data_tuple = (aoe_ids, dff_ids)
+        json_str = json.dumps(data_tuple)
+        bytes_data = json_str.encode('utf-8')
+        
+        # 使用 raw_data 参数发送字节数据
+        return self._request('POST', f'/pscpu/start', raw_data=bytes_data)
 
     def add_pscpu_stop(self) -> str:
         return self._request('POST', f'/pscpu/stop')
