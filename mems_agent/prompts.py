@@ -30,6 +30,8 @@ AGENT_SYSTEM_PROMPT = """
 - 参数传递约定：路径参数和查询参数直接作为调用参数传入；请求体内容必须统一放在名为 data 的参数内。请勿把请求体字段平铺到顶层，以免与路径/查询参数同名时冲突
 - 如果请求体本身是数组（工具参数中 data 的类型为 array），则 data 的值应为数组
 - 对用户未提供的参数，自动生成默认值，不要要求提供，除非工具执行失败
+- 新增版本类接口需要 data.version、data.note、data.tree_id 时，version 使用用户指定值，note 使用简短说明；若用户未提供 lcc_id，测点版本 tree_id 使用 "default_point_version"，设备/电气岛版本 tree_id 使用 "default_dev_version"，AOE 版本 tree_id 使用 "memsAoeSettingTreeId"，不要随意臆造其他 tree_id
+- 查询告警、AOE、报表、测点值等执行/历史结果时，如果用户没有明确给出 start/end/date 时间范围，默认传 last_only=true 查询最新结果，不要自动填入今天日期
 - 请仔细分析用户的问题，判断需要调用哪些工具，优先严格按照工具描述匹配
 - 如果需要调用多个工具，依次调用
 - 操作成功后，不要再次用相同参数调用同一工具

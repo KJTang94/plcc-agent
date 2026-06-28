@@ -21,7 +21,7 @@ class MemsAgent:
         )
         self.model = llm_config.get("model", "gpt-5.4")
         self.max_tool_steps = 15
-        self.max_same_call_repeats = 2
+        self.max_same_call_repeats = 1
         self.max_tools_in_prompt = 25
         self.max_tool_results_in_prompt = 20
         self.max_tool_result_chars = 5000
@@ -113,6 +113,26 @@ class MemsAgent:
             for item in state.get("tool_results", [])
             if self._get_tool_call_signature(item.get("tool_name", ""), item.get("args", {})) == signature
         )
+
+    def _normalize_tool_args(self, state: AgentState, tool_name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+        """Apply stable defaults for common ambiguous API patterns before execution."""
+        normalized = dict(args or {})
+        if tool_name in {
+            "get_flows_brief_results",
+            "get_flows_results",
+            "get_flows_results_json",
+            "get_flows_results_json_rows",
+            "get_alarms",
+            "get_aoe_results",
+            "get_measures",
+            "get_soes",
+        }:
+            user_text = state.get("user_input", "")
+            has_explicit_time = any(token in user_text for token in ("start", "end", "date", "日期", "时间", "今天", "昨天"))
+            if not has_explicit_time and not normalized.get("start") and not normalized.get("end"):
+                normalized.pop("date", None)
+                normalized["last_only"] = True
+        return normalized
 
     def _build_graph(self) -> StateGraph:
         workflow = StateGraph(AgentState)
@@ -429,7 +449,7 @@ class MemsAgent:
         try:
             agent_info = json.loads(state["agent_info"])
             tool_name = agent_info.get("tool_name")
-            args = agent_info.get("args", {})
+            args = self._normalize_tool_args(state, tool_name, agent_info.get("args", {}))
             
             print(f"[工具调用] ──────────────────────────────")
             print(f"[工具调用] 工具名称: {tool_name}")
@@ -615,6 +635,15 @@ class MemsAgent:
         status = state.get("subtask_status") or {}
         pending = [t for t in subtasks if status.get(t) != "completed"]
         if not pending:
+            return
+
+        # Agent 节点被约束为“每次推进最靠前的未完成子任务”，因此工具成功后
+        # 优先按顺序推进状态，避免额外 LLM 匹配把已完成的长流程误判为未完成并重复执行。
+        if is_success:
+            matched = pending[0]
+            status[matched] = "completed"
+            print(f"[子任务状态] '{matched}' -> completed")
+            state["subtask_status"] = status
             return
 
         # 用 LLM 将本次工具调用归属到某个待办子任务
